@@ -67,4 +67,14 @@
 #define QSL QStringLiteral
 #endif // QSL
 
+#ifdef __GNUC__
+#define LC_LIKELY(x) \
+   __builtin_expect((x), 1)
+#define LC_UNLIKELY(x) \
+   __builtin_expect((x), 0)
+#else
+#define LC_LIKELY(x) (x)
+#define LC_UNLIKELY(x) (x)
+#endif // __GNUC__
+
 #endif // LQTUTILS_H
