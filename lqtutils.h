@@ -30,7 +30,7 @@
 #define L_RO_PROP(...) GET_MACRO(__VA_ARGS__, L_RO_PROP4, L_RO_PROP3, L_RO_PROP2)(__VA_ARGS__)
 
 // A read-write prop both in C++ and in QML.
-#define L_RW_PROP4(type, name, setter, def)                                \
+#define L_RW_PROP_(type, name, setter)                                     \
     public:                                                                \
         type name() const { return m_##name ; }                            \
     public Q_SLOTS:                                                        \
@@ -42,26 +42,18 @@
     Q_SIGNALS:                                                             \
         void name##Changed(type name);                                     \
     private:                                                               \
-        Q_PROPERTY(type name READ name WRITE setter NOTIFY name##Changed); \
-        type m_##name = def;
+        Q_PROPERTY(type name READ name WRITE setter NOTIFY name##Changed);
+
+#define L_RW_PROP4(type, name, setter, def)                                \
+    L_RW_PROP_(type, name, setter)                                         \
+    type m_##name = def;
 
 #define L_RW_PROP3(type, name, setter)                                     \
-    public:                                                                \
-        type name() const { return m_##name ; }                            \
-    public Q_SLOTS:                                                        \
-        void setter(type name) {                                           \
-            if (m_##name == name) return;                                  \
-            m_##name = name;                                               \
-            emit name##Changed(name);                                      \
-        }                                                                  \
-    Q_SIGNALS:                                                             \
-        void name##Changed(type name);                                     \
-    private:                                                               \
-        Q_PROPERTY(type name READ name WRITE setter NOTIFY name##Changed); \
-        type m_##name;
+    L_RW_PROP_(type, name, setter)                                         \
+    type m_##name;
 
 // A read-write prop from C++, but read-only from QML.
-#define L_RO_PROP4(type, name, setter, def)                   \
+#define L_RO_PROP_(type, name, setter, def)                   \
     public:                                                   \
         type name() const { return m_##name ; }               \
     public Q_SLOTS:                                           \
@@ -73,23 +65,15 @@
     Q_SIGNALS:                                                \
         void name##Changed(type name);                        \
     private:                                                  \
-        Q_PROPERTY(type name READ name NOTIFY name##Changed); \
-        type m_##name = def;
+        Q_PROPERTY(type name READ name NOTIFY name##Changed);
 
-#define L_RO_PROP3(type, name, setter, def)                   \
-    public:                                                   \
-        type name() const { return m_##name ; }               \
-    public Q_SLOTS:                                           \
-        void setter(type name) {                              \
-            if (m_##name == name) return;                     \
-            m_##name = name;                                  \
-            emit name##Changed(name);                         \
-        }                                                     \
-    Q_SIGNALS:                                                \
-        void name##Changed(type name);                        \
-    private:                                                  \
-        Q_PROPERTY(type name READ name NOTIFY name##Changed); \
-        type m_##name = def;
+#define L_RO_PROP4(type, name, setter, def)                   \
+    L_RO_PROP_(type, name, setter)                            \
+    type m_##name = def;
+
+#define L_RO_PROP3(type, name, setter)                        \
+    L_RO_PROP_(type, name, setter)                            \
+    type m_##name;
 
 #if defined Q_OS_BLACKBERRY || defined Q_OS_ANDROID || defined Q_OS_IOS || defined Q_OS_WP
 #define L_OS_MOBILE
