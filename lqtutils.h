@@ -26,7 +26,7 @@
 #define LQTUTILS_H
 
 // A read-write prop both in C++ and in QML.
-#define L_RW_PROP(type, name, setter)                                      \
+#define L_RW_PROP(type, name, setter, def)                                 \
     public:                                                                \
         type name() const { return m_##name ; }                            \
     public Q_SLOTS:                                                        \
@@ -39,10 +39,10 @@
         void name##Changed(type name);                                     \
     private:                                                               \
         Q_PROPERTY(type name READ name WRITE setter NOTIFY name##Changed); \
-        type m_##name;
+        type m_##name = def;
 
 // A read-write prop from C++, but read-only from QML.
-#define L_RO_PROP(type, name, setter)                         \
+#define L_RO_PROP(type, name, setter, def)                    \
     public:                                                   \
         type name() const { return m_##name ; }               \
     public Q_SLOTS:                                           \
@@ -55,7 +55,7 @@
         void name##Changed(type name);                        \
     private:                                                  \
         Q_PROPERTY(type name READ name NOTIFY name##Changed); \
-        type m_##name;
+        type m_##name = def;
 
 #if defined Q_OS_BLACKBERRY || defined Q_OS_ANDROID || defined Q_OS_IOS || defined Q_OS_WP
 #define L_OS_MOBILE
