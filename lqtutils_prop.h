@@ -22,8 +22,8 @@
  * SOFTWARE.
  **/
 
-#ifndef LQTUTILS_H
-#define LQTUTILS_H
+#ifndef LQTUTILS_PROP_H
+#define LQTUTILS_PROP_H
 
 #define GET_MACRO(_1, _2, _3, _4, NAME,...) NAME
 #define L_RW_PROP(...) GET_MACRO(__VA_ARGS__, L_RW_PROP4, L_RW_PROP3, L_RW_PROP2)(__VA_ARGS__)
@@ -75,24 +75,4 @@
     L_RO_PROP_(type, name, setter)                            \
     type m_##name;
 
-#if defined Q_OS_BLACKBERRY || defined Q_OS_ANDROID || defined Q_OS_IOS || defined Q_OS_WP
-#define L_OS_MOBILE
-#else
-#define L_OS_DESKTOP
-#endif
-
-#ifndef QSL
-#define QSL QStringLiteral
-#endif // QSL
-
-#ifdef __GNUC__
-#define LC_LIKELY(x) \
-   __builtin_expect((x), 1)
-#define LC_UNLIKELY(x) \
-   __builtin_expect((x), 0)
-#else
-#define LC_LIKELY(x) (x)
-#define LC_UNLIKELY(x) (x)
-#endif // __GNUC__
-
-#endif // LQTUTILS_H
+#endif // LQTUTILS_PROP_H
