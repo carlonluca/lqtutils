@@ -75,4 +75,16 @@
     L_RO_PROP_(type, name, setter)                            \
     type m_##name;
 
+// Convenience macros to speed up a QObject subclass.
+#define L_BEGIN_CLASS(name)                           \
+    class name : public QObject                       \
+    {                                                 \
+        Q_OBJECT                                      \
+    public:                                           \
+        Q_INVOKABLE name(QObject* parent = nullptr) : \
+            QObject(parent) {}                        \
+    private:
+
+#define L_END_CLASS };
+
 #endif // LQTUTILS_PROP_H
