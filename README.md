@@ -21,7 +21,7 @@ class Fraction : public QObject
     Q_PROPERTY(double denominator READ denominator WRITE setDenominator NOTIFY denominatorChanged)
 public:
     Fraction(QObject* parent = nullptr) : QObject(parent) {}
-    
+
     double numerator() const {
         return m_numerator;
     }
@@ -35,14 +35,14 @@ public slots:
         if (m_numerator == numerator)
             return;
         m_numerator = numerator;
-        emit numeratorChanged();
+        emit numeratorChanged(numerator);
     }
 
     void setDenominator(double denominator) {
         if (m_denominator == denominator)
             return;
         m_denominator = denominator;
-        emit denominatorChanged();
+        emit denominatorChanged(denominator);
     }
 
 signals:
@@ -51,6 +51,6 @@ signals:
 
 private:
     double m_numerator;
-    double n_denominator;
-}
+    double m_denominator;
+};
 ```
