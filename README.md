@@ -54,3 +54,10 @@ private:
     double m_denominator;
 };
 ```
+When the QObject subclass is not supposed to have a particular behavior, the two macros L_BEGIN_CLASS and L_END_CLASS can speed up the declaration even more:
+```
+L_BEGIN_CLASS(Fraction)
+L_RW_PROP(double, numerator, setNumerator)
+L_RW_PROP(double, denominator, setDenominator)
+L_END_CLASS
+```
