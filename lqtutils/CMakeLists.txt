@@ -39,6 +39,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 enable_testing()
 
 include_directories(../)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../CMakeLists.txt)
+
 
 add_executable(LQtUtilsTest tst_lqtutils.cpp)
 add_test(NAME LQtUtilsTest COMMAND LQtUtilsTest)

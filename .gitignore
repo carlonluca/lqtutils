@@ -72,3 +72,4 @@ Thumbs.db
 *.exe
 
 build-*
+CMakeLists.txt.*

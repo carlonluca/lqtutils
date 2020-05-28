@@ -23,16 +23,37 @@
  **/
 
 #include <QtTest>
+#include <QString>
 
-#include "../lqtutils.h"
+#include "../lqtutils_prop.h"
+#include "../lqtutils_string.h"
+#include "../lsettings.h"
 
 class LQtUtilsObject : public QObject
 {
 	Q_OBJECT
-	L_RO_PROP(QString, test, setTest)
+    L_RO_PROP(QString, test, setTest, QString())
 public:
 	LQtUtilsObject(QObject* parent = nullptr) :
 		QObject(parent) {}
+};
+
+class LTestSettings : public QObject
+{
+    Q_OBJECT
+public:
+    static LTestSettings& instance() {
+        static LTestSettings _instance;
+        return _instance;
+    }
+
+    L_DEFINE_VALUE(QString, string1, QString("string1"), toString)
+
+protected:
+    LTestSettings(QObject* parent = nullptr) : QObject(parent) {}
+
+protected:
+    QSettings m_settings;
 };
 
 class LQtUtilsTest : public QObject
@@ -44,6 +65,7 @@ public:
 
 private slots:
 	void test_case1();
+    void test_case2();
 };
 
 LQtUtilsTest::LQtUtilsTest() {}
@@ -56,7 +78,12 @@ void LQtUtilsTest::test_case1()
 	test.setTest(s);
 	QVERIFY(test.test() == s);
 	test.setTest("HELLO");
-	QVERIFY(test.test() != s);
+    QVERIFY(test.test() != s);
+}
+
+void LQtUtilsTest::test_case2()
+{
+
 }
 
 QTEST_APPLESS_MAIN(LQtUtilsTest)
