@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "../lsettings.h"
+#include "../lqtutils_settings.h"
 #include "../lqtutils_prop.h"
 #include "../lqtutils_string.h"
 

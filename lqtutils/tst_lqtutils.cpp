@@ -29,7 +29,7 @@
 
 #include "../lqtutils_prop.h"
 #include "../lqtutils_string.h"
-#include "../lsettings.h"
+#include "../lqtutils_settings.h"
 
 class LQtUtilsObject : public QObject
 {

@@ -2,7 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
-#include "../lsettings.h"
+#include "../lqtutils_settings.h"
 #include "../lqtutils_string.h"
 #include "../lqtutils_prop.h"
 
