@@ -18,21 +18,22 @@
     private:                                                                  \
         Q_PROPERTY(type name READ name WRITE set_##name NOTIFY name##Changed)
 
-#define L_DECLARE_SETTINGS(classname, qsettings) \
-    class classname : public QObject \
-    { \
-        Q_OBJECT \
-    public: \
-        static classname& instance() { \
-            static classname _instance; \
-            return _instance;            \
-        } \
+#define L_DECLARE_SETTINGS(classname, qsettings)                 \
+    class classname : public QObject                             \
+    {                                                            \
     private: \
+        Q_OBJECT \
+    public:                                                      \
+        static classname& instance() {                           \
+            static classname _instance;                          \
+            return _instance;                                    \
+        }                                                        \
+    private:                                                     \
         classname(QObject* parent = nullptr) : QObject(parent) { \
-            m_settings = qsettings; \
-        } \
-        ~classname() { delete m_settings; } \
-    protected: \
+            m_settings = qsettings;                              \
+        }                                                        \
+        ~classname() { delete m_settings; }                      \
+    protected:                                                   \
         QSettings* m_settings;
 
 #endif
