@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QSettings>
 
+// Defines a single value inside the settings class.
 #define L_DEFINE_VALUE(type, name, def, f)                                    \
     public:                                                                   \
         type name() const { return m_settings->value(#name, def).f(); }       \
@@ -12,23 +13,25 @@
             if (name() == value) return;                                      \
             m_settings->setValue(#name, value);                               \
             emit name##Changed(value);                                        \
+            emit notifier().name##Changed(value);                             \
         }                                                                     \
     Q_SIGNALS:                                                                \
         void name##Changed(type name);                                        \
     private:                                                                  \
         Q_PROPERTY(type name READ name WRITE set_##name NOTIFY name##Changed)
 
+// Declares the settings class.
 #define L_DECLARE_SETTINGS(classname, qsettings)                 \
     class classname : public QObject                             \
     {                                                            \
-    private: \
-        Q_OBJECT \
-    public:                                                      \
-        static classname& instance() {                           \
-            static classname _instance;                          \
-            return _instance;                                    \
-        }                                                        \
     private:                                                     \
+        Q_OBJECT                                                 \
+    public:                                                      \
+        static classname& notifier() {                           \
+            static classname _notifier;                          \
+            return _notifier;                                    \
+        }                                                        \
+    public:                                                      \
         classname(QObject* parent = nullptr) : QObject(parent) { \
             m_settings = qsettings;                              \
         }                                                        \

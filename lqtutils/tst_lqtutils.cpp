@@ -57,6 +57,7 @@ public:
 private slots:
 	void test_case1();
     void test_case2();
+    void test_case3();
 };
 
 LQtUtilsTest::LQtUtilsTest() {}
@@ -85,7 +86,7 @@ void LQtUtilsTest::test_case2()
     QVERIFY(data.size() != 0);
 
     {
-        LSettingsTest& settings = LSettingsTest::instance();
+        LSettingsTest& settings = LSettingsTest::notifier();
         settings.set_string1("some string");
         settings.set_size(QSize(250, 200));
         settings.set_temperature(36.7);
@@ -103,18 +104,60 @@ void LQtUtilsTest::test_case2()
     bool signalEmitted = false;
     QEventLoop loop;
     QTimer::singleShot(0, this, [] {
-        LSettingsTest::instance().set_size(QSize(1280, 720));
+        LSettingsTest::notifier().set_size(QSize(1280, 720));
     });
-    connect(&LSettingsTest::instance(), &LSettingsTest::sizeChanged, this, [&signalEmitted] {
-        QCOMPARE(LSettingsTest::instance().size(), QSize(1280, 720));
+    connect(&LSettingsTest::notifier(), &LSettingsTest::sizeChanged, this, [&signalEmitted] {
+        QCOMPARE(LSettingsTest::notifier().size(), QSize(1280, 720));
         signalEmitted = true;
     });
-    connect(&LSettingsTest::instance(), &LSettingsTest::sizeChanged,
+    connect(&LSettingsTest::notifier(), &LSettingsTest::sizeChanged,
             &loop, &QEventLoop::quit);
     loop.exec();
 
-    QCOMPARE(LSettingsTest::instance().size(), QSize(1280, 720));
+    QCOMPARE(LSettingsTest::notifier().size(), QSize(1280, 720));
     QVERIFY(signalEmitted);
+}
+
+void LQtUtilsTest::test_case3()
+{
+    QMutex mutex;
+    int count = 0;
+
+    QEventLoop loop;
+
+    QThreadPool::globalInstance()->setMaxThreadCount(500);
+    for (int i = 0; i < 1000; i++) {
+        QThreadPool::globalInstance()->start(QRunnable::create([&mutex, &count, &loop] {
+            LSettingsTest settings;
+            settings.set_string1(QSL("runnable1"));
+            settings.set_temperature(35.5);
+
+            QMutexLocker locker(&mutex);
+            count++;
+            if (count >= 2000)
+                loop.quit();
+        }));
+        QThreadPool::globalInstance()->start(QRunnable::create([&mutex, &count, &loop] {
+            LSettingsTest settings;
+            settings.set_string1(QSL("runnable2"));
+            settings.set_temperature(37.5);
+
+            QMutexLocker locker(&mutex);
+            count++;
+            if (count >= 2000)
+                loop.quit();
+        }));
+    }
+
+    loop.exec();
+
+    {
+        QSettings settings("settings.ini", QSettings::IniFormat);
+        QVERIFY(settings.value(QSL("string1")) == QSL("runnable1") ||
+                settings.value(QSL("string1")) == QSL("runnable2"));
+        QVERIFY(settings.value(QSL("temperature")).toDouble() == 35.5 ||
+                settings.value(QSL("temperature")).toDouble() == 37.5);
+    }
 }
 
 QTEST_MAIN(LQtUtilsTest)

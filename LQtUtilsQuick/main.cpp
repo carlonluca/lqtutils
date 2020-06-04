@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
     LTestSignals test;
-    engine.rootContext()->setContextProperty("settings", &LQuickSettings::instance());
+    engine.rootContext()->setContextProperty("settings", &LQuickSettings::notifier());
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
