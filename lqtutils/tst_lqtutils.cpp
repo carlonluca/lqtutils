@@ -33,11 +33,11 @@
 
 class LQtUtilsObject : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
     L_RO_PROP(QString, test, setTest, QString())
 public:
-	LQtUtilsObject(QObject* parent = nullptr) :
-		QObject(parent) {}
+     LQtUtilsObject(QObject* parent = nullptr) :
+     QObject(parent) {}
 };
 
 L_DECLARE_SETTINGS(LSettingsTest, new QSettings("settings.ini", QSettings::IniFormat))
@@ -49,13 +49,13 @@ L_END_CLASS
 
 class LQtUtilsTest : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	LQtUtilsTest();
-	~LQtUtilsTest();
+    LQtUtilsTest();
+    ~LQtUtilsTest();
 
 private slots:
-	void test_case1();
+    void test_case1();
     void test_case2();
     void test_case3();
 };
@@ -65,11 +65,11 @@ LQtUtilsTest::~LQtUtilsTest() {}
 
 void LQtUtilsTest::test_case1()
 {
-	const QString s = QSL("HELLOOOOO!");
-	LQtUtilsObject test;
-	test.setTest(s);
-	QVERIFY(test.test() == s);
-	test.setTest("HELLO");
+    const QString s = QSL("HELLOOOOO!");
+    LQtUtilsObject test;
+    test.setTest(s);
+    QVERIFY(test.test() == s);
+    test.setTest("HELLO");
     QVERIFY(test.test() != s);
 }
 
