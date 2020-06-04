@@ -53,7 +53,7 @@
     type m_##name;
 
 // A read-write prop from C++, but read-only from QML.
-#define L_RO_PROP_(type, name, setter, def)                   \
+#define L_RO_PROP_(type, name, setter)                        \
     public:                                                   \
         type name() const { return m_##name ; }               \
     public Q_SLOTS:                                           \
