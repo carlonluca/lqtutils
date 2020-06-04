@@ -47,6 +47,10 @@ L_DEFINE_VALUE(double, temperature, -1, toDouble)
 L_DEFINE_VALUE(QByteArray, image, QByteArray(), toByteArray)
 L_END_CLASS
 
+L_DECLARE_SETTINGS(LSettingsTestSec1, new QSettings("settings.ini", QSettings::IniFormat), "SECTION_1")
+L_DEFINE_VALUE(QString, string2, QString("string2"), toString)
+L_END_CLASS
+
 class LQtUtilsTest : public QObject
 {
     Q_OBJECT
@@ -58,6 +62,8 @@ private slots:
     void test_case1();
     void test_case2();
     void test_case3();
+    void test_case4();
+    void test_case5();
 };
 
 LQtUtilsTest::LQtUtilsTest() {}
@@ -91,6 +97,9 @@ void LQtUtilsTest::test_case2()
         settings.set_size(QSize(250, 200));
         settings.set_temperature(36.7);
         settings.set_image(data);
+
+        LSettingsTestSec1 sec1;
+        sec1.set_string2(QSL("value_in_section"));
     }
 
     {
@@ -99,6 +108,7 @@ void LQtUtilsTest::test_case2()
         QCOMPARE(settings.value(QSL("size")).toSize(), QSize(250, 200));
         QCOMPARE(settings.value(QSL("temperature")).toDouble(), 36.7);
         QCOMPARE(settings.value(QSL("image")).toByteArray(), data);
+        QCOMPARE(settings.value(QSL("SECTION_1/string2")), "value_in_section");
     }
 
     bool signalEmitted = false;
@@ -158,6 +168,29 @@ void LQtUtilsTest::test_case3()
         QVERIFY(settings.value(QSL("temperature")).toDouble() == 35.5 ||
                 settings.value(QSL("temperature")).toDouble() == 37.5);
     }
+}
+
+void LQtUtilsTest::test_case4()
+{
+    QElapsedTimer timer;
+    timer.start();
+    for (int i = 0; i < 1000; i++) {
+
+        LSettingsTestSec1 sec1;
+        sec1.set_string2(QSL("value"));
+    }
+    qDebug() << timer.elapsed();
+}
+
+void LQtUtilsTest::test_case5()
+{
+    QElapsedTimer timer;
+    timer.start();
+    for (int i = 0; i < 1000; i++) {
+        QSettings settings("settings.ini", QSettings::IniFormat);
+        settings.setValue(QSL("string2"), QSL("value"));
+    }
+    qDebug() << timer.elapsed();
 }
 
 QTEST_MAIN(LQtUtilsTest)

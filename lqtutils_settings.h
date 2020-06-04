@@ -28,14 +28,20 @@
 #include <QObject>
 #include <QSettings>
 
+#define L_SETTINGS_GET_MACRO(_1, _2, _3, NAME,...) NAME
+#define L_DECLARE_SETTINGS(...) \
+    L_SETTINGS_GET_MACRO(__VA_ARGS__, L_DECLARE_SETTINGS3, L_DECLARE_SETTINGS2)(__VA_ARGS__)
+
 // Defines a single value inside the settings class.
 #define L_DEFINE_VALUE(type, name, def, f)                                    \
     public:                                                                   \
-        type name() const { return m_settings->value(#name, def).f(); }       \
+        type name() const {                                                   \
+            return m_settings->value(m_section + "/" + #name, def).f();       \
+        }                                                                     \
     public Q_SLOTS:                                                           \
         void set_##name(type value) {                                         \
             if (name() == value) return;                                      \
-            m_settings->setValue(#name, value);                               \
+            m_settings->setValue(m_section + "/" + #name, value);             \
             emit name##Changed(value);                                        \
             emit notifier().name##Changed(value);                             \
         }                                                                     \
@@ -45,7 +51,10 @@
         Q_PROPERTY(type name READ name WRITE set_##name NOTIFY name##Changed)
 
 // Declares the settings class.
-#define L_DECLARE_SETTINGS(classname, qsettings)                 \
+#define L_DECLARE_SETTINGS2(classname, qsettings) \
+    L_DECLARE_SETTINGS3(classname, qsettings, "")
+
+#define L_DECLARE_SETTINGS3(classname, qsettings, section)       \
     class classname : public QObject                             \
     {                                                            \
     private:                                                     \
@@ -61,6 +70,7 @@
         }                                                        \
         ~classname() { delete m_settings; }                      \
     protected:                                                   \
-        QSettings* m_settings;
+        QSettings* m_settings;                                   \
+        QString m_section = QStringLiteral(section);
 
 #endif
