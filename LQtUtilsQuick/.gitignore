@@ -71,5 +71,3 @@ Thumbs.db
 *.dll
 *.exe
 
-build-*
-CMakeLists.txt.*

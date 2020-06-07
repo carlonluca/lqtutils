@@ -25,9 +25,11 @@
 #ifndef LQTUTILS_PROP_H
 #define LQTUTILS_PROP_H
 
-#define GET_MACRO(_1, _2, _3, _4, NAME,...) NAME
-#define L_RW_PROP(...) GET_MACRO(__VA_ARGS__, L_RW_PROP4, L_RW_PROP3, L_RW_PROP2)(__VA_ARGS__)
-#define L_RO_PROP(...) GET_MACRO(__VA_ARGS__, L_RO_PROP4, L_RO_PROP3, L_RO_PROP2)(__VA_ARGS__)
+#define L_PROP_GET_MACRO(_1, _2, _3, _4, NAME,...) NAME
+#define L_RW_PROP(...) \
+    L_PROP_GET_MACRO(__VA_ARGS__, L_RW_PROP4, L_RW_PROP3, L_RW_PROP2)(__VA_ARGS__)
+#define L_RO_PROP(...) \
+    L_PROP_GET_MACRO(__VA_ARGS__, L_RO_PROP4, L_RO_PROP3, L_RO_PROP2)(__VA_ARGS__)
 
 // A read-write prop both in C++ and in QML.
 #define L_RW_PROP_(type, name, setter)                                     \
