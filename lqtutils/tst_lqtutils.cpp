@@ -64,6 +64,8 @@ private slots:
     void test_case3();
     void test_case4();
     void test_case5();
+    void test_case6();
+    void test_case7();
 };
 
 LQtUtilsTest::LQtUtilsTest() {}
@@ -172,25 +174,42 @@ void LQtUtilsTest::test_case3()
 
 void LQtUtilsTest::test_case4()
 {
-    QElapsedTimer timer;
-    timer.start();
-    for (int i = 0; i < 1000; i++) {
-
-        LSettingsTestSec1 sec1;
-        sec1.set_string2(QSL("value"));
+    QBENCHMARK {
+        for (int i = 0; i < 1000; i++) {
+            LSettingsTestSec1 sec1;
+            sec1.set_string2(QSL("value"));
+        }
     }
-    qDebug() << timer.elapsed();
 }
 
 void LQtUtilsTest::test_case5()
 {
-    QElapsedTimer timer;
-    timer.start();
-    for (int i = 0; i < 1000; i++) {
-        QSettings settings("settings.ini", QSettings::IniFormat);
-        settings.setValue(QSL("string2"), QSL("value"));
+    QBENCHMARK {
+        for (int i = 0; i < 1000; i++) {
+            QSettings settings("settings.ini", QSettings::IniFormat);
+            settings.setValue(QSL("string2"), QSL("value"));
+        }
     }
-    qDebug() << timer.elapsed();
+}
+
+void LQtUtilsTest::test_case6()
+{
+    QBENCHMARK {
+        for (int i = 0; i < 1000; i++) {
+            LSettingsTestSec1 sec1;
+            QCOMPARE(sec1.string2(), QSL("value"));
+        }
+    }
+}
+
+void LQtUtilsTest::test_case7()
+{
+    QBENCHMARK {
+        for (int i = 0; i < 1000; i++) {
+            QSettings settings("settings.ini", QSettings::IniFormat);
+            QCOMPARE(settings.value(QSL("string2")), QSL("value"));
+        }
+    }
 }
 
 QTEST_MAIN(LQtUtilsTest)
