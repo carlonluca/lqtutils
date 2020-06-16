@@ -26,7 +26,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(LQtUtilsTest LANGUAGES CXX)
 
-find_package(Qt5 COMPONENTS Test Gui REQUIRED)
+find_package(Qt5 COMPONENTS Test Gui Qml REQUIRED)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -44,4 +44,4 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/../CMakeLists.txt)
 
 add_executable(LQtUtilsTest tst_lqtutils.cpp)
 add_test(NAME LQtUtilsTest COMMAND LQtUtilsTest)
-target_link_libraries(LQtUtilsTest PRIVATE Qt5::Test Qt5::Gui)
+target_link_libraries(LQtUtilsTest PRIVATE Qt5::Test Qt5::Gui Qt5::Qml)

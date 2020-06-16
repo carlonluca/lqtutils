@@ -26,6 +26,7 @@
 #include <QString>
 #include <QImage>
 #include <QPainter>
+#include <QQmlEngine>
 
 #include "../lqtutils_prop.h"
 #include "../lqtutils_string.h"
@@ -221,6 +222,7 @@ void LQtUtilsTest::test_case7()
 
 void LQtUtilsTest::test_case8()
 {
+    qmlRegisterUncreatableMetaObject(MyEnum::staticMetaObject, "con.luke", 1, 0, "MyEnum", "Access to enums & flags only");
     QCOMPARE(MyEnum::Value1, 1);
     QCOMPARE(MyEnum::Value2, 2);
     QCOMPARE(QMetaEnum::fromType<MyEnum::MyEnumValues>().valueToKey(MyEnum::Value3), QSL("Value3"));

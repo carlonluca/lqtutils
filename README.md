@@ -105,3 +105,15 @@ Window {
     Binding { target: settings; property: "appY"; value: y }
 }
 ```
+## lqtutils_enum.h
+Contains a macro to define a enum and register it with the meta-object system. This enum can then be exposed to the QML. To create the enum simply do:
+```
+L_DECLARE_ENUM(MyEnum,
+               Value1 = 1,
+               Value2,
+               Value3)
+```
+This enum is exposed using a namespace without subclassing QObject. Register with the QML engine with:
+```
+qmlRegisterUncreatableMetaObject(MyEnum::staticMetaObject, "con.luke", 1, 0, "MyEnum", "Access to enums & flags only");
+```
