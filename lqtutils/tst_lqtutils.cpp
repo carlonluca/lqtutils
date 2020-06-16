@@ -30,7 +30,7 @@
 #include "../lqtutils_prop.h"
 #include "../lqtutils_string.h"
 #include "../lqtutils_settings.h"
-#include "../lqtutils/lqtutils_enum.h"
+#include "../lqtutils_enum.h"
 
 class LQtUtilsObject : public QObject
 {
