@@ -31,8 +31,8 @@
     namespace enumName                          \
     {                                           \
         Q_NAMESPACE                             \
-        enum enumName##Values { __VA_ARGS__  }; \
-        Q_ENUM_NS(enumName##Values)             \
+        enum enumName##Value { __VA_ARGS__  };  \
+        Q_ENUM_NS(enumName##Value)              \
     }
 
 #endif // LQTUTILS_ENUM_H
