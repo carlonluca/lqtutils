@@ -30,6 +30,7 @@
 #include "../lqtutils_prop.h"
 #include "../lqtutils_string.h"
 #include "../lqtutils_settings.h"
+#include "../lqtutils/lqtutils_enum.h"
 
 class LQtUtilsObject : public QObject
 {
@@ -51,6 +52,11 @@ L_DECLARE_SETTINGS(LSettingsTestSec1, new QSettings("settings.ini", QSettings::I
 L_DEFINE_VALUE(QString, string2, QString("string2"), toString)
 L_END_CLASS
 
+L_DECLARE_ENUM(MyEnum,
+               Value1 = 1,
+               Value2,
+               Value3)
+
 class LQtUtilsTest : public QObject
 {
     Q_OBJECT
@@ -66,6 +72,7 @@ private slots:
     void test_case5();
     void test_case6();
     void test_case7();
+    void test_case8();
 };
 
 LQtUtilsTest::LQtUtilsTest() {}
@@ -210,6 +217,13 @@ void LQtUtilsTest::test_case7()
             QCOMPARE(settings.value(QSL("string2")), QSL("value"));
         }
     }
+}
+
+void LQtUtilsTest::test_case8()
+{
+    QCOMPARE(MyEnum::Value1, 1);
+    QCOMPARE(MyEnum::Value2, 2);
+    QCOMPARE(QMetaEnum::fromType<MyEnum::MyEnumValues>().valueToKey(MyEnum::Value3), QSL("Value3"));
 }
 
 QTEST_MAIN(LQtUtilsTest)
