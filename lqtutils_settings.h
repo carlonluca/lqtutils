@@ -36,12 +36,12 @@
 #define L_DEFINE_VALUE(type, name, def, f)                                    \
     public:                                                                   \
         type name() const {                                                   \
-            return m_settings->value(m_section + "/" + #name, def).f();       \
+            return m_settings->value(sectionToPath() + #name, def).f();       \
         }                                                                     \
     public Q_SLOTS:                                                           \
         void set_##name(type value) {                                         \
             if (name() == value) return;                                      \
-            m_settings->setValue(m_section + "/" + #name, value);             \
+            m_settings->setValue(sectionToPath() + #name, value);             \
             emit name##Changed(value);                                        \
             emit notifier().name##Changed(value);                             \
         }                                                                     \
@@ -71,6 +71,9 @@
         ~classname() { delete m_settings; }                      \
     protected:                                                   \
         QSettings* m_settings;                                   \
-        QString m_section = QStringLiteral(section);
+        QString m_section = QStringLiteral(section);             \
+    private:                                                     \
+        QString sectionToPath() const                            \
+        { return (!m_section.isEmpty() ? m_section + "/" : ""); }
 
 #endif
