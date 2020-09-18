@@ -22,8 +22,8 @@
  * SOFTWARE.
  **/
 
-#ifndef LQTUTILS_STRING_H
-#define LQTUTILS_STRING_H
+#ifndef LQTUTILS_THREADING_H
+#define LQTUTILS_THREADING_H
 
 #include <QMutex>
 
@@ -34,4 +34,4 @@ public:
         QMutex(QMutex::Recursive) {}
 };
 
-#endif // LQTUTILS_STRING_H
+#endif // LQTUTILS_THREADING_H
