@@ -117,3 +117,9 @@ This enum is exposed using a namespace without subclassing QObject. Register wit
 ```
 qmlRegisterUncreatableMetaObject(MyEnum::staticMetaObject, "con.luke", 1, 0, "MyEnum", "Access to enums & flags only");
 ```
+
+## lqtutils_fsm.h
+A QState subclass that includes a state name and prints it to stdout when each state is entered.
+
+## lqtutils_threading.h
+A QMutex subclass defaulting to recursive mode.
