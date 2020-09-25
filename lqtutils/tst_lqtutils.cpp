@@ -42,6 +42,11 @@ public:
      QObject(parent) {}
 };
 
+L_BEGIN_CLASS(LPropTest)
+L_RW_PROP_REF(QStringList, myListRef, setMyListRef, QStringList() << "hello")
+L_RO_PROP(QStringList, myList, setMyList, QStringList() << "hello")
+L_END_CLASS
+
 L_DECLARE_SETTINGS(LSettingsTest, new QSettings("settings.ini", QSettings::IniFormat))
 L_DEFINE_VALUE(QString, string1, QString("string1"), toString)
 L_DEFINE_VALUE(QSize, size, QSize(100, 100), toSize)
@@ -74,6 +79,7 @@ private slots:
     void test_case6();
     void test_case7();
     void test_case8();
+    void test_case9();
 };
 
 LQtUtilsTest::LQtUtilsTest() {}
@@ -226,6 +232,21 @@ void LQtUtilsTest::test_case8()
     QCOMPARE(MyEnum::Value1, 1);
     QCOMPARE(MyEnum::Value2, 2);
     QCOMPARE(QMetaEnum::fromType<MyEnum::MyEnumValue>().valueToKey(MyEnum::Value3), QSL("Value3"));
+}
+
+void LQtUtilsTest::test_case9()
+{
+    LPropTest test;
+    test.myList().append("Luca");
+
+    LPropTest testRef;
+    testRef.myListRef().append("Luca");
+
+    QCOMPARE(test.myList().size(), 1);
+    QCOMPARE(test.myList().at(0), "hello");
+    QCOMPARE(testRef.myListRef().size(), 2);
+    QCOMPARE(testRef.myListRef().at(0), "hello");
+    QCOMPARE(testRef.myListRef().at(1), "Luca");
 }
 
 QTEST_MAIN(LQtUtilsTest)

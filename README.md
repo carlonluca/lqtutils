@@ -66,6 +66,11 @@ L_RW_PROP(double, denominator, setDenominator, 9)
 L_END_CLASS
 ```
 The L_RW_PROP and L_RO_PROP macros are overloaded, and can therefore be cassed with three or four params. The last param is used if you want to init the prop to some specific value automatically.
+
+### References
+
+If you need to be able to modify the property itself from C++ instead of resetting it, you can use the *_REF alternatives of L_RW_PROP and L_RO_PROP. In that case, getter methods return a reference to the type in C++.
+
 ## lqtutils_settings.h
 Contains a few tools that can be used to speed up writing simple settings to a file. Settings will still use QSettings and are therefore fully compatible. The macros are simply shortcuts to synthetise code. I only used this for creating ini files, but should work for other formats. An example:
 ```
