@@ -32,6 +32,7 @@
 #include "../lqtutils_string.h"
 #include "../lqtutils_settings.h"
 #include "../lqtutils_enum.h"
+#include "../lqtutils_autoexec.h"
 
 class LQtUtilsObject : public QObject
 {
@@ -80,6 +81,7 @@ private slots:
     void test_case7();
     void test_case8();
     void test_case9();
+    void test_case10();
 };
 
 LQtUtilsTest::LQtUtilsTest() {}
@@ -247,6 +249,21 @@ void LQtUtilsTest::test_case9()
     QCOMPARE(testRef.myListRef().size(), 2);
     QCOMPARE(testRef.myListRef().at(0), "hello");
     QCOMPARE(testRef.myListRef().at(1), "Luca");
+}
+
+void LQtUtilsTest::test_case10()
+{
+    int i = 9;
+
+    {
+        LQTAutoExec autoexec([&] {
+            i++;
+        });
+
+        QCOMPARE(i, 9);
+    }
+
+    QCOMPARE(i, 10);
 }
 
 QTEST_MAIN(LQtUtilsTest)

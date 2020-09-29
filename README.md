@@ -128,3 +128,19 @@ A QState subclass that includes a state name and prints it to stdout when each s
 
 ## lqtutils_threading.h
 A QMutex subclass defaulting to recursive mode.
+
+## lqtutils_autoexec.h
+A class that can be used to execute a lambda whenever the current scope ends, e.g.:
+```
+int i = 9;
+
+{
+    LQTAutoExec autoexec([&] {
+        i++;
+    });
+
+    QCOMPARE(i, 9);
+}
+
+QCOMPARE(i, 10);
+```
