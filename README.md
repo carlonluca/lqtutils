@@ -2,7 +2,7 @@
 This is a module containing a few tools that I typically use in Qt apps.
 ## lqtutils_prop.h
 Contains a few useful macros to synthetize Qt props. For instance:
-```
+```c++
 class Fraction : public QObject
 {
     Q_OBJECT
@@ -13,7 +13,7 @@ public:
 };
 ```
 instead of:
-```
+```c++
 class Fraction : public QObject
 {
     Q_OBJECT
@@ -59,7 +59,7 @@ private:
 };
 ```
 When the QObject subclass is not supposed to have a particular behavior, the two macros L_BEGIN_CLASS and L_END_CLASS can speed up the declaration even more:
-```
+```c++
 L_BEGIN_CLASS(Fraction)
 L_RW_PROP(double, numerator, setNumerator, 5)
 L_RW_PROP(double, denominator, setDenominator, 9)
@@ -73,7 +73,7 @@ If you need to be able to modify the property itself from C++ instead of resetti
 
 ## lqtutils_settings.h
 Contains a few tools that can be used to speed up writing simple settings to a file. Settings will still use QSettings and are therefore fully compatible. The macros are simply shortcuts to synthetise code. I only used this for creating ini files, but should work for other formats. An example:
-```
+```c++
 L_DECLARE_SETTINGS(LSettingsTest, new QSettings("settings.ini", QSettings::IniFormat))
 L_DEFINE_VALUE(QString, string1, QString("string1"), toString)
 L_DEFINE_VALUE(QSize, size, QSize(100, 100), toSize)
@@ -87,7 +87,7 @@ L_END_CLASS
 ```
 This will provide an interface to a "strong type" settings file containing a string, a QSize value, a double, a jpg image and another string, in a specific section of the ini file. Each class is reentrant like QSettings and can be instantiated in multiple threads.
 Each class also provides a unique notifier: the notifier can be used to receive notifications when any thread in the code changes the settings, and can also be used in bindings in QML code. For an example, refer to LQtUtilsQuick:
-```
+```c++
 Window {
     visible: true
     x: settings.appX
@@ -112,14 +112,14 @@ Window {
 ```
 ## lqtutils_enum.h
 Contains a macro to define a enum and register it with the meta-object system. This enum can then be exposed to the QML. To create the enum simply do:
-```
+```c++
 L_DECLARE_ENUM(MyEnum,
                Value1 = 1,
                Value2,
                Value3)
 ```
 This enum is exposed using a namespace without subclassing QObject. Register with the QML engine with:
-```
+```c++
 qmlRegisterUncreatableMetaObject(MyEnum::staticMetaObject, "con.luke", 1, 0, "MyEnum", "Access to enums & flags only");
 ```
 
@@ -131,16 +131,13 @@ A QMutex subclass defaulting to recursive mode.
 
 ## lqtutils_autoexec.h
 A class that can be used to execute a lambda whenever the current scope ends, e.g.:
-```
+```c++
 int i = 9;
-
 {
     LQTAutoExec autoexec([&] {
         i++;
     });
-
     QCOMPARE(i, 9);
 }
-
 QCOMPARE(i, 10);
 ```
