@@ -33,6 +33,7 @@
 #include "../lqtutils_settings.h"
 #include "../lqtutils_enum.h"
 #include "../lqtutils_autoexec.h"
+#include "../lqtutils_threading.h"
 
 class LQtUtilsObject : public QObject
 {
@@ -82,6 +83,7 @@ private slots:
     void test_case8();
     void test_case9();
     void test_case10();
+    void test_case11();
 };
 
 LQtUtilsTest::LQtUtilsTest() {}
@@ -254,16 +256,37 @@ void LQtUtilsTest::test_case9()
 void LQtUtilsTest::test_case10()
 {
     int i = 9;
-
     {
         LQTAutoExec autoexec([&] {
             i++;
         });
-
         QCOMPARE(i, 9);
     }
-
     QCOMPARE(i, 10);
+}
+
+void LQtUtilsTest::test_case11()
+{
+    int i = 9;
+    QThread* currentThread = QThread::currentThread();
+    INVOKE_AWAIT_ASYNC(this, [&i, currentThread] {
+        i++;
+        QCOMPARE(QThread::currentThread(), currentThread);
+        QCOMPARE(i, 10);
+    });
+    QCOMPARE(i, 10);
+
+    QThread* t = new QThread;
+    t->start();
+    QObject* obj = new QObject;
+    obj->moveToThread(t);
+    INVOKE_AWAIT_ASYNC(obj, [&i, currentThread, t] {
+        i++;
+        QCOMPARE(t, QThread::currentThread());
+        QVERIFY(QThread::currentThread() != currentThread);
+        QCOMPARE(i, 11);
+    });
+    QCOMPARE(i, 11);
 }
 
 QTEST_MAIN(LQtUtilsTest)

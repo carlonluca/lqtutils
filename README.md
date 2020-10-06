@@ -127,7 +127,22 @@ qmlRegisterUncreatableMetaObject(MyEnum::staticMetaObject, "con.luke", 1, 0, "My
 A QState subclass that includes a state name and prints it to stdout when each state is entered.
 
 ## lqtutils_threading.h
-A QMutex subclass defaulting to recursive mode.
+```LQTRecursiveMutex``` is a simple QMutex subclass defaulting to recursive mode.
+
+```INVOKE_AWAIT_ASYNC``` is a wrapper around QMetaObject::invokeMethod that allows to execute a slot or lambda in the thread of an obj, synchronously awaiting for the result. E.g.:
+```c++
+QThread* t = new QThread;
+t->start();
+QObject* obj = new QObject;
+obj->moveToThread(t);
+INVOKE_AWAIT_ASYNC(obj, [&i, currentThread, t] {
+    i++;
+    QCOMPARE(t, QThread::currentThread());
+    QVERIFY(QThread::currentThread() != currentThread);
+    QCOMPARE(i, 11);
+});
+QCOMPARE(i, 11);
+```
 
 ## lqtutils_autoexec.h
 A class that can be used to execute a lambda whenever the current scope ends, e.g.:

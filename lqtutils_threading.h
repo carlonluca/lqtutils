@@ -26,6 +26,12 @@
 #define LQTUTILS_THREADING_H
 
 #include <QMutex>
+#include <QMetaObject>
+
+#define INVOKE_AWAIT_ASYNC(obj, ...) {                                                                               \
+        auto type = QThread::currentThread() == obj->thread() ? Qt::DirectConnection : Qt::BlockingQueuedConnection; \
+        QMetaObject::invokeMethod(obj, __VA_ARGS__, type);                                                           \
+    }
 
 class LQTRecursiveMutex : public QMutex
 {
