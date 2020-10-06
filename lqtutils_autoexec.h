@@ -29,8 +29,11 @@
 
 class LQTAutoExec {
 public:
-    LQTAutoExec(std::function<void()> func) : m_func (func) {}
-    ~LQTAutoExec() { m_func(); }
+    LQTAutoExec(std::function<void()> func) { reset(func); }
+    LQTAutoExec() { reset(nullptr); }
+    ~LQTAutoExec() { if (m_func) m_func(); }
+    void reset(std::function<void()> func) { m_func = func; }
+    void reset() { reset(nullptr); }
 private:
     std::function<void()> m_func;
 };
