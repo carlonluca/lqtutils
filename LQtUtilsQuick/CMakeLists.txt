@@ -36,6 +36,7 @@ else()
       main.cpp
       ltestsignals.cpp
       lquicksettings.cpp
+      lenums.cpp
       qml.qrc
     )
 endif()
