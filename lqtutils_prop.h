@@ -65,7 +65,7 @@
 #define L_RO_PROP_(type, name, setter)                        \
     public:                                                   \
         type name() const { return m_##name ; }               \
-    public Q_SLOTS:                                           \
+    public:                                                   \
         void setter(type name) {                              \
             if (m_##name == name) return;                     \
             m_##name = name;                                  \
