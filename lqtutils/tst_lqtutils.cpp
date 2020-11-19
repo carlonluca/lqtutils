@@ -84,6 +84,7 @@ private slots:
     void test_case9();
     void test_case10();
     void test_case11();
+    void test_case12();
 };
 
 LQtUtilsTest::LQtUtilsTest() {}
@@ -287,6 +288,28 @@ void LQtUtilsTest::test_case11()
         QCOMPARE(i, 11);
     });
     QCOMPARE(i, 11);
+}
+
+void LQtUtilsTest::test_case12()
+{
+    int i = 9;
+
+    {
+        LQTSharedAutoExec lock2;
+        {
+            LQTSharedAutoExec lock;
+            {
+                lock = LQTSharedAutoExec([&i] {
+                    i++;
+                });
+                QCOMPARE(i, 9);
+            }
+            QCOMPARE(i, 9);
+            lock2 = lock;
+        }
+        QCOMPARE(i, 9);
+    }
+    QCOMPARE(i, 10);
 }
 
 QTEST_MAIN(LQtUtilsTest)

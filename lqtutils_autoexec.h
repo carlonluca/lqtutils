@@ -25,9 +25,12 @@
 #ifndef LQTUTILS_AUTOEXEC_H
 #define LQTUTILS_AUTOEXEC_H
 
+#include <QSharedPointer>
+
 #include <functional>
 
-class LQTAutoExec {
+class LQTAutoExec
+{
 public:
     LQTAutoExec(std::function<void()> func) { reset(func); }
     LQTAutoExec() { reset(nullptr); }
@@ -36,6 +39,17 @@ public:
     void reset() { reset(nullptr); }
 private:
     std::function<void()> m_func;
+};
+
+class LQTSharedAutoExec
+{
+public:
+    LQTSharedAutoExec(std::function<void()> func) :
+        m_exec(new LQTAutoExec(func)) {}
+    LQTSharedAutoExec() {}
+
+protected:
+    QSharedPointer<LQTAutoExec> m_exec;
 };
 
 #endif // LQTUTILS_AUTOEXEC_H

@@ -156,3 +156,5 @@ int i = 9;
 }
 QCOMPARE(i, 10);
 ```
+
+```LQTSharedAutoExec```: a class that can create copiable autoexec objects. Useful to implement locks with a function being executed when the lock is released.
