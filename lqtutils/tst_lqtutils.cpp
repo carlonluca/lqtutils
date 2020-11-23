@@ -27,6 +27,8 @@
 #include <QImage>
 #include <QPainter>
 #include <QQmlEngine>
+#include <QMetaType>
+#include <QFlags>
 
 #include "../lqtutils_prop.h"
 #include "../lqtutils_string.h"
@@ -41,6 +43,14 @@ public:
      LQtUtilsObject(QObject* parent = nullptr) :
      QObject(parent) {}
 };
+
+L_BEGIN_GADGET(MyGadget)
+L_RW_GPROP(QString, myProp, setMyProp)
+L_END_GADGET
+
+L_BEGIN_CLASS(MyQObject)
+L_RW_PROP(QString, myProp, setMyProp)
+L_END_CLASS
 
 L_DECLARE_SETTINGS(LSettingsTest, new QSettings("settings.ini", QSettings::IniFormat))
 L_DEFINE_VALUE(QString, string1, QString("string1"), toString)
@@ -74,9 +84,15 @@ private slots:
     void test_case6();
     void test_case7();
     void test_case8();
+    void test_case9();
 };
 
-LQtUtilsTest::LQtUtilsTest() {}
+LQtUtilsTest::LQtUtilsTest()
+{
+    qRegisterMetaType<MyGadget*>();
+    qRegisterMetaType<MyQObject*>();
+}
+
 LQtUtilsTest::~LQtUtilsTest() {}
 
 void LQtUtilsTest::test_case1()
@@ -226,6 +242,28 @@ void LQtUtilsTest::test_case8()
     QCOMPARE(MyEnum::Value1, 1);
     QCOMPARE(MyEnum::Value2, 2);
     QCOMPARE(QMetaEnum::fromType<MyEnum::MyEnumValue>().valueToKey(MyEnum::Value3), QSL("Value3"));
+}
+
+void LQtUtilsTest::test_case9()
+{
+    MyQObject qobj;
+    qobj.setMyProp(QSL("HELLO!"));
+
+    MyGadget gadget;
+    gadget.setMyProp(QSL("HELLO!"));
+
+    QCOMPARE(qobj.myProp(), QSL("HELLO!"));
+    QCOMPARE(gadget.myProp(), QSL("HELLO!"));
+
+    {
+        int metaTypeId = QMetaType::type("MyGadget*");
+        QVERIFY(metaTypeId != QMetaType::UnknownType);
+
+        QMetaType metaType(metaTypeId);
+        QVERIFY(metaType.isValid());
+        qDebug() << "flags:" << metaType.flags();
+        QVERIFY(metaType.flags().testFlag(QMetaType::PointerToGadget));
+    }
 }
 
 QTEST_MAIN(LQtUtilsTest)
