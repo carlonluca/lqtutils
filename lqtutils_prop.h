@@ -162,7 +162,6 @@
     public:                                                                \
         type name() const { return m_##name ; }                            \
         void setter(type name) {                                           \
-            if (m_##name == name) return;                                  \
             m_##name = name;                                               \
         }                                                                  \
     private:                                                               \
@@ -181,7 +180,6 @@
     public:                                                   \
         type name() const { return m_##name ; }               \
         void setter(type name) {                              \
-            if (m_##name == name) return;                     \
             m_##name = name;                                  \
         }                                                     \
     private:                                                  \
@@ -195,11 +193,15 @@
     L_RO_GPROP_(type, name, setter)                           \
     type m_##name;
 
-// Convenience macros to speed up a QObject subclass.
+// Convenience macros to speed up a gadget subclass.
 #define L_BEGIN_GADGET(name)                          \
     class name                                        \
     {                                                 \
-        Q_GADGET
+        Q_GADGET                                      \
+    public:                                           \
+        Q_INVOKABLE name() {}                         \
+    private:
+
 
 #define L_END_GADGET };
 
