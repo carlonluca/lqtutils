@@ -164,7 +164,7 @@ L_DECLARE_ENUM(MyEnum,
 ```
 This enum is exposed using a namespace without subclassing QObject. Register with the QML engine with:
 ```c++
-qmlRegisterUncreatableMetaObject(MyEnum::staticMetaObject, "con.luke", 1, 0, "MyEnum", "Access to enums & flags only");
+MyEnum::qmlRegisterMyEnum("com.luke", 1, 0);
 ```
 
 ## lqtutils_fsm.h

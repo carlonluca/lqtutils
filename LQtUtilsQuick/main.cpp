@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
+    MySharedEnum::qmlRegisterMySharedEnum("com.luke", 1, 0);
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("settings", &LQuickSettings::notifier());
     const QUrl url(QStringLiteral("qrc:/main.qml"));

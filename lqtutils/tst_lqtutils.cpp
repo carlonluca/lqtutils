@@ -268,7 +268,7 @@ void LQtUtilsTest::test_case7()
 
 void LQtUtilsTest::test_case8()
 {
-    qmlRegisterUncreatableMetaObject(MyEnum::staticMetaObject, "con.luke", 1, 0, "MyEnum", "Access to enums & flags only");
+    MyEnum::qmlRegisterMyEnum("com.luke", 1, 0);
     QCOMPARE(MyEnum::Value1, 1);
     QCOMPARE(MyEnum::Value2, 2);
     QCOMPARE(QMetaEnum::fromType<MyEnum::Value>().valueToKey(MyEnum::Value3), QSL("Value3"));

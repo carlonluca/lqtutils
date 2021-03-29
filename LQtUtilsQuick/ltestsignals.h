@@ -3,6 +3,13 @@
 
 #include <QObject>
 
+#include <../lqtutils_enum.h>
+
+L_DECLARE_ENUM(MySharedEnum,
+               Value1,
+               Value2,
+               Value6 = 6)
+
 Q_NAMESPACE
 
 class LTestSignals : public QObject

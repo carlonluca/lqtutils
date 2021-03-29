@@ -26,13 +26,18 @@
 #define LQTUTILS_ENUM_H
 
 #include <QObject>
+#include <QQmlEngine>
 
-#define L_DECLARE_ENUM(enumName, ...)           \
-    namespace enumName                          \
-    {                                           \
-        Q_NAMESPACE                             \
-        enum Value { __VA_ARGS__  };            \
-        Q_ENUM_NS(Value)                        \
+#define L_DECLARE_ENUM(enumName, ...)                                               \
+    namespace enumName                                                              \
+    {                                                                               \
+        Q_NAMESPACE                                                                 \
+        enum Value { __VA_ARGS__  };                                                \
+        Q_ENUM_NS(Value)                                                            \
+        inline int qmlRegister##enumName(const char* uri, int major, int minor) {   \
+            return qmlRegisterUncreatableMetaObject(enumName::staticMetaObject,     \
+            uri, major, minor, #enumName, "Access to enums & flags only");          \
+        }                                                                           \
     }
 
 #endif // LQTUTILS_ENUM_H

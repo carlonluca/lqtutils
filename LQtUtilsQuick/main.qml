@@ -1,13 +1,20 @@
 import QtQuick 2.12
 import QtQuick.Window 2.12
+import com.luke 1.0
 
 Window {
+    property int enumValue: MySharedEnum.Value6
+
     visible: true
     x: settings.appX
     y: settings.appY
     width: settings.appWidth
     height: settings.appHeight
     title: qsTr("Hello World")
+
+    Component.onCompleted: {
+        console.log("Enum value:", enumValue)
+    }
 
     Connections {
         target: settings
