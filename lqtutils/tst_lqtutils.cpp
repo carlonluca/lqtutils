@@ -95,6 +95,9 @@ void LQtUtilsTest::test_case1()
     const QString s = QSL("HELLOOOOO!");
     LQtUtilsObject test;
     test.setTest(s);
+    connect(&test, &LQtUtilsObject::testChanged, this, [] (QString) {
+        qDebug() << "Valued changed";
+    });
     QVERIFY(test.test() == s);
     test.setTest("HELLO");
     QVERIFY(test.test() != s);

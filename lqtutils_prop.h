@@ -25,6 +25,16 @@
 #ifndef LQTUTILS_PROP_H
 #define LQTUTILS_PROP_H
 
+// Define LQTUTILS_OMIT_ARG_FROM_SIGNAL to omit the argument from the change notification
+// signals.
+#ifdef LQTUTILS_OMIT_ARG_FROM_SIGNAL
+#define LQTUTILS_EMIT_SIGNAL(name)
+#define LQTUTILS_DECLARE_SIGNAL(type, name)
+#else
+#define LQTUTILS_EMIT_SIGNAL(name) name
+#define LQTUTILS_DECLARE_SIGNAL(type, name) type name
+#endif
+
 // The EXPAND macro here is only needed for MSVC:
 // https://stackoverflow.com/questions/5134523/msvc-doesnt-expand-va-args-correctly
 #define EXPAND( x ) x
@@ -50,10 +60,10 @@
         void setter(type name) {                                           \
             if (m_##name == name) return;                                  \
             m_##name = name;                                               \
-            emit name##Changed(name);                                      \
+            emit name##Changed(LQTUTILS_EMIT_SIGNAL(name));                \
         }                                                                  \
     Q_SIGNALS:                                                             \
-        void name##Changed(type name);                                     \
+        void name##Changed(LQTUTILS_DECLARE_SIGNAL(type, name));           \
     private:                                                               \
         Q_PROPERTY(type name READ name WRITE setter NOTIFY name##Changed);
 
@@ -66,18 +76,18 @@
     type m_##name;
 
 // A read-write prop from C++, but read-only from QML.
-#define L_RO_PROP_(type, name, setter)                        \
-    public:                                                   \
-        type name() const { return m_##name ; }               \
-    public:                                                   \
-        void setter(type name) {                              \
-            if (m_##name == name) return;                     \
-            m_##name = name;                                  \
-            emit name##Changed(name);                         \
-        }                                                     \
-    Q_SIGNALS:                                                \
-        void name##Changed(type name);                        \
-    private:                                                  \
+#define L_RO_PROP_(type, name, setter)                           \
+    public:                                                      \
+        type name() const { return m_##name ; }                  \
+    public:                                                      \
+        void setter(type name) {                                 \
+            if (m_##name == name) return;                        \
+            m_##name = name;                                     \
+            emit name##Changed(LQTUTILS_EMIT_SIGNAL(name));      \
+        }                                                        \
+    Q_SIGNALS:                                                   \
+        void name##Changed(LQTUTILS_DECLARE_SIGNAL(type, name)); \
+    private:                                                     \
         Q_PROPERTY(type name READ name NOTIFY name##Changed);
 
 #define L_RO_PROP4(type, name, setter, def)                   \
@@ -99,10 +109,10 @@
         void setter(type name) {                                           \
             if (m_##name == name) return;                                  \
             m_##name = name;                                               \
-            emit name##Changed(name);                                      \
+            emit name##Changed(LQTUTILS_EMIT_SIGNAL(name));                \
         }                                                                  \
     Q_SIGNALS:                                                             \
-        void name##Changed(type name);                                     \
+        void name##Changed(LQTUTILS_DECLARE_SIGNAL(type, name));           \
     private:                                                               \
         Q_PROPERTY(type name READ name WRITE setter NOTIFY name##Changed);
 
@@ -115,18 +125,18 @@
     type m_##name;
 
 // A read-write prop from C++, but read-only from QML.
-#define L_RO_PROP_REF_(type, name, setter)                    \
-    public:                                                   \
-        type& name() { return m_##name ; }                    \
-    public Q_SLOTS:                                           \
-        void setter(type name) {                              \
-            if (m_##name == name) return;                     \
-            m_##name = name;                                  \
-            emit name##Changed(name);                         \
-        }                                                     \
-    Q_SIGNALS:                                                \
-        void name##Changed(type name);                        \
-    private:                                                  \
+#define L_RO_PROP_REF_(type, name, setter)                       \
+    public:                                                      \
+        type& name() { return m_##name ; }                       \
+    public Q_SLOTS:                                              \
+        void setter(type name) {                                 \
+            if (m_##name == name) return;                        \
+            m_##name = name;                                     \
+            emit name##Changed(LQTUTILS_EMIT_SIGNAL(name));      \
+        }                                                        \
+    Q_SIGNALS:                                                   \
+        void name##Changed(LQTUTILS_DECLARE_SIGNAL(type, name)); \
+    private:                                                     \
         Q_PROPERTY(type name READ name NOTIFY name##Changed);
 
 #define L_RO_PROP_REF4(type, name, setter, def)               \

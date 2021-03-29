@@ -71,6 +71,10 @@ The L_RW_PROP and L_RO_PROP macros are overloaded, and can therefore be cassed w
 
 If you need to be able to modify the property itself from C++ instead of resetting it, you can use the *_REF alternatives of L_RW_PROP and L_RO_PROP. In that case, getter methods return a reference to the type in C++.
 
+### Signals With or Without Parameters
+
+By default, signals are generated with the value passed in the argument. If you prefer signals without params, you can define LQTUTILS_OMIT_ARG_FROM_SIGNAL **before** including the header.
+
 ## lqtutils_settings.h
 Contains a few tools that can be used to speed up writing simple settings to a file. Settings will still use QSettings and are therefore fully compatible. The macros are simply shortcuts to synthetise code. I only used this for creating ini files, but should work for other formats. An example:
 ```c++
