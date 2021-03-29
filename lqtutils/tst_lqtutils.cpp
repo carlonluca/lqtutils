@@ -38,11 +38,27 @@
 class LQtUtilsObject : public QObject
 {
     Q_OBJECT
+    L_RW_PROP(QString, rwTest, setRwTest, QString())
+    L_RW_PROP_AS(QString, rwTestAuto, QString())
+    L_RW_PROP_AS(QString, rwTestAuto2, QString("rwTestAuto2"))
+    L_RW_PROP_AS(QString, rwTestAuto3)
+    L_RO_PROP_AS(QString, roTestAuto, QString())
+    L_RO_PROP_AS(QString, roTestAuto2, QString("roTestAuto2"))
+    L_RO_PROP_AS(QString, roTestAuto3)
     L_RO_PROP(QString, test, setTest, QString())
+    L_RO_PROP_REF_AS(QString, refRoTestAuto)
+    L_RO_PROP_REF_AS(QString, refRoTestAuto2, QString("refRoTestAuto2"))
 public:
      LQtUtilsObject(QObject* parent = nullptr) :
      QObject(parent) {}
 };
+
+L_BEGIN_GADGET(LQtUtilsGadget)
+L_RO_GPROP_AS(int, someInteger, 5)
+L_RO_GPROP_AS(int, someInteger2)
+L_RW_GPROP_AS(int, someRwInteger, 6)
+L_RW_GPROP_AS(int, someRwInteger2)
+L_END_GADGET
 
 L_BEGIN_CLASS(LPropTest)
 L_RW_PROP_REF(QStringList, myListRef, setMyListRef, QStringList() << "hello")
@@ -101,6 +117,22 @@ void LQtUtilsTest::test_case1()
     QVERIFY(test.test() == s);
     test.setTest("HELLO");
     QVERIFY(test.test() != s);
+    test.set_rwTestAuto("HELLO AUTOSET");
+    QVERIFY(test.rwTestAuto() == "HELLO AUTOSET");
+    QVERIFY(test.rwTestAuto2() == "rwTestAuto2");
+    QVERIFY(test.rwTestAuto3().isNull());
+    test.set_roTestAuto("roTestAuto");
+    QVERIFY(test.roTestAuto2() == "roTestAuto2");
+    QVERIFY(test.roTestAuto3().isNull());
+    QVERIFY(test.refRoTestAuto2() == "refRoTestAuto2");
+
+    LQtUtilsGadget gadget;
+    QVERIFY(gadget.someInteger() == 5);
+    QVERIFY(gadget.someRwInteger() == 6);
+    gadget.set_someInteger2(10);
+    gadget.set_someRwInteger2(11);
+    QVERIFY(gadget.someInteger2() == 10);
+    QVERIFY(gadget.someRwInteger2() == 11);
 }
 
 void LQtUtilsTest::test_case2()

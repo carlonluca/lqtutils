@@ -75,6 +75,46 @@ If you need to be able to modify the property itself from C++ instead of resetti
 
 By default, signals are generated with the value passed in the argument. If you prefer signals without params, you can define LQTUTILS_OMIT_ARG_FROM_SIGNAL **before** including the header.
 
+### Autosetter
+
+It is also possible to omit the name of the setter in the declaration. This results in the auto-generation of a setter with the name "set_<property name>". To obtain this behavior, simply use the variants of the above macros with the suffix "_AS". This should work for all property types: ro, rw, ref and all gadget props.
+
+### Complete List of Available Macros
+
+For QObjects:
+
+    L_RW_PROP(type, name, setter)
+    L_RW_PROP(type, name, setter, default)
+    L_RW_PROP_AS(type, name)
+    L_RW_PROP_AS(type, name, default)
+    L_RW_PROP_REF(type, name, setter)
+    L_RW_PROP_REF(type, name, setter, default)
+    L_RW_PROP_REF_AS(type, name)
+    L_RW_PROP_REF_AS(type, name, default)
+    L_RO_PROP(type, name, setter)
+    L_RO_PROP(type, name, setter, default)
+    L_RO_PROP_AS(type, name)
+    L_RO_PROP_AS(type, name, default)
+    L_RO_PROP_REF(type, name, setter)
+    L_RO_PROP_REF(type, name, setter, default)
+    L_RO_PROP_REF_AS(type, name)
+    L_RO_PROP_REF_AS(type, name, default)
+    L_BEGIN_CLASS(name)
+    L_END_CLASS
+
+For gadgets:
+
+    L_RW_GPROP(type, name, setter)
+    L_RW_GPROP(type, name, setter, default)
+    L_RW_GPROP_AS(type, name)
+    L_RW_GPROP_AS(type, name, default)
+    L_RO_GPROP(type, name, setter)
+    L_RO_GPROP(type, name, setter, default)
+    L_RO_GPROP_AS(type, name)
+    L_RO_GPROP_AS(type, name, default)
+    L_BEGIN_GADGET(name)
+    L_END_GADGET
+
 ## lqtutils_settings.h
 Contains a few tools that can be used to speed up writing simple settings to a file. Settings will still use QSettings and are therefore fully compatible. The macros are simply shortcuts to synthetise code. I only used this for creating ini files, but should work for other formats. An example:
 ```c++
