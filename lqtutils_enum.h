@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2020 Luca Carlon
+ * Copyright (c) 2020-2021 Luca Carlon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,6 +37,13 @@
         inline int qmlRegister##enumName(const char* uri, int major, int minor) {   \
             return qmlRegisterUncreatableMetaObject(enumName::staticMetaObject,     \
             uri, major, minor, #enumName, "Access to enums & flags only");          \
+        }                                                                           \
+        inline int qRegisterMetaType() {                                            \
+            return ::qRegisterMetaType<enumName::Value>(#enumName);                 \
+        }                                                                           \
+        inline void registerEnum(const char* uri, int major, int minor) {           \
+            enumName::qmlRegister##enumName(uri, major, minor);                     \
+            enumName::qRegisterMetaType();                                          \
         }                                                                           \
     }
 
