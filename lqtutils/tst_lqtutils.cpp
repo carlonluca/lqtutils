@@ -34,6 +34,7 @@
 #include "../lqtutils_enum.h"
 #include "../lqtutils_autoexec.h"
 #include "../lqtutils_threading.h"
+#include "../lqtutils_math.h"
 
 class LQtUtilsObject : public QObject
 {
@@ -101,6 +102,7 @@ private slots:
     void test_case10();
     void test_case11();
     void test_case12();
+    void test_case13();
 };
 
 LQtUtilsTest::LQtUtilsTest() {}
@@ -345,6 +347,19 @@ void LQtUtilsTest::test_case12()
         QCOMPARE(i, 9);
     }
     QCOMPARE(i, 10);
+}
+
+void LQtUtilsTest::test_case13()
+{
+    QVERIFY(lqt_in_range(0, -1, 1));
+    QVERIFY(lqt_in_range(19.0, -10.0, 19.1));
+    QVERIFY(lqt_in_range(QSL("f"), QSL("a"), QSL("s")));
+    QVERIFY(lqt_in_range(QDateTime::currentDateTime(),
+                         QDateTime::currentDateTime().addDays(-4),
+                         QDateTime::currentDateTime().addSecs(1)));
+    QVERIFY(!lqt_in_range(QDateTime::currentDateTime(),
+                          QDateTime::currentDateTime().addDays(4),
+                          QDateTime::currentDateTime().addSecs(1)));
 }
 
 QTEST_MAIN(LQtUtilsTest)
