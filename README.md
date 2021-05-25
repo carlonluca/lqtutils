@@ -79,6 +79,10 @@ By default, signals are generated with the value passed in the argument. If you 
 
 It is also possible to omit the name of the setter in the declaration. This results in the auto-generation of a setter with the name "set_<property name>". To obtain this behavior, simply use the variants of the above macros with the suffix "_AS". This should work for all property types: ro, rw, ref and all gadget props.
 
+### Custom Setter
+
+It is possible to declare a property leaving out the setter. The setter con be implemented with a slot explicitly, by writing a method named "set_<propname>" returning void.
+
 ### Complete List of Available Macros
 
 For QObjects:
@@ -87,6 +91,8 @@ For QObjects:
     L_RW_PROP(type, name, setter, default)
     L_RW_PROP_AS(type, name)
     L_RW_PROP_AS(type, name, default)
+    L_RW_PROP_CS(type, name)
+    L_RW_PROP_CS(type, name, default)
     L_RW_PROP_REF(type, name, setter)
     L_RW_PROP_REF(type, name, setter, default)
     L_RW_PROP_REF_AS(type, name)
@@ -95,6 +101,8 @@ For QObjects:
     L_RO_PROP(type, name, setter, default)
     L_RO_PROP_AS(type, name)
     L_RO_PROP_AS(type, name, default)
+    L_RO_PROP_CS(type, name)
+    L_RO_PROP_CS(type, name, default)
     L_RO_PROP_REF(type, name, setter)
     L_RO_PROP_REF(type, name, setter, default)
     L_RO_PROP_REF_AS(type, name)
