@@ -42,7 +42,6 @@
 
 // QObject
 // =======
-
 #define L_RW_PROP(...) \
     EXPAND( L_PROP_GET_MACRO(__VA_ARGS__, L_RW_PROP4, L_RW_PROP3, L_RW_PROP2)(__VA_ARGS__) )
 #define L_RW_PROP_AS(...) \
@@ -86,19 +85,7 @@
     type m_##name;
 
 // Autosetter
-#define L_RW_PROP_AS_(type, name)                                          \
-    public:                                                                \
-        type name() const { return m_##name ; }                            \
-    public Q_SLOTS:                                                        \
-        void set_##name(type name) {                                       \
-            if (m_##name == name) return;                                  \
-            m_##name = name;                                               \
-            emit name##Changed(LQTUTILS_EMIT_SIGNAL(name));                \
-        }                                                                  \
-    Q_SIGNALS:                                                             \
-        void name##Changed(LQTUTILS_DECLARE_SIGNAL(type, name));           \
-    private:                                                               \
-        Q_PROPERTY(type name READ name WRITE set_##name NOTIFY name##Changed);
+#define L_RW_PROP_AS_(type, name) L_RW_PROP_(type, name, set_##name)
 
 #define L_RW_PROP3_AS(type, name, def)                                     \
     L_RW_PROP_AS_(type, name)                                              \
@@ -133,19 +120,7 @@
     type m_##name;
 
 // Autosetter
-#define L_RO_PROP_AS_(type, name)                                \
-    public:                                                      \
-        type name() const { return m_##name ; }                  \
-    public:                                                      \
-        void set_##name(type name) {                             \
-            if (m_##name == name) return;                        \
-            m_##name = name;                                     \
-            emit name##Changed(LQTUTILS_EMIT_SIGNAL(name));      \
-        }                                                        \
-    Q_SIGNALS:                                                   \
-        void name##Changed(LQTUTILS_DECLARE_SIGNAL(type, name)); \
-    private:                                                     \
-        Q_PROPERTY(type name READ name NOTIFY name##Changed);
+#define L_RO_PROP_AS_(type, name) L_RO_PROP_(type, name, set_##name)
 
 #define L_RO_PROP3_AS(type, name, def)                \
     L_RO_PROP_AS_(type, name)                         \
@@ -183,19 +158,7 @@
     type m_##name;
 
 // Autosetter
-#define L_RW_PROP_REF_AS_(type, name)                                      \
-    public:                                                                \
-        type& name() { return m_##name ; }                                 \
-    public Q_SLOTS:                                                        \
-        void set_##name(type name) {                                       \
-            if (m_##name == name) return;                                  \
-            m_##name = name;                                               \
-            emit name##Changed(LQTUTILS_EMIT_SIGNAL(name));                \
-        }                                                                  \
-    Q_SIGNALS:                                                             \
-        void name##Changed(LQTUTILS_DECLARE_SIGNAL(type, name));           \
-    private:                                                               \
-        Q_PROPERTY(type name READ name WRITE set_##name NOTIFY name##Changed);
+#define L_RW_PROP_REF_AS_(type, name) L_RW_PROP_REF_(type, name, set_##name)
 
 #define L_RW_PROP_REF3_AS(type, name, def)                            \
     L_RW_PROP_REF_AS_(type, name)                                     \
@@ -230,19 +193,7 @@
     type m_##name;
 
 // Autosetter
-#define L_RO_PROP_REF_AS_(type, name)                            \
-    public:                                                      \
-        type& name() { return m_##name ; }                       \
-    public Q_SLOTS:                                              \
-        void set_##name(type name) {                             \
-            if (m_##name == name) return;                        \
-            m_##name = name;                                     \
-            emit name##Changed(LQTUTILS_EMIT_SIGNAL(name));      \
-        }                                                        \
-    Q_SIGNALS:                                                   \
-        void name##Changed(LQTUTILS_DECLARE_SIGNAL(type, name)); \
-    private:                                                     \
-        Q_PROPERTY(type name READ name NOTIFY name##Changed);
+#define L_RO_PROP_REF_AS_(type, name) L_RO_PROP_REF_(type, name, set_##name)
 
 #define L_RO_PROP_REF3_AS(type, name, def)            \
     L_RO_PROP_REF_AS_(type, name)                     \
@@ -296,14 +247,7 @@
     type m_##name;
 
 // Autosetter
-#define L_RW_GPROP_AS_(type, name)                                         \
-    public:                                                                \
-        type name() const { return m_##name ; }                            \
-        void set_##name(type name) {                                       \
-            m_##name = name;                                               \
-        }                                                                  \
-    private:                                                               \
-        Q_PROPERTY(type name READ name WRITE set_##name);
+#define L_RW_GPROP_AS_(type, name) L_RW_GPROP_(type, name, set_##name)
 
 #define L_RW_GPROP3_AS(type, name, def)                        \
     L_RW_GPROP_AS_(type, name)                                 \
@@ -333,14 +277,7 @@
     type m_##name;
 
 // Autosetter
-#define L_RO_GPROP_AS_(type, name)                            \
-    public:                                                   \
-        type name() const { return m_##name ; }               \
-        void set_##name(type name) {                          \
-            m_##name = name;                                  \
-        }                                                     \
-    private:                                                  \
-        Q_PROPERTY(type name READ name);
+#define L_RO_GPROP_AS_(type, name) L_RO_GPROP_(type, name, set_##name)
 
 #define L_RO_GPROP3_AS(type, name, def)                       \
     L_RO_GPROP_AS_(type, name)                                \
