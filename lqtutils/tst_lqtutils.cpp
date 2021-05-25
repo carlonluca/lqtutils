@@ -49,9 +49,17 @@ class LQtUtilsObject : public QObject
     L_RO_PROP(QString, test, setTest, QString())
     L_RO_PROP_REF_AS(QString, refRoTestAuto)
     L_RO_PROP_REF_AS(QString, refRoTestAuto2, QString("refRoTestAuto2"))
+    L_RW_PROP_CS(QString, csProp, QSL("HELLO"))
 public:
      LQtUtilsObject(QObject* parent = nullptr) :
      QObject(parent) {}
+
+public slots:
+    // Custom setter.
+    void set_csProp(const QString& prop) {
+        m_csProp = prop;
+        m_test = QStringLiteral("CS CALLED");
+    }
 };
 
 L_BEGIN_GADGET(LQtUtilsGadget)
@@ -135,6 +143,10 @@ void LQtUtilsTest::test_case1()
     gadget.set_someRwInteger2(11);
     QVERIFY(gadget.someInteger2() == 10);
     QVERIFY(gadget.someRwInteger2() == 11);
+
+    test.set_csProp(QSL("HELLO"));
+    QVERIFY(test.test() == QSL("CS CALLED"));
+    QVERIFY(test.csProp() == QSL("HELLO"));
 }
 
 void LQtUtilsTest::test_case2()
