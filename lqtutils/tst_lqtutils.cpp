@@ -50,6 +50,8 @@ class LQtUtilsObject : public QObject
     L_RO_PROP_REF_AS(QString, refRoTestAuto)
     L_RO_PROP_REF_AS(QString, refRoTestAuto2, QString("refRoTestAuto2"))
     L_RW_PROP_CS(QString, csProp, QSL("HELLO"))
+    L_RW_PROP_REF_CS(QString, csPropRef, QSL("HELLO"))
+    L_RO_PROP_REF_CS(QString, csRoPropRef, QSL("csRoPropRef"))
 public:
      LQtUtilsObject(QObject* parent = nullptr) :
      QObject(parent) {}
@@ -58,7 +60,17 @@ public slots:
     // Custom setter.
     void set_csProp(const QString& prop) {
         m_csProp = prop;
-        m_test = QStringLiteral("CS CALLED");
+        m_test = QStringLiteral("csProp");
+    }
+
+    void set_csPropRef(const QString& prop) {
+        m_csPropRef = prop;
+        m_test = QSL("csPropRef");
+    }
+
+    void set_csRoProp(const QString& prop) {
+        m_csRoPropRef = prop;
+        m_test = QSL("csRoPropRef");
     }
 };
 
@@ -67,6 +79,11 @@ L_RO_GPROP_AS(int, someInteger, 5)
 L_RO_GPROP_AS(int, someInteger2)
 L_RW_GPROP_AS(int, someRwInteger, 6)
 L_RW_GPROP_AS(int, someRwInteger2)
+L_RO_GPROP_CS(QString, csRoProp, QSL("csRoProp"))
+L_RW_GPROP_CS(QString, csRwProp, QSL("csRwProp"))
+public:
+    void set_csRoProp(const QString&) { set_someInteger(5); }
+    void set_csRwProp(const QString&) { set_someInteger(6); }
 L_END_GADGET
 
 L_BEGIN_CLASS(LPropTest)
@@ -136,6 +153,16 @@ void LQtUtilsTest::test_case1()
     QVERIFY(test.roTestAuto3().isNull());
     QVERIFY(test.refRoTestAuto2() == "refRoTestAuto2");
 
+    test.set_csProp(QSL("csProp"));
+    QVERIFY(test.test() == QSL("csProp"));
+    QVERIFY(test.csProp() == QSL("csProp"));
+
+    test.set_csPropRef(QSL("csPropRef"));
+    QVERIFY(test.test() == QSL("csPropRef"));
+    QVERIFY(test.csPropRef() == QSL("csPropRef"));
+    test.csPropRef().replace(QSL("cs"), QSL("helloCs"));
+    QVERIFY(test.csPropRef() == QSL("helloCsPropRef"));
+
     LQtUtilsGadget gadget;
     QVERIFY(gadget.someInteger() == 5);
     QVERIFY(gadget.someRwInteger() == 6);
@@ -143,10 +170,10 @@ void LQtUtilsTest::test_case1()
     gadget.set_someRwInteger2(11);
     QVERIFY(gadget.someInteger2() == 10);
     QVERIFY(gadget.someRwInteger2() == 11);
-
-    test.set_csProp(QSL("HELLO"));
-    QVERIFY(test.test() == QSL("CS CALLED"));
-    QVERIFY(test.csProp() == QSL("HELLO"));
+    gadget.set_csRoProp("");
+    QVERIFY(gadget.someInteger() == 5);
+    gadget.set_csRwProp("");
+    QVERIFY(gadget.someInteger() == 6);
 }
 
 void LQtUtilsTest::test_case2()

@@ -81,7 +81,7 @@ It is also possible to omit the name of the setter in the declaration. This resu
 
 ### Custom Setter
 
-It is possible to declare a property leaving out the setter. The setter con be implemented with a slot explicitly, by writing a method named "set_<propname>" returning void.
+It is possible to generate a property without its setter implementation. The setter con be implemented with a slot explicitly by writing a method named "set_<propname>" returning void. An example can be found [here](lqtutils/tst_lqtutils.cpp#L52).
 
 ### Complete List of Available Macros
 
@@ -97,6 +97,8 @@ For QObjects:
     L_RW_PROP_REF(type, name, setter, default)
     L_RW_PROP_REF_AS(type, name)
     L_RW_PROP_REF_AS(type, name, default)
+    L_RW_PROP_REF_CS(type, name)
+    L_RW_PROP_REF_CS(type, name, default)
     L_RO_PROP(type, name, setter)
     L_RO_PROP(type, name, setter, default)
     L_RO_PROP_AS(type, name)
@@ -107,6 +109,8 @@ For QObjects:
     L_RO_PROP_REF(type, name, setter, default)
     L_RO_PROP_REF_AS(type, name)
     L_RO_PROP_REF_AS(type, name, default)
+    L_RO_PROP_REF_CS(type, name)
+    L_RO_PROP_REF_CS(type, name, default)
     L_BEGIN_CLASS(name)
     L_END_CLASS
 
@@ -116,10 +120,14 @@ For gadgets:
     L_RW_GPROP(type, name, setter, default)
     L_RW_GPROP_AS(type, name)
     L_RW_GPROP_AS(type, name, default)
+    L_RW_GPROP_CS(type, name)
+    L_RW_GPROP_CS(type, name, default)
     L_RO_GPROP(type, name, setter)
     L_RO_GPROP(type, name, setter, default)
     L_RO_GPROP_AS(type, name)
     L_RO_GPROP_AS(type, name, default)
+    L_RO_GPROP_CS(type, name)
+    L_RO_GPROP_CS(type, name, default)
     L_BEGIN_GADGET(name)
     L_END_GADGET
 

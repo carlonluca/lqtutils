@@ -59,10 +59,14 @@
     EXPAND( L_PROP_GET_MACRO(__VA_ARGS__, L_RW_PROP_REF4, L_RW_PROP_REF3, L_RW_PROP_REF2)(__VA_ARGS__) )
 #define L_RW_PROP_REF_AS(...) \
     EXPAND( L_PROP_GET_MACRO(__VA_ARGS__, L_RW_PROP_REF4_AS, L_RW_PROP_REF3_AS, L_RW_PROP_REF2_AS)(__VA_ARGS__) )
+#define L_RW_PROP_REF_CS(...) \
+    EXPAND( L_PROP_GET_MACRO(__VA_ARGS__, L_RW_PROP_REF4_CS, L_RW_PROP_REF3_CS, L_RW_PROP_REF2_CS)(__VA_ARGS__) )
 #define L_RO_PROP_REF(...) \
     EXPAND( L_PROP_GET_MACRO(__VA_ARGS__, L_RO_PROP_REF4, L_RO_PROP_REF3, L_RO_PROP_REF2)(__VA_ARGS__) )
 #define L_RO_PROP_REF_AS(...) \
     EXPAND( L_PROP_GET_MACRO(__VA_ARGS__, L_RO_PROP_REF4_AS, L_RO_PROP_REF3_AS, L_RO_PROP_REF2_AS)(__VA_ARGS__) )
+#define L_RO_PROP_REF_CS(...) \
+    EXPAND( L_PROP_GET_MACRO(__VA_ARGS__, L_RO_PROP_REF4_CS, L_RO_PROP_REF3_CS, L_RO_PROP_REF2_CS)(__VA_ARGS__) )
 
 // A read-write prop both in C++ and in QML
 // ========================================
@@ -108,16 +112,16 @@
     _INT_DECL_L_RW_PROP(type, name, set_##name)
 
 #define L_RW_PROP3_CS(type, name, def)                                     \
-    L_RW_PROP_(type, name, setter)                                         \
+    L_RW_PROP_CS_(type, name)                                              \
     type m_##name = def;
 
 #define L_RW_PROP2_CS(type, name)                                          \
-    L_RW_PROP_(type, name, setter)                                         \
+    L_RW_PROP_CS_(type, name)                                              \
     type m_##name;
 
 // A read-write prop from C++, but read-only from QML
 // ==================================================
-#define _INT_DECL_L_RO_PROP(type, name, setter)                            \
+#define _INT_DECL_L_RO_PROP(type, name, setter)                  \
     public:                                                      \
         type name() const { return m_##name ; }                  \
     Q_SIGNALS:                                                   \
@@ -159,11 +163,11 @@
     _INT_DECL_L_RO_PROP(type, name, set_##name)
 
 #define L_RO_PROP3_CS(type, name, def)                                     \
-    L_RO_PROP_(type, name, setter)                                         \
+    L_RO_PROP_CS_(type, name)                                              \
     type m_##name = def;
 
 #define L_RO_PROP2_CS(type, name)                                          \
-    L_RO_PROP_(type, name, setter)                                         \
+    L_RO_PROP_CS_(type, name)                                              \
     type m_##name;
 
 // For references
@@ -171,19 +175,23 @@
 
 // A read-write prop both in C++ and in QML
 // ========================================
-#define L_RW_PROP_REF_(type, name, setter)                                 \
+#define _INT_DECL_L_RW_PROP_REF(type, name, setter)                        \
     public:                                                                \
         type& name() { return m_##name ; }                                 \
+    Q_SIGNALS:                                                             \
+        void name##Changed(LQTUTILS_DECLARE_SIGNAL(type, name));           \
+    private:                                                               \
+        Q_PROPERTY(type name READ name WRITE setter NOTIFY name##Changed);
+
+#define L_RW_PROP_REF_(type, name, setter)                                 \
+    _INT_DECL_L_RW_PROP_REF(type, name, setter)                            \
     public Q_SLOTS:                                                        \
         void setter(type name) {                                           \
             if (m_##name == name) return;                                  \
             m_##name = name;                                               \
             emit name##Changed(LQTUTILS_EMIT_SIGNAL(name));                \
         }                                                                  \
-    Q_SIGNALS:                                                             \
-        void name##Changed(LQTUTILS_DECLARE_SIGNAL(type, name));           \
-    private:                                                               \
-        Q_PROPERTY(type name READ name WRITE setter NOTIFY name##Changed);
+    private:
 
 #define L_RW_PROP_REF4(type, name, setter, def)                            \
     L_RW_PROP_REF_(type, name, setter)                                     \
@@ -204,21 +212,37 @@
     L_RW_PROP_REF_AS_(type, name)                                     \
     type m_##name;
 
+// Custom setter
+#define L_RW_PROP_REF_CS_(type, name)                                 \
+    _INT_DECL_L_RW_PROP_REF(type, name, set_##name)
+
+#define L_RW_PROP_REF3_CS(type, name, def)                            \
+    L_RW_PROP_REF_CS_(type, name)                                     \
+    type m_##name = def;
+
+#define L_RW_PROP_REF2_CS(type, name)                                 \
+    L_RW_PROP_REF_CS_(type, name)                                     \
+    type m_##name;
+
 // A read-write prop from C++, but read-only from QML
 // ==================================================
-#define L_RO_PROP_REF_(type, name, setter)                       \
+#define _INT_DECL_L_RO_PROP_REF(type, name, setter)              \
     public:                                                      \
         type& name() { return m_##name ; }                       \
+    Q_SIGNALS:                                                   \
+        void name##Changed(LQTUTILS_DECLARE_SIGNAL(type, name)); \
+    private:                                                     \
+        Q_PROPERTY(type name READ name NOTIFY name##Changed);
+
+#define L_RO_PROP_REF_(type, name, setter)                       \
+    _INT_DECL_L_RO_PROP_REF(type, name, setter)                  \
     public Q_SLOTS:                                              \
         void setter(type name) {                                 \
             if (m_##name == name) return;                        \
             m_##name = name;                                     \
             emit name##Changed(LQTUTILS_EMIT_SIGNAL(name));      \
         }                                                        \
-    Q_SIGNALS:                                                   \
-        void name##Changed(LQTUTILS_DECLARE_SIGNAL(type, name)); \
-    private:                                                     \
-        Q_PROPERTY(type name READ name NOTIFY name##Changed);
+    private:
 
 #define L_RO_PROP_REF4(type, name, setter, def)               \
     L_RO_PROP_REF_(type, name, setter)                        \
@@ -237,6 +261,18 @@
 
 #define L_RO_PROP_REF2_AS(type, name)                 \
     L_RO_PROP_REF_AS_(type, name)                     \
+    type m_##name;
+
+// Custom setter
+#define L_RO_PROP_REF_CS_(type, name)                                 \
+    _INT_DECL_L_RO_PROP_REF(type, name, set_##name)                   \
+
+#define L_RO_PROP_REF3_CS(type, name, def)                            \
+    L_RO_PROP_REF_CS_(type, name)                                     \
+    type m_##name = def;
+
+#define L_RO_PROP_REF2_CS(type, name)                                 \
+    L_RO_PROP_REF_CS_(type, name)                                     \
     type m_##name;
 
 // Convenience macros to speed up a QObject subclass.
@@ -258,21 +294,30 @@
     EXPAND( L_PROP_GET_MACRO(__VA_ARGS__, L_RW_GPROP4, L_RW_GPROP3, L_RW_GPROP2)(__VA_ARGS__) )
 #define L_RW_GPROP_AS(...) \
     EXPAND( L_PROP_GET_MACRO(__VA_ARGS__, L_RW_GPROP4_AS, L_RW_GPROP3_AS, L_RW_GPROP2_AS)(__VA_ARGS__) )
+#define L_RW_GPROP_CS(...) \
+    EXPAND( L_PROP_GET_MACRO(__VA_ARGS__, L_RW_GPROP4_CS, L_RW_GPROP3_CS, L_RW_GPROP2_CS)(__VA_ARGS__) )
 #define L_RO_GPROP(...) \
     EXPAND( L_PROP_GET_MACRO(__VA_ARGS__, L_RO_GPROP4, L_RO_GPROP3, L_RO_GPROP2)(__VA_ARGS__) )
 #define L_RO_GPROP_AS(...) \
     EXPAND( L_PROP_GET_MACRO(__VA_ARGS__, L_RO_GPROP4_AS, L_RO_GPROP3_AS, L_RO_GPROP2_AS)(__VA_ARGS__) )
+#define L_RO_GPROP_CS(...) \
+    EXPAND( L_PROP_GET_MACRO(__VA_ARGS__, L_RO_GPROP4_CS, L_RO_GPROP3_CS, L_RO_GPROP2_CS)(__VA_ARGS__) )
+
+#define _INT_DECL_GADGET_PROP_GETTER(type, name)                           \
+    public:                                                                \
+        type name() const { return m_##name ; }
 
 // A read-write prop both in C++ and in QML
 // ========================================
 #define L_RW_GPROP_(type, name, setter)                                    \
+    _INT_DECL_GADGET_PROP_GETTER(type, name)                               \
+    private:                                                               \
+        Q_PROPERTY(type name READ name WRITE setter);                      \
     public:                                                                \
-        type name() const { return m_##name ; }                            \
         void setter(type name) {                                           \
             m_##name = name;                                               \
         }                                                                  \
-    private:                                                               \
-        Q_PROPERTY(type name READ name WRITE setter);
+    private:
 
 #define L_RW_GPROP4(type, name, setter, def)                                \
     L_RW_GPROP_(type, name, setter)                                         \
@@ -293,16 +338,31 @@
     L_RW_GPROP_AS_(type, name)                                 \
     type m_##name;
 
+// Custom setter
+#define L_RW_GPROP_CS_(type, name)                             \
+    _INT_DECL_GADGET_PROP_GETTER(type, name)                   \
+    private:                                                   \
+        Q_PROPERTY(type name READ name);
+
+#define L_RW_GPROP3_CS(type, name, def)                        \
+    L_RW_GPROP_CS_(type, name)                                 \
+    type m_##name = def;
+
+#define L_RW_GPROP2_CS(type, name)                             \
+    L_RW_GPROP_CS_(type, name)                                 \
+    type m_##name;
+
 // A read-write prop from C++, but read-only from QML
 // ==================================================
 #define L_RO_GPROP_(type, name, setter)                       \
+    _INT_DECL_GADGET_PROP_GETTER(type, name)                  \
+    private:                                                  \
+        Q_PROPERTY(type name READ name);                      \
     public:                                                   \
-        type name() const { return m_##name ; }               \
         void setter(type name) {                              \
             m_##name = name;                                  \
         }                                                     \
-    private:                                                  \
-        Q_PROPERTY(type name READ name);
+    private:
 
 #define L_RO_GPROP4(type, name, setter, def)                  \
     L_RO_GPROP_(type, name, setter)                           \
@@ -321,6 +381,20 @@
 
 #define L_RO_GPROP2_AS(type, name)                            \
     L_RO_GPROP_AS_(type, name)                                \
+    type m_##name;
+
+// Custom setter
+#define L_RO_GPROP_CS_(type, name)                             \
+    _INT_DECL_GADGET_PROP_GETTER(type, name)                   \
+    private:                                                   \
+        Q_PROPERTY(type name READ name);
+
+#define L_RO_GPROP3_CS(type, name, def)                        \
+    L_RO_GPROP_CS_(type, name)                                 \
+    type m_##name = def;
+
+#define L_RO_GPROP2_CS(type, name)                             \
+    L_RO_GPROP_CS_(type, name)                                 \
     type m_##name;
 
 // Convenience macros to speed up a gadget subclass.
