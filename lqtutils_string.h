@@ -25,8 +25,40 @@
 #ifndef LQTUTILS_STRING_H
 #define LQTUTILS_STRING_H
 
+#include <QDir>
+#include <QString>
+
 #ifndef QSL
 #define QSL QStringLiteral
 #endif // QSL
+
+inline QString path_combine(std::initializer_list<QString> l)
+{
+    QString ret;
+    for (size_t i = 0; i < l.size(); i++) {
+        ret += *(l.begin() + i);
+        if (Q_LIKELY(i != l.size() - 1))
+            ret += QDir::separator();
+    }
+    return ret;
+}
+
+inline int string_to_int(const QString& s, int def, bool* ok = nullptr)
+{
+    bool _ok;
+    int ret = s.toInt(&_ok);
+    if (ok)
+        *ok = _ok;
+    return _ok ? ret : def;
+}
+
+inline float string_to_float(const QString& s, float def, bool* ok = nullptr)
+{
+    bool _ok;
+    float ret = s.toInt(&_ok);
+    if (ok)
+        *ok = _ok;
+    return _ok ? ret : def;
+}
 
 #endif // LQTUTILS_STRING_H
