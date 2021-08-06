@@ -401,6 +401,6 @@ void LQtUtilsTest::test_case13()
                           QDateTime::currentDateTime().addSecs(1)));
 }
 
-QTEST_MAIN(LQtUtilsTest)
+QTEST_GUILESS_MAIN(LQtUtilsTest)
 
 #include "tst_lqtutils.moc"
