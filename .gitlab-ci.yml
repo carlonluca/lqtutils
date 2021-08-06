@@ -1,0 +1,16 @@
+image:
+  name: "carlonluca/qt-dev:5.15.2"
+  entrypoint: [""]
+
+stages:
+  - test
+
+# Job 1
+Test:
+  stage: test
+  script:
+    - mkdir build
+    - cd build
+    - cmake ../lqtutils
+    - make
+    - ./LQtUtilsTest
