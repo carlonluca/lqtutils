@@ -1,16 +1,30 @@
-image:
-  name: "carlonluca/qt-dev:5.15.2"
-  entrypoint: [""]
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
 
 stages:
-  - test
+  - test_qt5
+  - test_qt6
 
-# Job 1
-Test:
-  stage: test
+Test_qt5:
+  stage: test_qt5
+  image:
+    name: "carlonluca/qt-dev:5.15.2"
+    entrypoint: [""]
   script:
     - mkdir build
     - cd build
-    - cmake ../lqtutils
+    - cmake ../qt5
+    - make
+    - ./LQtUtilsTest
+
+Text_qt6:
+  stage: test_qt6
+  image:
+    name: "carlonluca/qt-dev:6.0.4"
+    entrypoint: [""]
+  script:
+    - mkdir build
+    - cd build
+    - cmake ../qt6
     - make
     - ./LQtUtilsTest
