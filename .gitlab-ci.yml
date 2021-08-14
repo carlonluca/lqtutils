@@ -20,7 +20,7 @@ Test_qt5:
 Text_qt6:
   stage: test_qt6
   image:
-    name: "carlonluca/qt-dev:6.0.4"
+    name: "carlonluca/qt-dev:6.1.2"
     entrypoint: [""]
   script:
     - mkdir build
