@@ -27,17 +27,24 @@
 
 #include <QMutex>
 #include <QMetaObject>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QRecursiveMutex>
+#endif
 
 #define INVOKE_AWAIT_ASYNC(obj, ...) {                                                                               \
         auto type = QThread::currentThread() == obj->thread() ? Qt::DirectConnection : Qt::BlockingQueuedConnection; \
         QMetaObject::invokeMethod(obj, __VA_ARGS__, type);                                                           \
     }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 class LQTRecursiveMutex : public QMutex
 {
 public:
     LQTRecursiveMutex() :
         QMutex(QMutex::Recursive) {}
 };
+#else
+typedef QRecursiveMutex LQTRecursiveMutex;
+#endif
 
 #endif // LQTUTILS_THREADING_H
