@@ -35,6 +35,7 @@
 #include "../lqtutils_autoexec.h"
 #include "../lqtutils_threading.h"
 #include "../lqtutils_math.h"
+#include "../lqtutils_time.h"
 
 class LQtUtilsObject : public QObject
 {
@@ -128,6 +129,7 @@ private slots:
     void test_case11();
     void test_case12();
     void test_case13();
+    void test_case14();
 };
 
 LQtUtilsTest::LQtUtilsTest() {}
@@ -399,6 +401,16 @@ void LQtUtilsTest::test_case13()
     QVERIFY(!lqt_in_range(QDateTime::currentDateTime(),
                           QDateTime::currentDateTime().addDays(4),
                           QDateTime::currentDateTime().addSecs(1)));
+}
+
+void LQtUtilsTest::test_case14()
+{
+    QDateTime now = QDateTime::currentDateTime();
+    QVERIFY(lqtutils::today().date() == now.date());
+    QVERIFY(lqtutils::today().time() == QTime(0, 0, 0, 0));
+    QVERIFY(lqtutils::tomorrow().date() != now.date());
+    QVERIFY(lqtutils::tomorrow().time() == QTime(0, 0, 0, 0));
+    QVERIFY(lqtutils::today().msecsTo(lqtutils::tomorrow()) == 1000*60*60*24);
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)
