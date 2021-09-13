@@ -1,3 +1,3 @@
 set(lqtutils_src
-    lsettings.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_ui.cpp
     )

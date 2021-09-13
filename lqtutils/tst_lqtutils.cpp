@@ -36,6 +36,7 @@
 #include "../lqtutils_threading.h"
 #include "../lqtutils_math.h"
 #include "../lqtutils_time.h"
+#include "../lqtutils_ui.h"
 
 class LQtUtilsObject : public QObject
 {
@@ -130,6 +131,7 @@ private slots:
     void test_case12();
     void test_case13();
     void test_case14();
+    void test_case15();
 };
 
 LQtUtilsTest::LQtUtilsTest() {}
@@ -411,6 +413,11 @@ void LQtUtilsTest::test_case14()
     QVERIFY(lqtutils::tomorrow().date() != now.date());
     QVERIFY(lqtutils::tomorrow().time() == QTime(0, 0, 0, 0));
     QVERIFY(lqtutils::today().msecsTo(lqtutils::tomorrow()) == 1000*60*60*24);
+}
+
+void LQtUtilsTest::test_case15()
+{
+    QScopedPointer<LQTFrameRateMonitor> mon(new LQTFrameRateMonitor);
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)
