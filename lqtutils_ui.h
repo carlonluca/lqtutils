@@ -23,38 +23,26 @@
  **/
 
 #include <QObject>
-#include <QQuickWindow>
 #include <QDateTime>
+#include <QList>
 
 #include "lqtutils_prop.h"
+
+class QQuickWindow;
+class QTimer;
 
 class LQTFrameRateMonitor : public QObject
 {
     Q_OBJECT
     L_RO_PROP_AS(int, fps, 0)
 public:
-    LQTFrameRateMonitor(QQuickWindow* w = nullptr, QObject* parent = nullptr) : QObject(parent) {
-        if (!w)
-            return;
-        connect(w, &QQuickWindow::frameSwapped,
-                this, &LQTFrameRateMonitor::onFrameSwapped);
-    }
+    LQTFrameRateMonitor(QQuickWindow* w = nullptr, QObject* parent = nullptr);
 
 private slots:
-    void onFrameSwapped() {
-        mTimestamps.append(QDateTime::currentDateTime());
-        refresh();
-    }
+    void onFrameSwapped();
+    void refresh();
 
 private:
-    void refresh() {
-        QDateTime now = QDateTime::currentDateTime();
-        for (int i = mTimestamps.size() - 1; i >= 0; i--)
-            if (mTimestamps[i].msecsTo(now) > 1000)
-                mTimestamps.removeAt(i);
-        set_fps(mTimestamps.size());
-    }
-
-private:
-    QList<QDateTime> mTimestamps;
+    QList<QDateTime> m_timestamps;
+    QTimer* m_refreshTimer;
 };
