@@ -218,3 +218,38 @@ QCOMPARE(i, 10);
 ```
 
 ```LQTSharedAutoExec```: a class that can create copiable autoexec objects. Useful to implement locks with a function being executed when the lock is released.
+
+## lqtutils_ui.h
+
+```LQTFrameRateMonitor``` is a class that can be used to measure the current frame rate of a QQuickWindow. The class monitors the frequency of frame swaps and provides a property with a value reporting the frame rate during the last second.
+
+### How to Use
+
+To use it, simply instantiate it when you need it like this:
+
+```
+QQuickView view;
+LQTFrameRateMonitor* monitor = new LQTFrameRateMonitor(&view);
+```
+
+expose it to QML if you need it:
+
+```
+view.engine()->rootContext()->setContextProperty("fpsmonitor", monitor);
+```
+
+and use it in QML (or in C++ if you prefer):
+
+```
+Text { text: qsTr("fps: ") + fpsmonitor.fps }
+```
+
+### Details
+
+The frame rate is provided in a notifiable property of the ```LQTFrameRateMonitor``` class:
+
+```
+L_RO_PROP_AS(int, fps, 0)
+```
+
+Note that this property is defined using the prop macros provided by this library. The property is recomputed when each frame is swapped or after a second. The overhead of the component should be minimal.
