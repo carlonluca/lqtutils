@@ -1,5 +1,6 @@
 #include <QTimer>
 #include <QQuickWindow>
+#include <QMutableListIterator>
 
 #include "lqtutils_ui.h"
 
@@ -27,9 +28,13 @@ void LQTFrameRateMonitor::onFrameSwapped()
 void LQTFrameRateMonitor::refresh()
 {
     QDateTime now = QDateTime::currentDateTime();
-    for (int i = m_timestamps.size() - 1; i >= 0; i--)
-        if (m_timestamps[i].msecsTo(now) > 1000)
-            m_timestamps.removeAt(i);
+    QMutableListIterator<QDateTime> it(m_timestamps);
+    while (it.hasNext()) {
+        if (it.next().msecsTo(now) > 1000)
+            it.remove();
+        else
+            break;
+    }
     set_fps(m_timestamps.size());
     m_refreshTimer->stop();
     m_refreshTimer->start();
