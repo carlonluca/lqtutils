@@ -26,7 +26,7 @@ SOURCES += \
     $$PWD/lqtutils_ui.cpp
 HEADERS += \
     $$PWD/lqtutils_ui.h
-qtHaveModule(statemachine) {
+contains(QT, statemachine) {
 SOURCES += $$PWD/lqtutils_fsm.cpp
 HEADERS += $$PWD/lqtutils_fsm.h
 }
