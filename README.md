@@ -1,5 +1,25 @@
 # LQtUtils
 This is a module containing a few tools that I typically use in Qt apps.
+
+## How to Include
+
+To include in a qmake app:
+
+```
+include(lqtutils/lqtutils.pri)
+```
+
+To include in a cmake app:
+
+```
+include(${CMAKE_CURRENT_SOURCE_DIR}/lqtutils/CMakeLists.txt)
+set(PROJECT_SOURCES
+    ${lqtutils_src}
+    main.cpp
+    ...
+)
+```
+
 ## lqtutils_prop.h
 Contains a few useful macros to synthetize Qt props. For instance:
 ```c++
@@ -227,20 +247,20 @@ QCOMPARE(i, 10);
 
 To use it, simply instantiate it when you need it like this:
 
-```
+```c++
 QQuickView view;
 LQTFrameRateMonitor* monitor = new LQTFrameRateMonitor(&view);
 ```
 
 expose it to QML if you need it:
 
-```
+```c++
 view.engine()->rootContext()->setContextProperty("fpsmonitor", monitor);
 ```
 
 and use it in QML (or in C++ if you prefer):
 
-```
+```js
 Text { text: qsTr("fps: ") + fpsmonitor.fps }
 ```
 
@@ -248,7 +268,7 @@ Text { text: qsTr("fps: ") + fpsmonitor.fps }
 
 The frame rate is provided in a notifiable property of the ```LQTFrameRateMonitor``` class:
 
-```
+```c++
 L_RO_PROP_AS(int, fps, 0)
 ```
 
