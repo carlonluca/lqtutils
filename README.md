@@ -273,3 +273,24 @@ L_RO_PROP_AS(int, fps, 0)
 ```
 
 Note that this property is defined using the prop macros provided by this library. The property is recomputed when each frame is swapped or after a second. The overhead of the component should be minimal.
+
+## lqtutils_perf.h
+
+```measure_time``` is a shortcut to quickly measure a procedure provided in a lambda for benchmarking it. The macro ```L_MEASURE_TIME``` can be used to be able to enable/disable the measurement through ```L_ENABLE_BENCHMARKS``` at project level reducing overhead to zero.
+
+### How to Use
+
+This is an exmaple:
+
+```c++
+measure_time([&] {
+    const uchar* rgba = ...
+    for (int x = 0; x < width; x++) {
+        for (int y = 0; y < height; y++) {
+            [process pixel]
+        }
+    }
+}, [] (qint64 time) {
+    qWarning() << "Image processed in:" << time;
+});
+```

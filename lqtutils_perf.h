@@ -25,6 +25,11 @@
 #ifndef LQTUTILS_PERF_H
 #define LQTUTILS_PERF_H
 
+#include <QtGlobal>
+#include <QElapsedTimer>
+
+#include <functional>
+
 #ifdef __GNUC__
 #define LC_LIKELY(x) \
    __builtin_expect((x), 1)
@@ -34,5 +39,36 @@
 #define LC_LIKELY(x) (x)
 #define LC_UNLIKELY(x) (x)
 #endif // __GNUC__
+
+/**
+ * @brief measure_time Measures time spent in lambda f.
+ * @param f The procedure to time.
+ * @param callback The callback returning the result.
+ * @return Time taken to compute f.
+ */
+inline void l_measure_time(std::function<void()> f, std::function<void(const qint64&)> callback = nullptr, bool disable = false)
+{
+    if (disable)
+        f();
+    else {
+        QElapsedTimer timer;
+        timer.start();
+        f();
+
+        qint64 time = timer.elapsed();
+        if (callback)
+            callback(time);
+    }
+}
+
+/**
+ * This macro wraps the l_measure_time. Defining/undefining L_ENABLE_BENCHMARKS
+ * can be used to turn on/off benchmarks.
+ */
+#ifdef L_ENABLE_BENCHMARKS
+#define L_MEASURE_TIME(f, callback, disable) l_measure_time(f, callback, disable)
+#else
+#define L_MEASURE_TIME(f, callback, disable) f()
+#endif
 
 #endif // LQTUTILS_PERF_H
