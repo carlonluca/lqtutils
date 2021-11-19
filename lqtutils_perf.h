@@ -29,6 +29,7 @@
 #include <QElapsedTimer>
 
 #include <functional>
+#include <optional>
 
 #ifdef __GNUC__
 #define LC_LIKELY(x) \
@@ -46,7 +47,7 @@
  * @param callback The callback returning the result.
  * @return Time taken to compute f.
  */
-inline void l_measure_time(std::function<void()> f, std::function<void(const qint64&)> callback = nullptr, bool disable = false)
+inline void l_measure_time(std::function<void()> f, bool disable = false, std::function<void(const qint64&)> callback = nullptr)
 {
     if (disable)
         f();
@@ -62,12 +63,38 @@ inline void l_measure_time(std::function<void()> f, std::function<void(const qin
 }
 
 /**
+ * @brief measure_time Measures time spent in lambda f.
+ * @param f The procedure to time.
+ * @param disable Whether you want to disable the measurement.
+ * @param callback The callback returning the result.
+ * @return Time taken to compute f and result of f.
+ */
+template<typename T>
+inline T l_measure_time(std::function<T()> f, bool disable = false, std::function<void(const qint64&)> callback = nullptr)
+{
+    if (disable)
+        return f();
+    else {
+        QElapsedTimer timer;
+        timer.start();
+        T res = f();
+
+        qint64 time = timer.elapsed();
+        if (callback)
+            callback(time);
+        return res;
+    }
+}
+
+/**
  * This macro wraps the l_measure_time. Defining/undefining L_ENABLE_BENCHMARKS
  * can be used to turn on/off benchmarks.
  */
 #ifdef L_ENABLE_BENCHMARKS
-#define L_MEASURE_TIME(f, callback, disable) l_measure_time(f, callback, disable)
+#define L_MEASURE_TIME_RET(type, f, disable, callback) l_measure_time<type>(f, disable, callback)
+#define L_MEASURE_TIME(f, disable, callback) l_measure_time(f, disable, callback)
 #else
+#define L_MEASURE_TIME_RET(type, f, callback, disable) f()
 #define L_MEASURE_TIME(f, callback, disable) f()
 #endif
 
