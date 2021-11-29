@@ -55,7 +55,7 @@ inline int string_to_int(const QString& s, int def, bool* ok = nullptr)
 inline float string_to_float(const QString& s, float def, bool* ok = nullptr)
 {
     bool _ok;
-    float ret = s.toInt(&_ok);
+    float ret = s.toFloat(&_ok);
     if (ok)
         *ok = _ok;
     return _ok ? ret : def;
