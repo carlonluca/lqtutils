@@ -132,6 +132,7 @@ private slots:
     void test_case13();
     void test_case14();
     void test_case15();
+    void test_case16();
 };
 
 LQtUtilsTest::LQtUtilsTest() {}
@@ -418,6 +419,18 @@ void LQtUtilsTest::test_case14()
 void LQtUtilsTest::test_case15()
 {
     QScopedPointer<LQTFrameRateMonitor> mon(new LQTFrameRateMonitor);
+}
+
+void LQtUtilsTest::test_case16()
+{
+    QRectF r(10, 20, 123.45, 678.90);
+    QString s = string_from_rect(r);
+    QVERIFY(s == QSL("10,20,123.45,678.9"));
+    QRectF r2 = string_to_rect(s);
+    QVERIFY(qFuzzyCompare(r.x(), r2.x()));
+    QVERIFY(qFuzzyCompare(r.y(), r2.y()));
+    QVERIFY(qFuzzyCompare(static_cast<float>(r.width()), static_cast<float>(r2.width())));
+    QVERIFY(qFuzzyCompare(static_cast<float>(r.height()), static_cast<float>(r2.height())));
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)

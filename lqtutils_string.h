@@ -27,6 +27,8 @@
 
 #include <QDir>
 #include <QString>
+#include <QRectF>
+#include <QLocale>
 
 #ifndef QSL
 #define QSL QStringLiteral
@@ -59,6 +61,42 @@ inline float string_to_float(const QString& s, float def, bool* ok = nullptr)
     if (ok)
         *ok = _ok;
     return _ok ? ret : def;
+}
+
+inline QRectF string_to_rect(const QString& s)
+{
+    if (s.isEmpty())
+        return QRectF();
+
+    QStringList tokens = s.split(',');
+    if (tokens.size() != 4)
+        return QRectF();
+
+    bool convOk;
+    QRectF ret;
+    QLocale locale(QLocale::English, QLocale::UnitedStates);
+    ret.setX(locale.toDouble(tokens[0].trimmed(), &convOk));
+    if (!convOk)
+        return QRectF();
+    ret.setY(locale.toDouble(tokens[1].trimmed(), &convOk));
+    if (!convOk)
+        return QRectF();
+    ret.setWidth(locale.toDouble(tokens[2].trimmed(), &convOk));
+    if (!convOk)
+        return QRectF();
+    ret.setHeight(locale.toDouble(tokens[3].trimmed(), &convOk));
+
+    return ret;
+}
+
+inline QString string_from_rect(const QRectF& rect)
+{
+    QLocale locale(QLocale::English, QLocale::UnitedStates);
+    return QString(QSL("%1,%2,%3,%4"))
+            .arg(locale.toString(rect.x()))
+            .arg(locale.toString(rect.y()))
+            .arg(locale.toString(rect.width()))
+            .arg(locale.toString(rect.height()));
 }
 
 #endif // LQTUTILS_STRING_H
