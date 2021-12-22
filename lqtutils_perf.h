@@ -47,7 +47,7 @@
  * @param callback The callback returning the result.
  * @return Time taken to compute f.
  */
-inline void l_measure_time(std::function<void()> f, bool disable = false, std::function<void(const qint64&)> callback = nullptr)
+inline void l_measure_time(std::function<void()> f, std::function<void(const qint64&)> callback = nullptr, bool disable = false)
 {
     if (disable)
         f();
@@ -70,7 +70,7 @@ inline void l_measure_time(std::function<void()> f, bool disable = false, std::f
  * @return Time taken to compute f and result of f.
  */
 template<typename T>
-inline T l_measure_time(std::function<T()> f, bool disable = false, std::function<void(const qint64&)> callback = nullptr)
+inline T l_measure_time(std::function<T()> f, std::function<void(const qint64&)> callback = nullptr, bool disable = false)
 {
     if (disable)
         return f();
@@ -85,17 +85,5 @@ inline T l_measure_time(std::function<T()> f, bool disable = false, std::functio
         return res;
     }
 }
-
-/**
- * This macro wraps the l_measure_time. Defining/undefining L_ENABLE_BENCHMARKS
- * can be used to turn on/off benchmarks.
- */
-#ifdef L_ENABLE_BENCHMARKS
-#define L_MEASURE_TIME_RET(type, f, disable, callback) l_measure_time<type>(f, disable, callback)
-#define L_MEASURE_TIME(f, disable, callback) l_measure_time(f, disable, callback)
-#else
-#define L_MEASURE_TIME_RET(type, f, callback, disable) f()
-#define L_MEASURE_TIME(f, callback, disable) f()
-#endif
 
 #endif // LQTUTILS_PERF_H
