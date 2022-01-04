@@ -26,7 +26,7 @@
 #define LQTUTILS_MATH
 
 /**
- * @brief in_range<T> Returns true iif val is in [a, b].
+ * @brief in_range<T> Returns true iif val is in [a, b).
  * @param val
  * @param a
  * @param b
