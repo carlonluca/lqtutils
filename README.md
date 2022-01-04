@@ -294,3 +294,69 @@ measure_time([&] {
     qWarning() << "Image processed in:" << time;
 });
 ```
+
+## lqtutils_bqueue.h
+
+This header contains a simple blocking queue. It allows blocking/nonblocking insertions with timeout, blocking/nonblocking removal and a safe processing of the queue. This is an example of the producer/consumer pattern:
+
+```c++
+struct LQTTestProducer : public QThread
+{
+    LQTTestProducer(LQTBlockingQueue<int>* queue) : QThread(), m_queue(queue) {}
+    void run() override {
+        static int i = 0;
+        while (!isInterruptionRequested()) {
+            QThread::msleep(10);
+            m_queue->enqueue(i++);
+            QVERIFY(m_queue->size() <= 10);
+        }
+    }
+    void requestDispose() {
+        requestInterruption();
+        m_queue->requestDispose();
+    }
+
+private:
+    LQTBlockingQueue<int>* m_queue;
+};
+
+struct LQTTestConsumer : public QThread
+{
+    LQTTestConsumer(LQTBlockingQueue<int>* queue) : QThread(), m_queue(queue) {}
+    void run() override {
+        static int i = 0;
+        while (!isInterruptionRequested()) {
+            QThread::msleep(15);
+            std::optional<int> ret = m_queue->dequeue();
+            if (!ret)
+                return;
+            QVERIFY(*ret == i++);
+            QVERIFY(lqt_in_range(m_queue->size(), 0, 11));
+        }
+    }
+    void requestDispose() {
+        requestInterruption();
+        m_queue->requestDispose();
+    }
+
+private:
+    LQTBlockingQueue<int>* m_queue;
+};
+
+[...]
+
+LQTBlockingQueue<int> queue(10, QSL("display_name"));
+LQTTestConsumer consumer(&queue);
+LQTTestProducer producer(&queue);
+consumer.start();
+producer.start();
+
+QEventLoop loop;
+QTimer::singleShot(30*1000, this, [&] { loop.quit(); });
+loop.exec();
+
+producer.requestDispose();
+producer.wait();
+consumer.requestDispose();
+consumer.wait();
+```
