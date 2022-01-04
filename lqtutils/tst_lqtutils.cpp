@@ -27,6 +27,7 @@
 #include <QImage>
 #include <QPainter>
 #include <QQmlEngine>
+#include <QDebug>
 
 #include "../lqtutils_prop.h"
 #include "../lqtutils_string.h"
@@ -37,6 +38,7 @@
 #include "../lqtutils_math.h"
 #include "../lqtutils_time.h"
 #include "../lqtutils_ui.h"
+#include "../lqtutils_bqueue.h"
 
 class LQtUtilsObject : public QObject
 {
@@ -133,6 +135,8 @@ private slots:
     void test_case14();
     void test_case15();
     void test_case16();
+    void test_case17();
+    void test_case18();
 };
 
 LQtUtilsTest::LQtUtilsTest() {}
@@ -431,6 +435,86 @@ void LQtUtilsTest::test_case16()
     QVERIFY(qFuzzyCompare(r.y(), r2.y()));
     QVERIFY(qFuzzyCompare(static_cast<float>(r.width()), static_cast<float>(r2.width())));
     QVERIFY(qFuzzyCompare(static_cast<float>(r.height()), static_cast<float>(r2.height())));
+}
+
+struct LQTTestProducer : public QThread
+{
+    LQTTestProducer(LQTBlockingQueue<int>* queue) : QThread(), m_queue(queue) {}
+    void run() override {
+        static int i = 0;
+        while (!isInterruptionRequested()) {
+            QThread::msleep(10);
+            m_queue->enqueue(i++);
+            QVERIFY(m_queue->size() <= 10);
+        }
+    }
+    void requestDispose() {
+        requestInterruption();
+        m_queue->requestDispose();
+    }
+
+private:
+    LQTBlockingQueue<int>* m_queue;
+};
+
+struct LQTTestConsumer : public QThread
+{
+    LQTTestConsumer(LQTBlockingQueue<int>* queue) : QThread(), m_queue(queue) {}
+    void run() override {
+        static int i = 0;
+        while (!isInterruptionRequested()) {
+            QThread::msleep(15);
+            std::optional<int> ret = m_queue->dequeue();
+            if (!ret)
+                return;
+            QVERIFY(*ret == i++);
+            QVERIFY(lqt_in_range(m_queue->size(), 0, 11));
+        }
+    }
+    void requestDispose() {
+        requestInterruption();
+        m_queue->requestDispose();
+    }
+
+private:
+    LQTBlockingQueue<int>* m_queue;
+};
+
+void LQtUtilsTest::test_case17()
+{
+    LQTBlockingQueue<int> queue(10, QSL("display_name"));
+    LQTTestConsumer consumer(&queue);
+    LQTTestProducer producer(&queue);
+    consumer.start();
+    producer.start();
+
+    QEventLoop loop;
+    QTimer::singleShot(30*1000, this, [&] { loop.quit(); });
+    loop.exec();
+
+    producer.requestDispose();
+    producer.wait();
+    consumer.requestDispose();
+    consumer.wait();
+}
+
+void LQtUtilsTest::test_case18()
+{
+    LQTBlockingQueue<int> queue(2);
+    queue.enqueue(0);
+    queue.enqueue(1);
+    QVERIFY(queue.size() == 2);
+    QVERIFY(!queue.enqueue(2, 5));
+    QVERIFY(queue.size() == 2);
+
+    queue.lockQueue([] (QList<int>* queue) {
+        QVERIFY((*queue)[0] == 0);
+        QVERIFY((*queue)[1] == 1);
+    });
+
+    queue.dequeue();
+    queue.dequeue();
+    QVERIFY(queue.dequeue() == std::nullopt);
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)
