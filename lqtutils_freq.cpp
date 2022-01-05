@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2021 Luca Carlon
+ * Copyright (c) 2022 Luca Carlon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,23 +22,40 @@
  * SOFTWARE.
  **/
 
-#ifndef LQTUTILS_UI_H
-#define LQTUTILS_UI_H
 
-#include <QObject>
-#include <QDateTime>
-#include <QList>
+#include <QTimer>
+#include <QMutableListIterator>
 
-#include "lqtutils_prop.h"
 #include "lqtutils_freq.h"
 
-class QQuickWindow;
-
-class LQTFrameRateMonitor : public LQTFreqMeter
+LQTFreqMeter::LQTFreqMeter(QObject* parent) :
+    QObject(parent)
 {
-    Q_OBJECT
-public:
-    LQTFrameRateMonitor(QQuickWindow* w = nullptr, QObject* parent = nullptr);
-};
+    m_refreshTimer = new QTimer(this);
+    connect(m_refreshTimer, &QTimer::timeout,
+            this, &LQTFreqMeter::refresh);
+    m_refreshTimer->setInterval(1000);
+    m_refreshTimer->setSingleShot(true);
+    m_refreshTimer->start();
+}
 
-#endif // LQTUTILS_UI_H
+void LQTFreqMeter::registerSample()
+{
+    m_timestamps.append(QDateTime::currentDateTime());
+    refresh();
+}
+
+void LQTFreqMeter::refresh()
+{
+    QDateTime now = QDateTime::currentDateTime();
+    QMutableListIterator<QDateTime> it(m_timestamps);
+    while (it.hasNext()) {
+        if (it.next().msecsTo(now) > 1000)
+            it.remove();
+        else
+            break;
+    }
+    set_freq(m_timestamps.size());
+    m_refreshTimer->stop();
+    m_refreshTimer->start();
+}

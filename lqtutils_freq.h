@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2021 Luca Carlon
+ * Copyright (c) 2022 Luca Carlon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,23 +22,31 @@
  * SOFTWARE.
  **/
 
-#ifndef LQTUTILS_UI_H
-#define LQTUTILS_UI_H
+#ifndef LQTUTILS_FREQ_H
+#define LQTUTILS_FREQ_H
 
 #include <QObject>
 #include <QDateTime>
 #include <QList>
 
 #include "lqtutils_prop.h"
-#include "lqtutils_freq.h"
 
-class QQuickWindow;
+class QTimer;
 
-class LQTFrameRateMonitor : public LQTFreqMeter
+class LQTFreqMeter : public QObject
 {
     Q_OBJECT
+    L_RO_PROP_AS(int, freq, 0)
 public:
-    LQTFrameRateMonitor(QQuickWindow* w = nullptr, QObject* parent = nullptr);
+    explicit LQTFreqMeter(QObject* parent = nullptr);
+
+public slots:
+    void registerSample();
+    void refresh();
+
+private:
+    QList<QDateTime> m_timestamps;
+    QTimer* m_refreshTimer;
 };
 
-#endif // LQTUTILS_UI_H
+#endif // LQTUTILS_FREQ_H

@@ -41,7 +41,6 @@ enable_testing()
 include_directories(../)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../CMakeLists.txt)
 
-
 add_executable(LQtUtilsTest ../lqtutils/tst_lqtutils.cpp ${lqtutils_src})
 add_test(NAME LQtUtilsTest COMMAND LQtUtilsTest)
 target_link_libraries(LQtUtilsTest PRIVATE Qt6::Test Qt6::Gui Qt6::Qml Qt6::Quick)
