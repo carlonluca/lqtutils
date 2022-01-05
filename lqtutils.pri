@@ -23,9 +23,11 @@
 #
 
 SOURCES += \
-    $$PWD/lqtutils_ui.cpp
+    $$PWD/lqtutils_ui.cpp \
+    $$PWD/lqtutils_freq.cpp
 HEADERS += \
-    $$PWD/lqtutils_ui.h
+    $$PWD/lqtutils_ui.h \
+    $$PWD/lqtutils_freq.h
 contains(QT, statemachine) {
 SOURCES += $$PWD/lqtutils_fsm.cpp
 HEADERS += $$PWD/lqtutils_fsm.h
