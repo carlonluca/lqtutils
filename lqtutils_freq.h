@@ -28,6 +28,7 @@
 #include <QObject>
 #include <QDateTime>
 #include <QList>
+#include <QMutex>
 
 #include "lqtutils_prop.h"
 
@@ -45,6 +46,7 @@ public slots:
     void refresh();
 
 private:
+    QMutex m_mutex;
     QList<QDateTime> m_timestamps;
     QTimer* m_refreshTimer;
 };

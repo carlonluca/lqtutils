@@ -28,25 +28,29 @@
 
 #include "lqtutils_freq.h"
 
+#define AUTO_REFRESH_INTERVAL 1000
+
 LQTFreqMeter::LQTFreqMeter(QObject* parent) :
     QObject(parent)
 {
     m_refreshTimer = new QTimer(this);
     connect(m_refreshTimer, &QTimer::timeout,
             this, &LQTFreqMeter::refresh);
-    m_refreshTimer->setInterval(1000);
+    m_refreshTimer->setInterval(AUTO_REFRESH_INTERVAL);
     m_refreshTimer->setSingleShot(true);
     m_refreshTimer->start();
 }
 
 void LQTFreqMeter::registerSample()
 {
+    QMutexLocker locker(&m_mutex);
     m_timestamps.append(QDateTime::currentDateTime());
-    refresh();
+    QTimer::singleShot(0, this, &LQTFreqMeter::refresh);
 }
 
 void LQTFreqMeter::refresh()
 {
+    QMutexLocker locker(&m_mutex);
     QDateTime now = QDateTime::currentDateTime();
     QMutableListIterator<QDateTime> it(m_timestamps);
     while (it.hasNext()) {
