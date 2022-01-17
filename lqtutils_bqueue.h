@@ -39,8 +39,8 @@ public:
     std::optional<T> waitFirst(bool remove, qint64 timeout = -1);
     std::optional<T> dequeue(qint64 timeout = -1);
     std::optional<T> peek(qint64 timeout = -1);
-    int size();
-    bool isEmpty();
+    int size() const;
+    bool isEmpty() const;
     void requestDispose();
     void lockQueue(std::function<void(QList<T>* queue)> callback);
 
@@ -48,7 +48,7 @@ private:
     int m_capacity;
     bool m_disposed;
     QString m_name;
-    QMutex m_mutex;
+    mutable QMutex m_mutex;
     QWaitCondition m_condFull;
     QWaitCondition m_condEmpty;
     QList<T> m_queue;
@@ -109,14 +109,14 @@ std::optional<T> LQTBlockingQueue<T>::peek(qint64 timeout)
 }
 
 template<typename T>
-int LQTBlockingQueue<T>::size()
+int LQTBlockingQueue<T>::size() const
 {
     QMutexLocker locker(&m_mutex);
     return m_queue.size();
 }
 
 template<typename T>
-bool LQTBlockingQueue<T>::isEmpty()
+bool LQTBlockingQueue<T>::isEmpty() const
 {
     QMutexLocker locker(&m_mutex);
     return m_queue.isEmpty();
