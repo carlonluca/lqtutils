@@ -82,9 +82,7 @@ std::optional<T> LQTBlockingQueue<T>::waitFirst(bool remove, qint64 timeout)
     if (m_disposed)
         return std::nullopt;
     if (m_queue.isEmpty()) {
-        if (timeout <= 0)
-            return std::nullopt;
-        else if (!m_condEmpty.wait(&m_mutex, timeout))
+        if (!m_condEmpty.wait(&m_mutex, timeout))
             return std::nullopt;
         if (m_disposed)
             return std::nullopt;

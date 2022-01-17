@@ -514,7 +514,7 @@ void LQtUtilsTest::test_case18()
 
     queue.dequeue();
     queue.dequeue();
-    QVERIFY(queue.dequeue() == std::nullopt);
+    QVERIFY(queue.dequeue(0) == std::nullopt);
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)
