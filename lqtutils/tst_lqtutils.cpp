@@ -512,6 +512,14 @@ void LQtUtilsTest::test_case18()
         QVERIFY((*queue)[1] == 1);
     });
 
+    QVERIFY(queue.enqueueDropFirst(2, 0));
+    QVERIFY(queue.size() == 2);
+
+    queue.lockQueue([] (QList<int>* queue) {
+        QVERIFY((*queue)[0] == 1);
+        QVERIFY((*queue)[1] == 2);
+    });
+
     queue.dequeue();
     queue.dequeue();
     QVERIFY(queue.dequeue(0) == std::nullopt);

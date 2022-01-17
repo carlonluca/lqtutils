@@ -36,6 +36,7 @@ public:
     LQTBlockingQueue(int capacity, const QString& name = QString()) :
         m_capacity(capacity), m_disposed(false), m_name(name) {}
     bool enqueue(const T& e, qint64 timeout = -1);
+    bool enqueueDropFirst(const T& e, qint64 timeout = -1);
     std::optional<T> waitFirst(bool remove, qint64 timeout = -1);
     std::optional<T> dequeue(qint64 timeout = -1);
     std::optional<T> peek(qint64 timeout = -1);
@@ -64,6 +65,27 @@ bool LQTBlockingQueue<T>::enqueue(const T& e, qint64 timeout)
         if (m_queue.size() >= m_capacity) {
             if (!m_condFull.wait(&m_mutex, timeout))
                 return false;
+            if (m_disposed)
+                return false;
+        }
+
+        m_queue.append(e);
+    }
+
+    m_condEmpty.wakeOne();
+    return true;
+}
+
+template<typename T>
+bool LQTBlockingQueue<T>::enqueueDropFirst(const T& e, qint64 timeout)
+{
+    {
+        QMutexLocker locker(&m_mutex);
+        if (m_disposed)
+            return false;
+        if (m_queue.size() >= m_capacity) {
+            if (!m_condFull.wait(&m_mutex, timeout))
+                m_queue.takeFirst();
             if (m_disposed)
                 return false;
         }
