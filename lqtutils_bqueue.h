@@ -44,6 +44,7 @@ public:
     bool isEmpty() const;
     void requestDispose();
     void lockQueue(std::function<void(QList<T>* queue)> callback);
+    QString name() { return m_name; }
 
 private:
     int m_capacity;
