@@ -137,6 +137,7 @@ private slots:
     void test_case16();
     void test_case17();
     void test_case18();
+    void test_case19();
 };
 
 LQtUtilsTest::LQtUtilsTest() {}
@@ -523,6 +524,16 @@ void LQtUtilsTest::test_case18()
     queue.dequeue();
     queue.dequeue();
     QVERIFY(queue.dequeue(0) == std::nullopt);
+}
+
+void LQtUtilsTest::test_case19()
+{
+    QVERIFY(qFuzzyCompare(string_to_float(QSL("1.6"), 1.6), 1.6f));
+    QVERIFY(qFuzzyCompare(string_to_float(QSL("abc"), 1.6), 1.6f));
+    QVERIFY(string_to_int(QSL("5"), 5) == 5);
+    QVERIFY(string_to_int(QString("%1").arg(std::numeric_limits<qint64>::max() + 100), 1) == 1);
+    QVERIFY(string_to_int64(QString("%1").arg(std::numeric_limits<qint64>::max() + 100),
+                            1) == std::numeric_limits<qint64>::max() + 100);
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)
