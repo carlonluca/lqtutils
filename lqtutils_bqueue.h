@@ -87,7 +87,8 @@ bool LQTBlockingQueue<T>::enqueueDropFirst(const T& e, qint64 timeout)
             return false;
         if (m_queue.size() >= m_capacity) {
             if (!m_condFull.wait(&m_mutex, timeout))
-                m_queue.takeFirst();
+                if (!m_queue.isEmpty())
+                    m_queue.takeFirst();
             if (m_disposed)
                 return false;
         }
