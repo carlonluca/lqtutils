@@ -42,6 +42,7 @@ public:
     std::optional<T> peek(qint64 timeout = -1);
     int size() const;
     bool isEmpty() const;
+    bool isDisposed() const;
     void requestDispose();
     void lockQueue(std::function<void(QList<T>* queue)> callback);
     QString name() { return m_name; }
@@ -141,6 +142,13 @@ bool LQTBlockingQueue<T>::isEmpty() const
 {
     QMutexLocker locker(&m_mutex);
     return m_queue.isEmpty();
+}
+
+template<typename T>
+bool LQTBlockingQueue<T>::isDisposed() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_disposed;
 }
 
 template<typename T>
