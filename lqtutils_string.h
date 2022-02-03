@@ -100,12 +100,45 @@ inline QRectF string_to_rect(const QString& s)
 
 inline QString string_from_rect(const QRectF& rect)
 {
+    if (!rect.isValid() || rect.isNull())
+        return QString();
+
     QLocale locale(QLocale::English, QLocale::UnitedStates);
     return QString(QSL("%1,%2,%3,%4"))
             .arg(locale.toString(rect.x()))
             .arg(locale.toString(rect.y()))
             .arg(locale.toString(rect.width()))
             .arg(locale.toString(rect.height()));
+}
+
+inline QSize string_to_size(const QString& s)
+{
+    if (s.isEmpty())
+        return QSize();
+
+    QStringList tokens = s.split('x');
+    if (tokens.size() != 2)
+        return QSize();
+
+    bool convOk;
+    int width = string_to_int(tokens[0], 0, &convOk);
+    if (!convOk)
+        return QSize();
+    int height = string_to_int(tokens[1], 0, &convOk);
+    if (!convOk)
+        return QSize();
+
+    return QSize(width, height);
+}
+
+inline QString size_to_string(const QSize& size)
+{
+    if (!size.isValid() || size.isNull())
+        return QString();
+
+    return QString(QSL("%1x%2"))
+            .arg(size.width())
+            .arg(size.height());
 }
 
 #endif // LQTUTILS_STRING_H
