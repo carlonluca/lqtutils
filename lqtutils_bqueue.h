@@ -41,6 +41,7 @@ public:
     std::optional<T> dequeue(qint64 timeout = -1);
     std::optional<T> peek(qint64 timeout = -1);
     int size() const;
+    int capacity() const { return m_capacity; }
     bool isEmpty() const;
     bool isDisposed() const;
     void requestDispose();
@@ -72,9 +73,9 @@ bool LQTBlockingQueue<T>::enqueue(const T& e, qint64 timeout)
         }
 
         m_queue.append(e);
+        m_condEmpty.wakeOne();
     }
 
-    m_condEmpty.wakeOne();
     return true;
 }
 
@@ -94,9 +95,9 @@ bool LQTBlockingQueue<T>::enqueueDropFirst(const T& e, qint64 timeout)
         }
 
         m_queue.append(e);
+        m_condEmpty.wakeOne();
     }
 
-    m_condEmpty.wakeOne();
     return true;
 }
 
