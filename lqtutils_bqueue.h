@@ -22,6 +22,9 @@
  * SOFTWARE.
  **/
 
+#ifndef LQTUTILS_BQUEUE
+#define LQTUTILS_BQUEUE
+
 #include <QString>
 #include <QMutex>
 #include <QWaitCondition>
@@ -168,3 +171,5 @@ void LQTBlockingQueue<T>::lockQueue(std::function<void(QList<T>*)> callback)
     QMutexLocker locker(&m_mutex);
     callback(&m_queue);
 }
+
+#endif // LQTUTILS_BQUEUE
