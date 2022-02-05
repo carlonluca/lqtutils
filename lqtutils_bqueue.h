@@ -64,20 +64,18 @@ private:
 template<typename T>
 bool LQTBlockingQueue<T>::enqueue(const T& e, qint64 timeout)
 {
-    {
-        QMutexLocker locker(&m_mutex);
+    QMutexLocker locker(&m_mutex);
+    if (m_disposed)
+        return false;
+    if (m_queue.size() >= m_capacity) {
+        if (!m_condFull.wait(&m_mutex, timeout))
+            return false;
         if (m_disposed)
             return false;
-        if (m_queue.size() >= m_capacity) {
-            if (!m_condFull.wait(&m_mutex, timeout))
-                return false;
-            if (m_disposed)
-                return false;
-        }
-
-        m_queue.append(e);
-        m_condEmpty.wakeOne();
     }
+
+    m_queue.append(e);
+    m_condEmpty.wakeOne();
 
     return true;
 }
@@ -85,21 +83,19 @@ bool LQTBlockingQueue<T>::enqueue(const T& e, qint64 timeout)
 template<typename T>
 bool LQTBlockingQueue<T>::enqueueDropFirst(const T& e, qint64 timeout)
 {
-    {
-        QMutexLocker locker(&m_mutex);
+    QMutexLocker locker(&m_mutex);
+    if (m_disposed)
+        return false;
+    if (m_queue.size() >= m_capacity) {
+        if (!m_condFull.wait(&m_mutex, timeout))
+            if (!m_queue.isEmpty())
+                m_queue.takeFirst();
         if (m_disposed)
             return false;
-        if (m_queue.size() >= m_capacity) {
-            if (!m_condFull.wait(&m_mutex, timeout))
-                if (!m_queue.isEmpty())
-                    m_queue.takeFirst();
-            if (m_disposed)
-                return false;
-        }
-
-        m_queue.append(e);
-        m_condEmpty.wakeOne();
     }
+
+    m_queue.append(e);
+    m_condEmpty.wakeOne();
 
     return true;
 }
