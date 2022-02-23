@@ -138,6 +138,7 @@ private slots:
     void test_case17();
     void test_case18();
     void test_case19();
+    void test_case20();
 };
 
 LQtUtilsTest::LQtUtilsTest() {}
@@ -534,6 +535,20 @@ void LQtUtilsTest::test_case19()
     QVERIFY(string_to_int(QString("%1").arg(std::numeric_limits<qint64>::max() + 100), 1) == 1);
     QVERIFY(string_to_int64(QString("%1").arg(std::numeric_limits<qint64>::max() + 100),
                             1) == std::numeric_limits<qint64>::max() + 100);
+}
+
+void LQtUtilsTest::test_case20()
+{
+    QThread t;
+    t.start();
+    QEventLoop loop;
+    lqt_run_in_thread(&t, [&loop, &t] {
+        QVERIFY(&t == QThread::currentThread());
+        loop.quit();
+    });
+    loop.exec();
+    t.quit();
+    t.wait();
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)
