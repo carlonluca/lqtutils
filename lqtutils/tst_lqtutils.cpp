@@ -139,6 +139,7 @@ private slots:
     void test_case18();
     void test_case19();
     void test_case20();
+    void test_case21();
 };
 
 LQtUtilsTest::LQtUtilsTest() {}
@@ -549,6 +550,22 @@ void LQtUtilsTest::test_case20()
     loop.exec();
     t.quit();
     t.wait();
+}
+
+void LQtUtilsTest::test_case21()
+{
+    LQTCacheValue<bool> boolCache;
+    QVERIFY(boolCache.value("value1", [] () -> bool { return true; }) == true);
+    QVERIFY(boolCache.value("value1", [] () -> bool { return false; }) == true);
+    QVERIFY(boolCache.value("value2", [] () -> bool { return false; }) == false);
+    QVERIFY(boolCache.value("value2", [] () -> bool { return true; }) == false);
+
+    LQTCacheValue<MyEnum::Value> enumCache;
+    QVERIFY(enumCache.value("value1", [] () -> MyEnum::Value { return MyEnum::Value1; }) == MyEnum::Value1);
+    QVERIFY(enumCache.value("value1", [] () -> MyEnum::Value { return MyEnum::Value2; }) == MyEnum::Value1);
+    QVERIFY(enumCache.value("value2", [] () -> MyEnum::Value { return MyEnum::Value1; }) == MyEnum::Value1);
+    QVERIFY(enumCache.value("value2", [] () -> MyEnum::Value { return MyEnum::Value2; }) == MyEnum::Value1);
+    QVERIFY(enumCache.value("value3", [] () -> MyEnum::Value { return MyEnum::Value3; }) == MyEnum::Value3);
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)

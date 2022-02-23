@@ -79,4 +79,24 @@
         QString sectionToPath() const                            \
         { return (!m_section.isEmpty() ? m_section + "/" : ""); }
 
+template<typename T>
+class LQTCacheValue
+{
+public:
+    T value(const QString& key, std::function<T()> init);
+
+private:
+    QHash<QString, T> m_cache;
+};
+
+template<typename T>
+T LQTCacheValue<T>::value(const QString& key, std::function<T()> init)
+{
+    if (m_cache.contains(key))
+        return m_cache.value(key);
+    T v = init();
+    m_cache.insert(key, v);
+    return v;
+}
+
 #endif
