@@ -21,7 +21,7 @@ set(PROJECT_SOURCES
 )
 ```
 
-## lqtutils_prop.h
+## Synthetize Qt properties in a short way (lqtutils_prop.h)
 Contains a few useful macros to synthetize Qt props. For instance:
 ```c++
 class Fraction : public QObject
@@ -86,7 +86,9 @@ L_RW_PROP(double, numerator, setNumerator, 5)
 L_RW_PROP(double, denominator, setDenominator, 9)
 L_END_CLASS
 ```
-The L_RW_PROP and L_RO_PROP macros are overloaded, and can therefore be cassed with three or four params. The last param is used if you want to init the prop to some specific value automatically.
+The L_RW_PROP and L_RO_PROP macros are overloaded, and can therefore be used with three or four params. The last param is used if you want to init the prop to some specific value automatically.
+
+This makes the usage of Qt properties more synthetic and speeds up the development. It is very useful when many properties are needed to expose data to QML.
 
 ### References
 
@@ -152,7 +154,7 @@ For gadgets:
     L_BEGIN_GADGET(name)
     L_END_GADGET
 
-## lqtutils_settings.h
+## Synthetize Qt settings with support for signals (lqtutils_settings.h)
 Contains a few tools that can be used to speed up writing simple settings to a file. Settings will still use QSettings and are therefore fully compatible. The macros are simply shortcuts to synthetise code. I only used this for creating ini files, but should work for other formats. An example:
 ```c++
 L_DECLARE_SETTINGS(LSettingsTest, new QSettings("settings.ini", QSettings::IniFormat))
@@ -191,7 +193,7 @@ Window {
     Binding { target: settings; property: "appY"; value: y }
 }
 ```
-## lqtutils_enum.h
+## Synthetize Qt enums and quickly expose to QML (lqtutils_enum.h)
 Contains a macro to define a enum and register it with the meta-object system. This enum can then be exposed to the QML. To create the enum simply do:
 ```c++
 L_DECLARE_ENUM(MyEnum,
@@ -203,6 +205,9 @@ This enum is exposed using a namespace without subclassing QObject. Register wit
 ```c++
 MyEnum::registerEnum("com.luke", 1, 0);
 ```
+
+## Cache values and init automatically
+```LQTCacheValue``` caches values of any type in a hash and calls the provided lambda if the value was never initialized. This is useful when writing settings classes and you want to read only once.
 
 ## lqtutils_fsm.h
 A QState subclass that includes a state name and prints it to stdout when each state is entered.
@@ -224,6 +229,8 @@ INVOKE_AWAIT_ASYNC(obj, [&i, currentThread, t] {
 });
 QCOMPARE(i, 11);
 ```
+
+```lqt_run_in_thread``` runs a lambda in a specific QThread asynchronously.
 
 ## lqtutils_autoexec.h
 A class that can be used to execute a lambda whenever the current scope ends, e.g.:
