@@ -543,6 +543,7 @@ void LQtUtilsTest::test_case20()
     QThread t;
     t.start();
     QEventLoop loop;
+    QVERIFY(&t != QThread::currentThread());
     lqt_run_in_thread(&t, [&loop, &t] {
         QVERIFY(&t == QThread::currentThread());
         loop.quit();
