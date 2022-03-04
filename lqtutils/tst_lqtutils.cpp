@@ -560,6 +560,15 @@ void LQtUtilsTest::test_case21()
     QVERIFY(boolCache.value("value1", [] () -> bool { return false; }) == true);
     QVERIFY(boolCache.value("value2", [] () -> bool { return false; }) == false);
     QVERIFY(boolCache.value("value2", [] () -> bool { return true; }) == false);
+    QVERIFY(boolCache.isSet("value1"));
+    QVERIFY(boolCache.isSet("value2"));
+    QVERIFY(!boolCache.isSet("value3"));
+    boolCache.reset("value1");
+    boolCache.reset("value2");
+    QVERIFY(!boolCache.isSet("value1"));
+    QVERIFY(!boolCache.isSet("value2"));
+    boolCache.setValue("value1", false);
+    QVERIFY(!boolCache.value("value1", [] { return false; }) == true);
 
     LQTCacheValue<MyEnum::Value> enumCache;
     QVERIFY(enumCache.value("value1", [] () -> MyEnum::Value { return MyEnum::Value1; }) == MyEnum::Value1);

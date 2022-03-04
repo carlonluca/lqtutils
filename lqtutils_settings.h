@@ -84,19 +84,45 @@ class LQTCacheValue
 {
 public:
     T value(const QString& key, std::function<T()> init);
+    void reset(const QString& key);
+    void setValue(const QString& key, const T& v);
+    bool isSet(const QString& key);
 
 private:
     QHash<QString, T> m_cache;
+    QMutex m_mutex;
 };
 
 template<typename T>
 T LQTCacheValue<T>::value(const QString& key, std::function<T()> init)
 {
+    QMutexLocker locker(&m_mutex);
     if (m_cache.contains(key))
         return m_cache.value(key);
     T v = init();
     m_cache.insert(key, v);
     return v;
+}
+
+template<typename T>
+void LQTCacheValue<T>::reset(const QString& key)
+{
+    QMutexLocker locker(&m_mutex);
+    m_cache.remove(key);
+}
+
+template<typename T>
+void LQTCacheValue<T>::setValue(const QString& key, const T& v)
+{
+    QMutexLocker locker(&m_mutex);
+    m_cache.insert(key, v);
+}
+
+template<typename T>
+bool LQTCacheValue<T>::isSet(const QString& key)
+{
+    QMutexLocker locker(&m_mutex);
+    return m_cache.contains(key);
 }
 
 #endif
