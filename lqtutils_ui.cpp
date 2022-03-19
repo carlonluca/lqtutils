@@ -31,6 +31,11 @@
 LQTFrameRateMonitor::LQTFrameRateMonitor(QQuickWindow* w, QObject* parent) :
     LQTFreqMeter(parent)
 {
+    setWindow(w);
+}
+
+void LQTFrameRateMonitor::setWindow(QQuickWindow* w)
+{
     if (!w)
         return;
     connect(w, &QQuickWindow::frameSwapped,
