@@ -39,7 +39,7 @@ class LQTFrameRateMonitor : public LQTFreqMeter
     Q_OBJECT
 public:
     LQTFrameRateMonitor(QQuickWindow* w = nullptr, QObject* parent = nullptr);
-    void setWindow(QQuickWindow* w);
+    Q_INVOKABLE void setWindow(QQuickWindow* w);
 };
 
 #endif // LQTUTILS_UI_H
