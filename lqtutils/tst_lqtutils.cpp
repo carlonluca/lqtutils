@@ -533,9 +533,11 @@ void LQtUtilsTest::test_case19()
     QVERIFY(qFuzzyCompare(string_to_float(QSL("1.6"), 1.6), 1.6f));
     QVERIFY(qFuzzyCompare(string_to_float(QSL("abc"), 1.6), 1.6f));
     QVERIFY(string_to_int(QSL("5"), 5) == 5);
+#pragma GCC diagnostic ignored "-Woverflow"
     QVERIFY(string_to_int(QString("%1").arg(std::numeric_limits<qint64>::max() + 100), 1) == 1);
     QVERIFY(string_to_int64(QString("%1").arg(std::numeric_limits<qint64>::max() + 100),
                             1) == std::numeric_limits<qint64>::max() + 100);
+#pragma GCC diagnostic pop
 }
 
 void LQtUtilsTest::test_case20()

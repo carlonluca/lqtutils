@@ -76,7 +76,7 @@
     Q_SIGNALS:                                                             \
         void name##Changed(LQTUTILS_DECLARE_SIGNAL(type, name));           \
     private:                                                               \
-        Q_PROPERTY(type name READ name WRITE setter NOTIFY name##Changed);
+        Q_PROPERTY(type name READ name WRITE setter NOTIFY name##Changed)
 
 #define L_RW_PROP_(type, name, setter)                                     \
     _INT_DECL_L_RW_PROP(type, name, setter)                                \
@@ -127,7 +127,7 @@
     Q_SIGNALS:                                                   \
         void name##Changed(LQTUTILS_DECLARE_SIGNAL(type, name)); \
     private:                                                     \
-        Q_PROPERTY(type name READ name NOTIFY name##Changed);    \
+        Q_PROPERTY(type name READ name NOTIFY name##Changed)     \
 
 #define L_RO_PROP_(type, name, setter)                           \
     _INT_DECL_L_RO_PROP(type, name, set_##name)                  \
@@ -181,7 +181,7 @@
     Q_SIGNALS:                                                             \
         void name##Changed(LQTUTILS_DECLARE_SIGNAL(type, name));           \
     private:                                                               \
-        Q_PROPERTY(type name READ name WRITE setter NOTIFY name##Changed);
+        Q_PROPERTY(type name READ name WRITE setter NOTIFY name##Changed)
 
 #define L_RW_PROP_REF_(type, name, setter)                                 \
     _INT_DECL_L_RW_PROP_REF(type, name, setter)                            \
@@ -232,7 +232,7 @@
     Q_SIGNALS:                                                   \
         void name##Changed(LQTUTILS_DECLARE_SIGNAL(type, name)); \
     private:                                                     \
-        Q_PROPERTY(type name READ name NOTIFY name##Changed);
+        Q_PROPERTY(type name READ name NOTIFY name##Changed)
 
 #define L_RO_PROP_REF_(type, name, setter)                       \
     _INT_DECL_L_RO_PROP_REF(type, name, setter)                  \
@@ -312,7 +312,7 @@
 #define L_RW_GPROP_(type, name, setter)                                    \
     _INT_DECL_GADGET_PROP_GETTER(type, name)                               \
     private:                                                               \
-        Q_PROPERTY(type name READ name WRITE setter);                      \
+        Q_PROPERTY(type name READ name WRITE setter)                       \
     public:                                                                \
         void setter(type name) {                                           \
             m_##name = name;                                               \
@@ -342,7 +342,7 @@
 #define L_RW_GPROP_CS_(type, name)                             \
     _INT_DECL_GADGET_PROP_GETTER(type, name)                   \
     private:                                                   \
-        Q_PROPERTY(type name READ name);
+        Q_PROPERTY(type name READ name)
 
 #define L_RW_GPROP3_CS(type, name, def)                        \
     L_RW_GPROP_CS_(type, name)                                 \
@@ -357,7 +357,7 @@
 #define L_RO_GPROP_(type, name, setter)                       \
     _INT_DECL_GADGET_PROP_GETTER(type, name)                  \
     private:                                                  \
-        Q_PROPERTY(type name READ name);                      \
+        Q_PROPERTY(type name READ name)                       \
     public:                                                   \
         void setter(type name) {                              \
             m_##name = name;                                  \
@@ -387,7 +387,7 @@
 #define L_RO_GPROP_CS_(type, name)                             \
     _INT_DECL_GADGET_PROP_GETTER(type, name)                   \
     private:                                                   \
-        Q_PROPERTY(type name READ name);
+        Q_PROPERTY(type name READ name)
 
 #define L_RO_GPROP3_CS(type, name, def)                        \
     L_RO_GPROP_CS_(type, name)                                 \
