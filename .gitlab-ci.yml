@@ -33,7 +33,7 @@ Test_qt61:
 Test_qt62:
   stage: test_qt62
   image:
-    name: "carlonluca/qt-dev:6.2.1"
+    name: "carlonluca/qt-dev:6.2.3"
     entrypoint: [""]
   script:
     - mkdir build
