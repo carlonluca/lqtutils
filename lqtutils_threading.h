@@ -29,6 +29,7 @@
 #include <QMetaObject>
 #include <QThread>
 #include <QTimer>
+#include <QEventLoop>
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 #include <QRecursiveMutex>
 #endif
@@ -38,6 +39,56 @@
         auto type = QThread::currentThread() == obj->thread() ? Qt::DirectConnection : Qt::BlockingQueuedConnection; \
         QMetaObject::invokeMethod(obj, __VA_ARGS__, type);                                                           \
     }
+
+template<typename T> T lqt_run_in_thread_sync(QObject* o, std::function<T()> f)
+{
+    QEventLoop loop;
+    T ret;
+    QTimer::singleShot(0, o, [&f, &ret, &loop] {
+        ret = f();
+        loop.quit();
+    });
+    loop.exec();
+    return ret;
+}
+
+template<typename T> T lqt_run_in_thread_sync(QThread* t, std::function<T()> f)
+{
+    QEventLoop loop;
+    T ret;
+    QObject* o = new QObject;
+    o->moveToThread(t);
+    QTimer::singleShot(0, o, [&f, o, &ret, &loop] {
+        ret = f();
+        o->deleteLater();
+        loop.quit();
+    });
+    loop.exec();
+    return ret;
+}
+
+inline void lqt_run_in_thread_sync(QThread* t, std::function<void()> f)
+{
+    QEventLoop loop;
+    QObject* o = new QObject;
+    o->moveToThread(t);
+    QTimer::singleShot(0, o, [&f, o, &loop] {
+        f();
+        o->deleteLater();
+        loop.quit();
+    });
+    loop.exec();
+}
+
+inline void lqt_run_in_thread_sync(QObject* o, std::function<void()> f)
+{
+    QEventLoop loop;
+    QTimer::singleShot(0, o, [&f, &loop] {
+        f();
+        loop.quit();
+    });
+    loop.exec();
+}
 
 inline void lqt_run_in_thread(QThread* t, std::function<void()> f)
 {

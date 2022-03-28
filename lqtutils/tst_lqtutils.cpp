@@ -140,6 +140,7 @@ private slots:
     void test_case19();
     void test_case20();
     void test_case21();
+    void test_case22();
 };
 
 LQtUtilsTest::LQtUtilsTest() {}
@@ -578,6 +579,38 @@ void LQtUtilsTest::test_case21()
     QVERIFY(enumCache.value("value2", [] () -> MyEnum::Value { return MyEnum::Value1; }) == MyEnum::Value1);
     QVERIFY(enumCache.value("value2", [] () -> MyEnum::Value { return MyEnum::Value2; }) == MyEnum::Value1);
     QVERIFY(enumCache.value("value3", [] () -> MyEnum::Value { return MyEnum::Value3; }) == MyEnum::Value3);
+}
+
+void LQtUtilsTest::test_case22()
+{
+    QThread* t = new QThread;
+    t->start();
+
+    QVERIFY(t != QThread::currentThread());
+
+    lqt_run_in_thread_sync(t, [t] {
+        QVERIFY(t == QThread::currentThread());
+    });
+
+    QObject* o = new QObject;
+    o->moveToThread(t);
+    lqt_run_in_thread_sync(o, [t] {
+        QVERIFY(t == QThread::currentThread());
+        return;
+    });
+
+    QVERIFY(lqt_run_in_thread_sync<bool>(t, [] () -> bool {
+        return true;
+    }));
+
+    QVERIFY(lqt_run_in_thread_sync<bool>(o, [] () -> bool {
+        return true;
+    }));
+
+    o->deleteLater();
+    t->quit();
+    t->wait();
+    t->deleteLater();
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)
