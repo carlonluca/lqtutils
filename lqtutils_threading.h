@@ -61,7 +61,7 @@ template<typename T> T lqt_run_in_thread_sync(QThread* t, std::function<T()> f)
     QTimer::singleShot(0, o, [&f, o, &ret, &loop] {
         ret = f();
         o->deleteLater();
-        loop.quit();
+        QMetaObject::invokeMethod(&loop, "quit");
     });
     loop.exec();
     return ret;
@@ -75,7 +75,7 @@ inline void lqt_run_in_thread_sync(QThread* t, std::function<void()> f)
     QTimer::singleShot(0, o, [&f, o, &loop] {
         f();
         o->deleteLater();
-        loop.quit();
+        QMetaObject::invokeMethod(&loop, "quit");
     });
     loop.exec();
 }
@@ -85,7 +85,7 @@ inline void lqt_run_in_thread_sync(QObject* o, std::function<void()> f)
     QEventLoop loop;
     QTimer::singleShot(0, o, [&f, &loop] {
         f();
-        loop.quit();
+        QMetaObject::invokeMethod(&loop, "quit");
     });
     loop.exec();
 }
