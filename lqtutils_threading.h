@@ -30,6 +30,7 @@
 #include <QThread>
 #include <QTimer>
 #include <QEventLoop>
+#include <QSemaphore>
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 #include <QRecursiveMutex>
 #endif
@@ -42,52 +43,52 @@
 
 template<typename T> T lqt_run_in_thread_sync(QObject* o, std::function<T()> f)
 {
-    QEventLoop loop;
+    QSemaphore sem;
     T ret;
-    QTimer::singleShot(0, o, [&f, &ret, &loop] {
+    QTimer::singleShot(0, o, [&f, &ret, &sem] {
         ret = f();
-        loop.quit();
+        sem.release();
     });
-    loop.exec();
+    sem.acquire();
     return ret;
 }
 
 template<typename T> T lqt_run_in_thread_sync(QThread* t, std::function<T()> f)
 {
-    QEventLoop loop;
+    QSemaphore sem;
     T ret;
     QObject* o = new QObject;
     o->moveToThread(t);
-    QTimer::singleShot(0, o, [&f, o, &ret, &loop] {
+    QTimer::singleShot(0, o, [&f, o, &ret, &sem] {
         ret = f();
         o->deleteLater();
-        QMetaObject::invokeMethod(&loop, "quit");
+        sem.release();
     });
-    loop.exec();
+    sem.acquire();
     return ret;
 }
 
 inline void lqt_run_in_thread_sync(QThread* t, std::function<void()> f)
 {
-    QEventLoop loop;
+    QSemaphore sem;
     QObject* o = new QObject;
     o->moveToThread(t);
-    QTimer::singleShot(0, o, [&f, o, &loop] {
+    QTimer::singleShot(0, o, [&f, o, &sem] {
         f();
         o->deleteLater();
-        QMetaObject::invokeMethod(&loop, "quit");
+        sem.release();
     });
-    loop.exec();
+    sem.acquire();
 }
 
 inline void lqt_run_in_thread_sync(QObject* o, std::function<void()> f)
 {
-    QEventLoop loop;
-    QTimer::singleShot(0, o, [&f, &loop] {
+    QSemaphore sem;
+    QTimer::singleShot(0, o, [&f, &sem] {
         f();
-        QMetaObject::invokeMethod(&loop, "quit");
+        sem.release();
     });
-    loop.exec();
+    sem.acquire();
 }
 
 inline void lqt_run_in_thread(QThread* t, std::function<void()> f)

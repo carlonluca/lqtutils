@@ -599,9 +599,13 @@ void LQtUtilsTest::test_case22()
         return;
     });
 
-    QVERIFY(lqt_run_in_thread_sync<bool>(t, [] () -> bool {
+    int testValue = 1;
+    QVERIFY(lqt_run_in_thread_sync<bool>(t, [&testValue] () -> bool {
+        QThread::sleep(3);
+        testValue = 5;
         return true;
     }));
+    QVERIFY(testValue == 5);
 
     QVERIFY(lqt_run_in_thread_sync<bool>(o, [] () -> bool {
         return true;
