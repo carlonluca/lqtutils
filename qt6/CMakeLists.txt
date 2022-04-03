@@ -48,5 +48,5 @@ target_link_libraries(LQtUtilsTest PRIVATE Qt6::Test Qt6::Gui Qt6::Qml Qt6::Quic
 if(MSVC)
   target_compile_options(LQtUtilsTest PRIVATE /W4 /WX)
 else()
-  target_compile_options(LQtUtilsTest PRIVATE -Wall -Wextra -Wpedantic -Werror)
+  target_compile_options(LQtUtilsTest PRIVATE -Wall -Wextra -Wpedantic)
 endif()
