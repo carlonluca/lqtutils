@@ -28,6 +28,7 @@
 #include <QObject>
 #include <QDateTime>
 #include <QList>
+#include <QJSValue>
 
 #include "lqtutils_prop.h"
 #include "lqtutils_freq.h"
@@ -40,6 +41,15 @@ class LQTFrameRateMonitor : public LQTFreqMeter
 public:
     LQTFrameRateMonitor(QQuickWindow* w = nullptr, QObject* parent = nullptr);
     Q_INVOKABLE void setWindow(QQuickWindow* w);
+};
+
+class LQTQmlUtils : public QObject
+{
+    Q_OBJECT
+public:
+    LQTQmlUtils(QObject* parent = nullptr) : QObject(parent) {}
+
+    Q_INVOKABLE void singleShot(int msec, QJSValue callback);
 };
 
 #endif // LQTUTILS_UI_H

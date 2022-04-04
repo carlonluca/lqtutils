@@ -41,3 +41,11 @@ void LQTFrameRateMonitor::setWindow(QQuickWindow* w)
     connect(w, &QQuickWindow::frameSwapped,
             this, &LQTFrameRateMonitor::registerSample);
 }
+
+void LQTQmlUtils::singleShot(int msec, QJSValue callback)
+{
+    QTimer::singleShot(msec, this, [callback] {
+        if (callback.isCallable())
+            callback.call();
+    });
+}
