@@ -7,6 +7,7 @@ stages:
   - test_qt62
   - test_qt62_jammy
   - test_qt63
+  - test_qt63_jammy
 
 Test_qt5:
   stage: test_qt5
@@ -60,6 +61,18 @@ Test_qt63:
   stage: test_qt63
   image:
     name: "carlonluca/qt-dev:6.3.0"
+    entrypoint: [""]
+  script:
+    - mkdir build
+    - cd build
+    - cmake ../qt6
+    - make
+    - ./LQtUtilsTest
+
+Test_qt63_jammy:
+  stage: test_qt63_jammy
+  image:
+    name: "carlonluca/qt-dev:6.3.0_jammy"
     entrypoint: [""]
   script:
     - mkdir build
