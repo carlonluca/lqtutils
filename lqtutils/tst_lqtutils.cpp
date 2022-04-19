@@ -527,6 +527,10 @@ void LQtUtilsTest::test_case18()
     queue.dequeue();
     queue.dequeue();
     QVERIFY(queue.dequeue(0) == std::nullopt);
+
+    for (int i = 0; i < 1E5; i++)
+        queue.dequeue(0);
+    QVERIFY(queue.isEmpty());
 }
 
 void LQtUtilsTest::test_case19()
