@@ -72,6 +72,16 @@ inline float string_to_float(const QString& s, float def, bool* ok = nullptr)
     return _ok ? ret : def;
 }
 
+inline float string_to_float_en(const QString& s, float def, bool* ok = nullptr)
+{
+    bool _ok;
+    QLocale locale(QLocale::English, QLocale::UnitedStates);
+    float ret = locale.toFloat(s, &_ok);
+    if (ok)
+        *ok = _ok;
+    return _ok ? ret : def;
+}
+
 inline QRectF string_to_rect(const QString& s)
 {
     if (s.isEmpty())
