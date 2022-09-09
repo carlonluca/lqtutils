@@ -27,6 +27,9 @@
 
 #include <QObject>
 #include <QSettings>
+#include <QMutex>
+#include <QString>
+#include <QHash>
 
 // The EXPAND macro here is only needed for MSVC:
 // https://stackoverflow.com/questions/5134523/msvc-doesnt-expand-va-args-correctly
