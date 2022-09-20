@@ -39,6 +39,7 @@
 #include "../lqtutils_time.h"
 #include "../lqtutils_ui.h"
 #include "../lqtutils_bqueue.h"
+#include "../lqtutils_net.h"
 
 class LQtUtilsObject : public QObject
 {
@@ -141,6 +142,7 @@ private slots:
     void test_case20();
     void test_case21();
     void test_case22();
+    void test_case23();
 };
 
 LQtUtilsTest::LQtUtilsTest() {}
@@ -616,6 +618,26 @@ void LQtUtilsTest::test_case22()
     t->quit();
     t->wait();
     t->deleteLater();
+}
+
+void LQtUtilsTest::test_case23()
+{
+    QScopedPointer<LQTDownloader> downloader(new LQTDownloader(
+                QSL("https://raw.githubusercontent.com/carlonluca/isogeometric-analysis/master/2.3/lagrange.svg.png"),
+                QSL("/tmp/tmp.png")));
+    QVERIFY(downloader->state() == LQTDownloader::S_IDLE);
+
+    downloader->download();
+    QVERIFY(downloader->state() == LQTDownloader::S_DOWNLOADING);
+
+    QEventLoop loop;
+    connect(downloader.data(), &LQTDownloader::downloadSucceeded, this, [&loop, &downloader] {
+        QVERIFY(downloader->state() == LQTDownloader::S_DONE);
+        loop.quit();
+    });
+    loop.exec();
+
+    QVERIFY(downloader->state() == LQTDownloader::S_DONE);
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)
