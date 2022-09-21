@@ -34,6 +34,8 @@
 
 #include "lqtutils_prop.h"
 
+#define DEBUG_LOGS
+
 class LQTDownloaderPriv : public QObject
 {
     Q_OBJECT
@@ -43,6 +45,11 @@ public:
       , m_filePath(filePath)
       , m_file(m_filePath)
       , m_failed(false) {}
+#ifdef DEBUG_LOGS
+    ~LQTDownloaderPriv() {
+        qDebug() << Q_FUNC_INFO;
+    }
+#endif
 
 public slots:
     void write(const QByteArray& data);

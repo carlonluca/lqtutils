@@ -143,6 +143,7 @@ private slots:
     void test_case21();
     void test_case22();
     void test_case23();
+    void test_case24();
 };
 
 LQtUtilsTest::LQtUtilsTest() {}
@@ -623,7 +624,8 @@ void LQtUtilsTest::test_case22()
 void LQtUtilsTest::test_case23()
 {
     QScopedPointer<LQTDownloader> downloader(new LQTDownloader(
-                QSL("https://raw.githubusercontent.com/carlonluca/isogeometric-analysis/master/2.3/lagrange.svg.png"),
+                QSL("https://raw.githubusercontent.com/carlonluca/"
+                    "isogeometric-analysis/master/2.3/lagrange.svg.png"),
                 QSL("/tmp/tmp.png")));
     QVERIFY(downloader->state() == LQTDownloader::S_IDLE);
 
@@ -638,6 +640,26 @@ void LQtUtilsTest::test_case23()
     loop.exec();
 
     QVERIFY(downloader->state() == LQTDownloader::S_DONE);
+}
+
+void LQtUtilsTest::test_case24()
+{
+    QScopedPointer<LQTDownloader> downloader(new LQTDownloader(
+                QSL("https://raw.githubusercontent.com/carlonluca/"
+                    "isogeometric-analysis/master/4.5/iga_knot_insertion_plate_hole.svg.png"),
+                QSL("/tmp/tmp.png")));
+    QVERIFY(downloader->state() == LQTDownloader::S_IDLE);
+
+    downloader->download();
+
+    QEventLoop loop;
+    connect(downloader.data(), &LQTDownloader::downloadProgress, this, [&loop, &downloader] {
+        QVERIFY(downloader->state() == LQTDownloader::S_DOWNLOADING);
+        downloader->abort();
+        loop.quit();
+    });
+    loop.exec();
+    QVERIFY(downloader->state() == LQTDownloader::S_ABORTED);
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)
