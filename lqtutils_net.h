@@ -33,52 +33,50 @@
 #include <QFile>
 
 #include "lqtutils_prop.h"
+#include "lqtutils_enum.h"
 
 #define DEBUG_LOGS
+
+L_DECLARE_ENUM(LQTDownloaderState,
+               S_IDLE,
+               S_DOWNLOADING,
+               S_DONE,
+               S_NETWORK_FAILURE,
+               S_IO_FAILURE,
+               S_ABORTED)
 
 class LQTDownloaderPriv : public QObject
 {
     Q_OBJECT
+    L_RO_PROP_AS(LQTDownloaderState::Value, state, LQTDownloaderState::S_IDLE)
 public:
-    LQTDownloaderPriv(const QString& filePath, QObject* parent = nullptr) :
-        QObject(parent)
-      , m_filePath(filePath)
-      , m_file(m_filePath)
-      , m_failed(false) {}
-#ifdef DEBUG_LOGS
+    LQTDownloaderPriv(const QUrl& url, const QString& filePath, QObject* parent = nullptr);
     ~LQTDownloaderPriv() {
+#ifdef DEBUG_LOGS
         qDebug() << Q_FUNC_INFO;
-    }
 #endif
+    }
 
 public slots:
+    void download();
+    void abort();
     void write(const QByteArray& data);
 
 signals:
-    void errorOccurred();
+    void downloadProgress(qint64 progress, qint64 total);
 
 private:
+    QNetworkAccessManager* m_manager;
+    QNetworkReply* m_reply;
+    QUrl m_url;
     QString m_filePath;
     QFile m_file;
-    bool m_failed;
 };
 
 class LQTDownloader : public QObject
 {
     Q_OBJECT
-public:
-    enum DownloaderState {
-        S_IDLE,
-        S_DOWNLOADING,
-        S_DONE,
-        S_FAILURE,
-        S_ABORTED
-    };
-    Q_ENUM(DownloaderState)
-
-private:
-    L_RO_PROP_AS(DownloaderState, state, DownloaderState::S_IDLE)
-
+    Q_PROPERTY(bool state READ state NOTIFY stateChanged)
 public:
     LQTDownloader(const QUrl& url, const QString& filePath, QObject* parent = nullptr);
     ~LQTDownloader();
@@ -86,20 +84,17 @@ public:
     void download();
     void abort();
 
+    LQTDownloaderState::Value state() const { return m_threadContext->state(); }
+
 signals:
-    void networkErrorOccurred(QNetworkReply::NetworkError err);
-    void ioErrorOccurred();
-    void downloadSucceeded(QString filePath);
+    void stateChanged();
     void downloadProgress(qint64 done, qint64 total);
-    void finished();
 
 private:
-    QNetworkAccessManager* m_manager;
     QThread* m_thread;
     LQTDownloaderPriv* m_threadContext;
     QUrl m_url;
     QString m_filePath;
-    QNetworkReply* m_reply;
 };
 
 #endif // LQTUTILS_NET
