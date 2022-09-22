@@ -35,8 +35,6 @@
 #include "lqtutils_prop.h"
 #include "lqtutils_enum.h"
 
-#define DEBUG_LOGS
-
 L_DECLARE_ENUM(LQTDownloaderState,
                S_IDLE,
                S_DOWNLOADING,
@@ -51,11 +49,7 @@ class LQTDownloaderPriv : public QObject
     L_RO_PROP_AS(LQTDownloaderState::Value, state, LQTDownloaderState::S_IDLE)
 public:
     LQTDownloaderPriv(const QUrl& url, const QString& filePath, QObject* parent = nullptr);
-    ~LQTDownloaderPriv() {
-#ifdef DEBUG_LOGS
-        qDebug() << Q_FUNC_INFO;
-#endif
-    }
+    ~LQTDownloaderPriv();
 
 public slots:
     void download();

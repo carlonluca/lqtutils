@@ -2,6 +2,8 @@
 
 #include "lqtutils_net.h"
 
+//#define DEBUG_LOGS
+
 LQTDownloaderPriv::LQTDownloaderPriv(const QUrl& url, const QString &filePath, QObject* parent) :
     QObject(parent)
   , m_manager(new QNetworkAccessManager(this))
@@ -9,6 +11,13 @@ LQTDownloaderPriv::LQTDownloaderPriv(const QUrl& url, const QString &filePath, Q
   , m_url(url)
   , m_filePath(filePath)
   , m_file(m_filePath) {}
+
+LQTDownloaderPriv::~LQTDownloaderPriv()
+{
+#ifdef DEBUG_LOGS
+    qDebug() << Q_FUNC_INFO;
+#endif
+}
 
 void LQTDownloaderPriv::download()
 {
@@ -30,6 +39,7 @@ void LQTDownloaderPriv::download()
             return;
         }
 
+        m_file.close();
         set_state(LQTDownloaderState::S_DONE);
     });
 }

@@ -147,6 +147,7 @@ private slots:
     void test_case24();
     void test_case25();
     void test_case26();
+    void test_case27();
 };
 
 LQtUtilsTest::LQtUtilsTest() {}
@@ -630,10 +631,15 @@ void LQtUtilsTest::test_case22()
 
 void LQtUtilsTest::test_case23()
 {
+    QString tmpFilePath = QSL("/tmp/lqtutils_test_tmp.png");
+    LQTAutoExec exec([&tmpFilePath] {
+        QFile::remove(tmpFilePath);
+    });
+
     QScopedPointer<LQTDownloader> downloader(new LQTDownloader(
                 QSL("https://raw.githubusercontent.com/carlonluca/"
                     "isogeometric-analysis/master/2.3/lagrange.svg.png"),
-                QSL("/tmp/tmp.png")));
+                tmpFilePath));
     QVERIFY(downloader->state() == LQTDownloaderState::S_IDLE);
 
     downloader->download();
@@ -651,10 +657,15 @@ void LQtUtilsTest::test_case23()
 
 void LQtUtilsTest::test_case24()
 {
+    QString tmpFilePath = QSL("/tmp/lqtutils_test_tmp.png");
+    LQTAutoExec exec([&tmpFilePath] {
+        QFile::remove(tmpFilePath);
+    });
+
     QScopedPointer<LQTDownloader> downloader(new LQTDownloader(
                 QSL("https://raw.githubusercontent.com/carlonluca/"
                     "isogeometric-analysis/master/4.5/iga_knot_insertion_plate_hole.svg.png"),
-                QSL("/tmp/tmp2.png")));
+                tmpFilePath));
     QVERIFY(downloader->state() == LQTDownloaderState::S_IDLE);
 
     downloader->download();
@@ -692,10 +703,15 @@ void LQtUtilsTest::test_case25()
 
 void LQtUtilsTest::test_case26()
 {
+    QString tmpFilePath = QSL("/tmp/lqtutils_test_tmp.xz");
+    LQTAutoExec exec([&tmpFilePath] {
+        QFile::remove(tmpFilePath);
+    });
+
     QScopedPointer<LQTDownloader> downloader(new LQTDownloader(
                 QSL("https://raw.githubusercontent.com/carlonluca/"
                 "isogeometric-analysis/master/4.5/iga_knot_insertion_plate_hole.svg.png"),
-                QSL("/tmp/tmp.xz")));
+                tmpFilePath));
     QVERIFY(downloader->state() == LQTDownloaderState::S_IDLE);
 
     downloader->download();
@@ -712,9 +728,11 @@ void LQtUtilsTest::test_case26()
     });
     loop.exec();
     QVERIFY(downloader->state() == LQTDownloaderState::S_DONE);
+    QVERIFY(lqt_hash(tmpFilePath) == QByteArray::fromHex(QSL("b471254ec7c69949125834e107b45dd5").toUtf8()));
+}
 
-    QVERIFY(lqt_hash(QSL("/tmp/tmp.xz")) ==
-            QByteArray::fromHex(QString("b471254ec7c69949125834e107b45dd5").toUtf8()));
+void LQtUtilsTest::test_case27()
+{
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)
