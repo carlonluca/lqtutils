@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Test Gui Qml Quick)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Test Gui Qml Quick)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Qml Quick)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Qml Quick)
 if (Qt6_FOUND)
     find_package(Qt6 REQUIRED COMPONENTS StateMachine)
 endif()
@@ -31,7 +31,6 @@ target_include_directories(lqtutils
 
 target_link_libraries(lqtutils PRIVATE
     Qt${QT_VERSION_MAJOR}::Core
-    Qt${QT_VERSION_MAJOR}::Test
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::Qml
     Qt${QT_VERSION_MAJOR}::Quick
