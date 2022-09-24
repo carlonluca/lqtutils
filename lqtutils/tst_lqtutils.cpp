@@ -733,6 +733,29 @@ void LQtUtilsTest::test_case26()
 
 void LQtUtilsTest::test_case27()
 {
+    QString tmpFilePath("/tmp/lqtutils_test_tmp");
+    LQTAutoExec([&tmpFilePath] {
+        QFile::remove(tmpFilePath);
+    });
+
+    lqt_random_file(tmpFilePath, 1024);
+    QVERIFY(QFile(tmpFilePath).size() == 1024);
+    QByteArray md51 = lqt_hash(tmpFilePath);
+
+    lqt_random_file(tmpFilePath, 2048);
+    QVERIFY(QFile(tmpFilePath).size() == 2048);
+    QByteArray md52 = lqt_hash(tmpFilePath);
+
+    lqt_random_file(tmpFilePath, 4000);
+    QVERIFY(QFile(tmpFilePath).size() == 4000);
+    QByteArray md53 = lqt_hash(tmpFilePath);
+
+    QVERIFY(md51 != md52);
+    QVERIFY(md51 != md53);
+    QVERIFY(md52 != md53);
+
+    qDebug() << "MD5:" << md51.toHex() << md52.toHex() << md53.toHex();
+    QVERIFY(QFile(tmpFilePath).remove());
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)

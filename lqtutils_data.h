@@ -26,7 +26,16 @@
 #include <QString>
 #include <QCryptographicHash>
 #include <QFile>
+#include <QRandomGenerator>
 
+/**
+ * Computes the hash of a file.
+ *
+ * @brief lqt_hash
+ * @param fileName
+ * @param algo
+ * @return
+ */
 QByteArray lqt_hash(const QString &fileName,
                     QCryptographicHash::Algorithm algo = QCryptographicHash::Md5)
 {
@@ -39,4 +48,29 @@ QByteArray lqt_hash(const QString &fileName,
         return hash.result();
 
     return QByteArray();
+}
+
+bool lqt_random_file(const QString& fileName, qint64 size)
+{
+    QFile f(fileName);
+    if (!f.open(QIODevice::WriteOnly))
+        return false;
+
+    const int chunks = size/1024;
+    for (int i = 0; i < chunks; i++) {
+        QList<quint32> list;
+        list.resize(1024/4);
+        QRandomGenerator::global()->fillRange(list.data(), list.size());
+        const int size = list.size()*sizeof(quint32);
+        if (f.write(reinterpret_cast<const char*>(list.data()), size) != size)
+            return false;
+    }
+
+    const int tailSize = size - chunks*1024;
+    for (int i = 0; i < tailSize; i++) {
+        const quint32 v = QRandomGenerator::global()->generate();
+        f.write(reinterpret_cast<const char*>(&v), 1);
+    }
+
+    return true;
 }
