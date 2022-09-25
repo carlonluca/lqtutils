@@ -372,3 +372,34 @@ producer.wait();
 consumer.requestDispose();
 consumer.wait();
 ```
+
+## lqtutils_net.h
+
+The class ```LQTDownloader``` can be used to download a URL to a file in a background thread. Example:
+
+```c++
+QScopedPointer<LQTDownloader> downloader(new LQTDownloader(url, filePath));
+downloader->download();
+connect(downloader.data(), &LQTDownloader::downloadProgress, this, [&downloader] (qint64 progress, qint64 total) {
+    qDebug() << "Downloading:" << progress << "/" << total << downloader->state();
+});
+connect(downloader.data(), &LQTDownloader::stateChanged, this, [&loop, &downloader] {
+    if (downloader->state() == LQTDownloaderState::S_DONE)
+        // Done
+});
+```
+
+## lqtutils_data.h
+
+Hash of a file:
+
+```c++
+QByteArray lqt_hash(const QString &fileName,
+                    QCryptographicHash::Algorithm algo = QCryptographicHash::Md5)
+```
+
+Writes a random file of the specified size:
+
+```c++
+bool lqt_random_file(const QString& fileName, qint64 size)
+```
