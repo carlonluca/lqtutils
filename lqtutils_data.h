@@ -58,7 +58,7 @@ bool lqt_random_file(const QString& fileName, qint64 size)
 
     const int chunks = size/1024;
     for (int i = 0; i < chunks; i++) {
-        QList<quint32> list;
+        QVector<quint32> list;
         list.resize(1024/4);
         QRandomGenerator::global()->fillRange(list.data(), list.size());
         const int size = list.size()*sizeof(quint32);
