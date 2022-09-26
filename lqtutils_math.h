@@ -25,6 +25,8 @@
 #ifndef LQTUTILS_MATH
 #define LQTUTILS_MATH
 
+#include <cmath>
+
 /**
  * @brief in_range<T> Returns true iif val is in [a, b).
  * @param val
@@ -34,5 +36,17 @@
  */
 template<typename T> inline bool lqt_in_range(const T& val, const T& a, const T& b)
 { return val >= a && val < b; }
+
+/**
+ * Compares two floating point numbers.
+ *
+ * @brief lqt_approx_equal
+ * @param a
+ * @param b
+ * @param epsilon
+ * @return
+ */
+template<typename T> inline bool lqt_approx_equal(const T& a, const T& b, const T& epsilon)
+{ return std::fabs(a - b) <= ( (std::fabs(a) < std::fabs(b) ? std::fabs(b) : std::fabs(a)) * epsilon); }
 
 #endif // LQTUTILS_MATH

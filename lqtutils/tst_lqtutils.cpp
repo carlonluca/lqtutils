@@ -148,6 +148,7 @@ private slots:
     void test_case25();
     void test_case26();
     void test_case27();
+    void test_case28();
 };
 
 LQtUtilsTest::LQtUtilsTest() {}
@@ -756,6 +757,14 @@ void LQtUtilsTest::test_case27()
 
     qDebug() << "MD5:" << md51.toHex() << md52.toHex() << md53.toHex();
     QVERIFY(QFile(tmpFilePath).remove());
+}
+
+void LQtUtilsTest::test_case28()
+{
+    QVERIFY(lqt_approx_equal(.01f, .01f, .0f));
+    QVERIFY(!lqt_approx_equal(.01f, .02f, .0f));
+    QVERIFY(lqt_approx_equal(1.f/2, 2.f/4, .0001f));
+    QVERIFY(lqt_approx_equal(0.3, 0.1 + 0.2, 0.0005));
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)
