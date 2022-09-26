@@ -50,6 +50,14 @@ QByteArray lqt_hash(const QString &fileName,
     return QByteArray();
 }
 
+/**
+ * Creates a random file of a specified size.
+ *
+ * @brief lqt_random_file
+ * @param fileName
+ * @param size
+ * @return
+ */
 bool lqt_random_file(const QString& fileName, qint64 size)
 {
     QFile f(fileName);
