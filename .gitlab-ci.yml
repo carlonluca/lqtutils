@@ -4,10 +4,9 @@ variables:
 stages:
   - test_qt5
   - test_qt61
-  - test_qt62
   - test_qt62_jammy
-  - test_qt63
   - test_qt63_jammy
+  - test_qt64_jammy
 
 Test_qt5:
   stage: test_qt5
@@ -33,18 +32,6 @@ Test_qt61:
     - make
     - ./LQtUtilsTest
 
-Test_qt62:
-  stage: test_qt62
-  image:
-    name: "carlonluca/qt-dev:6.2.3"
-    entrypoint: [""]
-  script:
-    - mkdir build
-    - cd build
-    - cmake ../qt6
-    - make
-    - ./LQtUtilsTest
-
 Test_qt62_jammy:
   stage: test_qt62_jammy
   image:
@@ -57,10 +44,10 @@ Test_qt62_jammy:
     - make
     - ./LQtUtilsTest
 
-Test_qt63:
-  stage: test_qt63
+Test_qt63_jammy:
+  stage: test_qt63_jammy
   image:
-    name: "carlonluca/qt-dev:6.3.0"
+    name: "carlonluca/qt-dev:6.3.2"
     entrypoint: [""]
   script:
     - mkdir build
@@ -69,10 +56,10 @@ Test_qt63:
     - make
     - ./LQtUtilsTest
 
-Test_qt63_jammy:
-  stage: test_qt63_jammy
+Test_qt64_jammy:
+  stage: test_qt64_jammy
   image:
-    name: "carlonluca/qt-dev:6.3.0_jammy"
+    name: "carlonluca/qt-dev:6.4.0_jammy"
     entrypoint: [""]
   script:
     - mkdir build
