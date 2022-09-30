@@ -14,11 +14,7 @@ To include in a cmake app:
 
 ```
 include(${CMAKE_CURRENT_SOURCE_DIR}/lqtutils/CMakeLists.txt)
-set(PROJECT_SOURCES
-    ${lqtutils_src}
-    main.cpp
-    ...
-)
+target_link_libraries(yourproj lqtutils)
 ```
 
 ## Synthetize Qt properties in a short way (lqtutils_prop.h)
