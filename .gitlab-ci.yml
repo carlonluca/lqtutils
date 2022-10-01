@@ -59,7 +59,7 @@ Test_qt63_jammy:
 Test_qt64_jammy:
   stage: test_qt64_jammy
   image:
-    name: "carlonluca/qt-dev:6.4.0_jammy"
+    name: "carlonluca/qt-dev:6.4.0"
     entrypoint: [""]
   script:
     - mkdir build
