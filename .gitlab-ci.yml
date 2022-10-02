@@ -64,6 +64,6 @@ Test_qt64_jammy:
   script:
     - mkdir build
     - cd build
-    - cmake ../qt6
+    - QT_HOST_PATH=/opt/Qt-arm64-6.4.0 cmake ../qt6
     - make
     - ./LQtUtilsTest
