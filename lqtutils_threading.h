@@ -107,7 +107,7 @@ inline void run_in_thread(QThread* t, std::function<void()> f)
 class RecursiveMutex : public QMutex
 {
 public:
-    LQTRecursiveMutex() :
+    RecursiveMutex() :
         QMutex(QMutex::Recursive) {}
 };
 #else
