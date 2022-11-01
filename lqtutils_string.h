@@ -65,6 +65,15 @@ inline qint64 string_to_int64(const QString& s, qint64 def, bool* ok = nullptr)
     return _ok ? ret : def;
 }
 
+inline qint64 string_to_uint64(const QString& s, quint64 def, bool* ok = nullptr)
+{
+    bool _ok;
+    qint64 ret = s.toULongLong(&_ok);
+    if (ok)
+        *ok = _ok;
+    return _ok ? ret : def;
+}
+
 inline float string_to_float(const QString& s, float def, bool* ok = nullptr)
 {
     bool _ok;
