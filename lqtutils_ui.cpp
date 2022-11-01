@@ -28,18 +28,20 @@
 
 #include "lqtutils_ui.h"
 
-LQTFrameRateMonitor::LQTFrameRateMonitor(QQuickWindow* w, QObject* parent) :
+namespace lqt {
+
+FrameRateMonitor::FrameRateMonitor(QQuickWindow* w, QObject* parent) :
     LQTFreqMeter(parent)
 {
     setWindow(w);
 }
 
-void LQTFrameRateMonitor::setWindow(QQuickWindow* w)
+void FrameRateMonitor::setWindow(QQuickWindow* w)
 {
     if (!w)
         return;
     connect(w, &QQuickWindow::frameSwapped,
-            this, &LQTFrameRateMonitor::registerSample);
+            this, &FrameRateMonitor::registerSample);
 }
 
 void LQTQmlUtils::singleShot(int msec, QJSValue callback)
@@ -50,3 +52,5 @@ void LQTQmlUtils::singleShot(int msec, QJSValue callback)
             callback.call();
     });
 }
+
+} // namespace

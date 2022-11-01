@@ -27,7 +27,7 @@
 
 #include <QDateTime>
 
-namespace lqtutils {
+namespace lqt {
 
 inline QDateTime today() {
     QDateTime now = QDateTime::currentDateTime();

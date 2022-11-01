@@ -34,6 +34,8 @@
 
 class QTimer;
 
+namespace lqt {
+
 class LQTFreqMeter : public QObject
 {
     Q_OBJECT
@@ -50,5 +52,7 @@ private:
     QList<QDateTime> m_timestamps;
     QTimer* m_refreshTimer;
 };
+
+} // namespace
 
 #endif // LQTUTILS_FREQ_H

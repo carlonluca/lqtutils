@@ -28,6 +28,8 @@
 #include <QFile>
 #include <QRandomGenerator>
 
+namespace lqt {
+
 /**
  * Computes the hash of a file.
  *
@@ -36,7 +38,7 @@
  * @param algo
  * @return
  */
-QByteArray lqt_hash(const QString &fileName,
+QByteArray hash(const QString &fileName,
                     QCryptographicHash::Algorithm algo = QCryptographicHash::Md5)
 {
     QFile f(fileName);
@@ -58,7 +60,7 @@ QByteArray lqt_hash(const QString &fileName,
  * @param size
  * @return
  */
-bool lqt_random_file(const QString& fileName, qint64 size)
+bool random_file(const QString& fileName, qint64 size)
 {
     QFile f(fileName);
     if (!f.open(QIODevice::WriteOnly))
@@ -82,3 +84,5 @@ bool lqt_random_file(const QString& fileName, qint64 size)
 
     return true;
 }
+
+} // namespace

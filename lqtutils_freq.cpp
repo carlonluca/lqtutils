@@ -30,6 +30,8 @@
 
 #define AUTO_REFRESH_INTERVAL 1000
 
+namespace lqt {
+
 LQTFreqMeter::LQTFreqMeter(QObject* parent) :
     QObject(parent)
 {
@@ -63,3 +65,5 @@ void LQTFreqMeter::refresh()
     m_refreshTimer->stop();
     m_refreshTimer->start();
 }
+
+} // namesapce

@@ -411,38 +411,38 @@ void LQtUtilsTest::test_case12()
 
 void LQtUtilsTest::test_case13()
 {
-    QVERIFY(lqt_in_range(0, -1, 1));
-    QVERIFY(lqt_in_range(19.0, -10.0, 19.1));
-    QVERIFY(lqt_in_range(QSL("f"), QSL("a"), QSL("s")));
-    QVERIFY(lqt_in_range(QDateTime::currentDateTime(),
-                         QDateTime::currentDateTime().addDays(-4),
-                         QDateTime::currentDateTime().addSecs(1)));
-    QVERIFY(!lqt_in_range(QDateTime::currentDateTime(),
-                          QDateTime::currentDateTime().addDays(4),
+    QVERIFY(lqt::in_range(0, -1, 1));
+    QVERIFY(lqt::in_range(19.0, -10.0, 19.1));
+    QVERIFY(lqt::in_range(QSL("f"), QSL("a"), QSL("s")));
+    QVERIFY(lqt::in_range(QDateTime::currentDateTime(),
+                          QDateTime::currentDateTime().addDays(-4),
                           QDateTime::currentDateTime().addSecs(1)));
+    QVERIFY(!lqt::in_range(QDateTime::currentDateTime(),
+                           QDateTime::currentDateTime().addDays(4),
+                           QDateTime::currentDateTime().addSecs(1)));
 }
 
 void LQtUtilsTest::test_case14()
 {
     QDateTime now = QDateTime::currentDateTime();
-    QVERIFY(lqtutils::today().date() == now.date());
-    QVERIFY(lqtutils::today().time() == QTime(0, 0, 0, 0));
-    QVERIFY(lqtutils::tomorrow().date() != now.date());
-    QVERIFY(lqtutils::tomorrow().time() == QTime(0, 0, 0, 0));
-    QVERIFY(lqtutils::today().msecsTo(lqtutils::tomorrow()) == 1000*60*60*24);
+    QVERIFY(lqt::today().date() == now.date());
+    QVERIFY(lqt::today().time() == QTime(0, 0, 0, 0));
+    QVERIFY(lqt::tomorrow().date() != now.date());
+    QVERIFY(lqt::tomorrow().time() == QTime(0, 0, 0, 0));
+    QVERIFY(lqt::today().msecsTo(lqt::tomorrow()) == 1000*60*60*24);
 }
 
 void LQtUtilsTest::test_case15()
 {
-    QScopedPointer<LQTFrameRateMonitor> mon(new LQTFrameRateMonitor);
+    QScopedPointer<lqt::FrameRateMonitor> mon(new lqt::FrameRateMonitor);
 }
 
 void LQtUtilsTest::test_case16()
 {
     QRectF r(10, 20, 123.45, 678.90);
-    QString s = string_from_rect(r);
+    QString s = lqt::string_from_rect(r);
     QVERIFY(s == QSL("10,20,123.45,678.9"));
-    QRectF r2 = string_to_rect(s);
+    QRectF r2 = lqt::string_to_rect(s);
     QVERIFY(qFuzzyCompare(r.x(), r2.x()));
     QVERIFY(qFuzzyCompare(r.y(), r2.y()));
     QVERIFY(qFuzzyCompare(static_cast<float>(r.width()), static_cast<float>(r2.width())));
@@ -451,7 +451,7 @@ void LQtUtilsTest::test_case16()
 
 struct LQTTestProducer : public QThread
 {
-    LQTTestProducer(LQTBlockingQueue<int>* queue) : QThread(), m_queue(queue) {}
+    LQTTestProducer(lqt::BlockingQueue<int>* queue) : QThread(), m_queue(queue) {}
     void run() override {
         static int i = 0;
         while (!isInterruptionRequested()) {
@@ -466,12 +466,12 @@ struct LQTTestProducer : public QThread
     }
 
 private:
-    LQTBlockingQueue<int>* m_queue;
+    lqt::BlockingQueue<int>* m_queue;
 };
 
 struct LQTTestConsumer : public QThread
 {
-    LQTTestConsumer(LQTBlockingQueue<int>* queue) : QThread(), m_queue(queue) {}
+    LQTTestConsumer(lqt::BlockingQueue<int>* queue) : QThread(), m_queue(queue) {}
     void run() override {
         static int i = 0;
         while (!isInterruptionRequested()) {
@@ -480,7 +480,7 @@ struct LQTTestConsumer : public QThread
             if (!ret)
                 return;
             QVERIFY(*ret == i++);
-            QVERIFY(lqt_in_range(m_queue->size(), 0, 11));
+            QVERIFY(lqt::in_range(m_queue->size(), 0, 11));
         }
     }
     void requestDispose() {
@@ -489,12 +489,12 @@ struct LQTTestConsumer : public QThread
     }
 
 private:
-    LQTBlockingQueue<int>* m_queue;
+    lqt::BlockingQueue<int>* m_queue;
 };
 
 void LQtUtilsTest::test_case17()
 {
-    LQTBlockingQueue<int> queue(10, QSL("display_name"));
+    lqt::BlockingQueue<int> queue(10, QSL("display_name"));
     LQTTestConsumer consumer(&queue);
     LQTTestProducer producer(&queue);
     consumer.start();
@@ -512,7 +512,7 @@ void LQtUtilsTest::test_case17()
 
 void LQtUtilsTest::test_case18()
 {
-    LQTBlockingQueue<int> queue(2);
+    lqt::BlockingQueue<int> queue(2);
     queue.enqueue(0);
     queue.enqueue(1);
     QVERIFY(queue.size() == 2);
@@ -543,13 +543,13 @@ void LQtUtilsTest::test_case18()
 
 void LQtUtilsTest::test_case19()
 {
-    QVERIFY(qFuzzyCompare(string_to_float(QSL("1.6"), 1.6), 1.6f));
-    QVERIFY(qFuzzyCompare(string_to_float(QSL("abc"), 1.6), 1.6f));
-    QVERIFY(string_to_int(QSL("5"), 5) == 5);
+    QVERIFY(qFuzzyCompare(lqt::string_to_float(QSL("1.6"), 1.6), 1.6f));
+    QVERIFY(qFuzzyCompare(lqt::string_to_float(QSL("abc"), 1.6), 1.6f));
+    QVERIFY(lqt::string_to_int(QSL("5"), 5) == 5);
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Woverflow"
-    QVERIFY(string_to_int(QString("%1").arg(std::numeric_limits<qint64>::max() + 100), 1) == 1);
-    QVERIFY(string_to_int64(QString("%1").arg(std::numeric_limits<qint64>::max() + 100),
+    QVERIFY(lqt::string_to_int(QString("%1").arg(std::numeric_limits<qint64>::max() + 100), 1) == 1);
+    QVERIFY(lqt::string_to_int64(QString("%1").arg(std::numeric_limits<qint64>::max() + 100),
                             1) == std::numeric_limits<qint64>::max() + 100);
 #pragma GCC diagnostic pop
 }
@@ -560,7 +560,7 @@ void LQtUtilsTest::test_case20()
     t.start();
     QEventLoop loop;
     QVERIFY(&t != QThread::currentThread());
-    lqt_run_in_thread(&t, [&loop, &t] {
+    lqt::run_in_thread(&t, [&loop, &t] {
         QVERIFY(&t == QThread::currentThread());
         loop.quit();
     });
@@ -571,7 +571,7 @@ void LQtUtilsTest::test_case20()
 
 void LQtUtilsTest::test_case21()
 {
-    LQTCacheValue<bool> boolCache;
+    lqt::CacheValue<bool> boolCache;
     QVERIFY(boolCache.value("value1", [] () -> bool { return true; }) == true);
     QVERIFY(boolCache.value("value1", [] () -> bool { return false; }) == true);
     QVERIFY(boolCache.value("value2", [] () -> bool { return false; }) == false);
@@ -586,7 +586,7 @@ void LQtUtilsTest::test_case21()
     boolCache.setValue("value1", false);
     QVERIFY(!boolCache.value("value1", [] { return false; }) == true);
 
-    LQTCacheValue<MyEnum::Value> enumCache;
+    lqt::CacheValue<MyEnum::Value> enumCache;
     QVERIFY(enumCache.value("value1", [] () -> MyEnum::Value { return MyEnum::Value1; }) == MyEnum::Value1);
     QVERIFY(enumCache.value("value1", [] () -> MyEnum::Value { return MyEnum::Value2; }) == MyEnum::Value1);
     QVERIFY(enumCache.value("value2", [] () -> MyEnum::Value { return MyEnum::Value1; }) == MyEnum::Value1);
@@ -601,26 +601,26 @@ void LQtUtilsTest::test_case22()
 
     QVERIFY(t != QThread::currentThread());
 
-    lqt_run_in_thread_sync(t, [t] {
+    lqt::run_in_thread_sync(t, [t] {
         QVERIFY(t == QThread::currentThread());
     });
 
     QObject* o = new QObject;
     o->moveToThread(t);
-    lqt_run_in_thread_sync(o, [t] {
+    lqt::run_in_thread_sync(o, [t] {
         QVERIFY(t == QThread::currentThread());
         return;
     });
 
     int testValue = 1;
-    QVERIFY(lqt_run_in_thread_sync<bool>(t, [&testValue] () -> bool {
+    QVERIFY(lqt::run_in_thread_sync<bool>(t, [&testValue] () -> bool {
         QThread::sleep(3);
         testValue = 5;
         return true;
     }));
     QVERIFY(testValue == 5);
 
-    QVERIFY(lqt_run_in_thread_sync<bool>(o, [] () -> bool {
+    QVERIFY(lqt::run_in_thread_sync<bool>(o, [] () -> bool {
         return true;
     }));
 
@@ -637,7 +637,7 @@ void LQtUtilsTest::test_case23()
         QFile::remove(tmpFilePath);
     });
 
-    QScopedPointer<LQTDownloader> downloader(new LQTDownloader(
+    QScopedPointer<lqt::Downloader> downloader(new lqt::Downloader(
                 QSL("https://raw.githubusercontent.com/carlonluca/"
                     "isogeometric-analysis/master/2.3/lagrange.svg.png"),
                 tmpFilePath));
@@ -647,7 +647,7 @@ void LQtUtilsTest::test_case23()
     QVERIFY(downloader->state() == LQTDownloaderState::S_DOWNLOADING);
 
     QEventLoop loop;
-    connect(downloader.data(), &LQTDownloader::stateChanged, this, [&loop, &downloader] {
+    connect(downloader.data(), &lqt::Downloader::stateChanged, this, [&loop, &downloader] {
         if (downloader->state() == LQTDownloaderState::S_DONE)
             loop.quit();
     });
@@ -663,7 +663,7 @@ void LQtUtilsTest::test_case24()
         QFile::remove(tmpFilePath);
     });
 
-    QScopedPointer<LQTDownloader> downloader(new LQTDownloader(
+    QScopedPointer<lqt::Downloader> downloader(new lqt::Downloader(
                 QSL("https://raw.githubusercontent.com/carlonluca/"
                     "isogeometric-analysis/master/4.5/iga_knot_insertion_plate_hole.svg.png"),
                 tmpFilePath));
@@ -672,7 +672,7 @@ void LQtUtilsTest::test_case24()
     downloader->download();
 
     QEventLoop loop;
-    connect(downloader.data(), &LQTDownloader::downloadProgress, this, [&loop, &downloader] {
+    connect(downloader.data(), &lqt::Downloader::downloadProgress, this, [&loop, &downloader] {
         QVERIFY(downloader->state() == LQTDownloaderState::S_DOWNLOADING);
         downloader->abort();
         loop.quit();
@@ -683,7 +683,7 @@ void LQtUtilsTest::test_case24()
 
 void LQtUtilsTest::test_case25()
 {
-    QScopedPointer<LQTDownloader> downloader(new LQTDownloader(
+    QScopedPointer<lqt::Downloader> downloader(new lqt::Downloader(
                 QSL("https://raw.githubusercontent.com/carlonluca/"
                     "isogeometric-analysis/master/4.5/iga_knot_insertion_plate_hole.svg.png"),
                 QSL("/tmp/dirthatdoesnotexist/tmp.png")));
@@ -692,7 +692,7 @@ void LQtUtilsTest::test_case25()
     downloader->download();
 
     QEventLoop loop;
-    connect(downloader.data(), &LQTDownloader::stateChanged, this, [&loop, &downloader] {
+    connect(downloader.data(), &lqt::Downloader::stateChanged, this, [&loop, &downloader] {
         if (downloader->state() == LQTDownloaderState::S_IO_FAILURE) {
             downloader->abort();
             loop.quit();
@@ -709,19 +709,19 @@ void LQtUtilsTest::test_case26()
         QFile::remove(tmpFilePath);
     });
 
-    QScopedPointer<LQTDownloader> downloader(new LQTDownloader(
+    QScopedPointer<lqt::Downloader> downloader(new lqt::Downloader(
                 QSL("https://raw.githubusercontent.com/carlonluca/"
                 "isogeometric-analysis/master/4.5/iga_knot_insertion_plate_hole.svg.png"),
                 tmpFilePath));
     QVERIFY(downloader->state() == LQTDownloaderState::S_IDLE);
 
     downloader->download();
-    connect(downloader.data(), &LQTDownloader::downloadProgress, this, [&downloader] (qint64 progress, qint64 total) {
+    connect(downloader.data(), &lqt::Downloader::downloadProgress, this, [&downloader] (qint64 progress, qint64 total) {
         qDebug() << "Downloading:" << progress << "/" << total << downloader->state();
     });
 
     QEventLoop loop;
-    connect(downloader.data(), &LQTDownloader::stateChanged, this, [&loop, &downloader] {
+    connect(downloader.data(), &lqt::Downloader::stateChanged, this, [&loop, &downloader] {
         QVERIFY(downloader->state() == LQTDownloaderState::S_DOWNLOADING ||
                 downloader->state() == LQTDownloaderState::S_DONE);
         if (downloader->state() == LQTDownloaderState::S_DONE)
@@ -729,7 +729,7 @@ void LQtUtilsTest::test_case26()
     });
     loop.exec();
     QVERIFY(downloader->state() == LQTDownloaderState::S_DONE);
-    QVERIFY(lqt_hash(tmpFilePath) == QByteArray::fromHex(QSL("b471254ec7c69949125834e107b45dd5").toUtf8()));
+    QVERIFY(lqt::hash(tmpFilePath) == QByteArray::fromHex(QSL("b471254ec7c69949125834e107b45dd5").toUtf8()));
 }
 
 void LQtUtilsTest::test_case27()
@@ -739,17 +739,17 @@ void LQtUtilsTest::test_case27()
         QFile::remove(tmpFilePath);
     });
 
-    lqt_random_file(tmpFilePath, 1024);
+    lqt::random_file(tmpFilePath, 1024);
     QVERIFY(QFile(tmpFilePath).size() == 1024);
-    QByteArray md51 = lqt_hash(tmpFilePath);
+    QByteArray md51 = lqt::hash(tmpFilePath);
 
-    lqt_random_file(tmpFilePath, 2048);
+    lqt::random_file(tmpFilePath, 2048);
     QVERIFY(QFile(tmpFilePath).size() == 2048);
-    QByteArray md52 = lqt_hash(tmpFilePath);
+    QByteArray md52 = lqt::hash(tmpFilePath);
 
-    lqt_random_file(tmpFilePath, 4000);
+    lqt::random_file(tmpFilePath, 4000);
     QVERIFY(QFile(tmpFilePath).size() == 4000);
-    QByteArray md53 = lqt_hash(tmpFilePath);
+    QByteArray md53 = lqt::hash(tmpFilePath);
 
     QVERIFY(md51 != md52);
     QVERIFY(md51 != md53);
@@ -761,10 +761,10 @@ void LQtUtilsTest::test_case27()
 
 void LQtUtilsTest::test_case28()
 {
-    QVERIFY(lqt_approx_equal(.01f, .01f, .0f));
-    QVERIFY(!lqt_approx_equal(.01f, .02f, .0f));
-    QVERIFY(lqt_approx_equal(1.f/2, 2.f/4, .0001f));
-    QVERIFY(lqt_approx_equal(0.3, 0.1 + 0.2, 0.0005));
+    QVERIFY(lqt::approx_equal(.01f, .01f, .0f));
+    QVERIFY(!lqt::approx_equal(.01f, .02f, .0f));
+    QVERIFY(lqt::approx_equal(1.f/2, 2.f/4, .0001f));
+    QVERIFY(lqt::approx_equal(0.3, 0.1 + 0.2, 0.0005));
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)

@@ -4,7 +4,9 @@
 
 //#define DEBUG_LOGS
 
-LQTDownloaderPriv::LQTDownloaderPriv(const QUrl& url, const QString &filePath, QObject* parent) :
+namespace lqt {
+
+DownloaderPriv::DownloaderPriv(const QUrl& url, const QString &filePath, QObject* parent) :
     QObject(parent)
   , m_manager(new QNetworkAccessManager(this))
   , m_reply(nullptr)
@@ -12,20 +14,20 @@ LQTDownloaderPriv::LQTDownloaderPriv(const QUrl& url, const QString &filePath, Q
   , m_filePath(filePath)
   , m_file(m_filePath) {}
 
-LQTDownloaderPriv::~LQTDownloaderPriv()
+DownloaderPriv::~DownloaderPriv()
 {
 #ifdef DEBUG_LOGS
     qDebug() << Q_FUNC_INFO;
 #endif
 }
 
-void LQTDownloaderPriv::download()
+void DownloaderPriv::download()
 {
     set_state(LQTDownloaderState::S_DOWNLOADING);
 
     m_reply = m_manager->get(QNetworkRequest(m_url));
     connect(m_reply, &QNetworkReply::downloadProgress,
-            this, &LQTDownloaderPriv::downloadProgress);
+            this, &DownloaderPriv::downloadProgress);
     connect(m_reply, &QNetworkReply::readyRead, this, [this] {
         if (m_state != LQTDownloaderState::S_DOWNLOADING)
             return;
@@ -44,7 +46,7 @@ void LQTDownloaderPriv::download()
     });
 }
 
-void LQTDownloaderPriv::abort()
+void DownloaderPriv::abort()
 {
     if (m_reply) {
         m_reply->abort();
@@ -55,7 +57,7 @@ void LQTDownloaderPriv::abort()
     set_state(LQTDownloaderState::S_ABORTED);
 }
 
-void LQTDownloaderPriv::write(const QByteArray& data)
+void DownloaderPriv::write(const QByteArray& data)
 {
     if (m_state != LQTDownloaderState::S_DOWNLOADING)
         return;
@@ -79,31 +81,31 @@ class LQTThread : public QThread
 #endif
 };
 
-LQTDownloader::LQTDownloader(const QUrl& url, const QString& filePath, QObject* parent) :
+Downloader::Downloader(const QUrl& url, const QString& filePath, QObject* parent) :
     QObject(parent)
   , m_url(url)
   , m_filePath(filePath)
   , m_thread(new LQTThread)
-  , m_threadContext(new LQTDownloaderPriv(url, filePath))
+  , m_threadContext(new DownloaderPriv(url, filePath))
 {
     LQTDownloaderState::registerEnum("com.luke", 1, 0);
 
     m_threadContext->moveToThread(m_thread);
     m_thread->start();
 
-    connect(m_threadContext, &LQTDownloaderPriv::stateChanged,
-            this, &LQTDownloader::stateChanged);
-    connect(m_threadContext, &LQTDownloaderPriv::downloadProgress,
-            this, &LQTDownloader::downloadProgress);
-    connect(this, &LQTDownloader::destroyed,
+    connect(m_threadContext, &DownloaderPriv::stateChanged,
+            this, &Downloader::stateChanged);
+    connect(m_threadContext, &DownloaderPriv::downloadProgress,
+            this, &Downloader::downloadProgress);
+    connect(this, &Downloader::destroyed,
             m_threadContext, &QObject::deleteLater);
-    connect(m_threadContext, &LQTDownloaderPriv::destroyed,
+    connect(m_threadContext, &DownloaderPriv::destroyed,
             m_thread, &QThread::quit);
     connect(m_thread, &QThread::finished,
             m_thread, &QThread::deleteLater);
 }
 
-LQTDownloader::~LQTDownloader()
+Downloader::~Downloader()
 {
 #ifdef DEBUG_LOGS
     qDebug() << Q_FUNC_INFO;
@@ -112,7 +114,7 @@ LQTDownloader::~LQTDownloader()
         abort();
 }
 
-void LQTDownloader::download()
+void Downloader::download()
 {
     if (m_threadContext->state() != LQTDownloaderState::S_IDLE) {
         qFatal("Do not re-use the downloader");
@@ -122,8 +124,10 @@ void LQTDownloader::download()
     QMetaObject::invokeMethod(m_threadContext, "download", Qt::BlockingQueuedConnection);
 }
 
-void LQTDownloader::abort()
+void Downloader::abort()
 {
     if (m_threadContext->state() == LQTDownloaderState::S_DOWNLOADING)
         QMetaObject::invokeMethod(m_threadContext, "abort", Qt::BlockingQueuedConnection);
 }
+
+} // namespace

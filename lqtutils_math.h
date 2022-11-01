@@ -27,6 +27,8 @@
 
 #include <cmath>
 
+namespace lqt {
+
 /**
  * @brief in_range<T> Returns true iif val is in [a, b).
  * @param val
@@ -34,7 +36,7 @@
  * @param b
  * @return
  */
-template<typename T> inline bool lqt_in_range(const T& val, const T& a, const T& b)
+template<typename T> inline bool in_range(const T& val, const T& a, const T& b)
 { return val >= a && val < b; }
 
 /**
@@ -46,7 +48,9 @@ template<typename T> inline bool lqt_in_range(const T& val, const T& a, const T&
  * @param epsilon
  * @return
  */
-template<typename T> inline bool lqt_approx_equal(const T& a, const T& b, const T& epsilon)
+template<typename T> inline bool approx_equal(const T& a, const T& b, const T& epsilon)
 { return std::fabs(a - b) <= ( (std::fabs(a) < std::fabs(b) ? std::fabs(b) : std::fabs(a)) * epsilon); }
+
+} // namespace
 
 #endif // LQTUTILS_MATH

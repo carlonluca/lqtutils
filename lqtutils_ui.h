@@ -30,16 +30,17 @@
 #include <QList>
 #include <QJSValue>
 
-#include "lqtutils_prop.h"
 #include "lqtutils_freq.h"
 
 class QQuickWindow;
 
-class LQTFrameRateMonitor : public LQTFreqMeter
+namespace lqt {
+
+class FrameRateMonitor : public LQTFreqMeter
 {
     Q_OBJECT
 public:
-    LQTFrameRateMonitor(QQuickWindow* w = nullptr, QObject* parent = nullptr);
+    FrameRateMonitor(QQuickWindow* w = nullptr, QObject* parent = nullptr);
     Q_INVOKABLE void setWindow(QQuickWindow* w);
 };
 
@@ -51,5 +52,7 @@ public:
 
     Q_INVOKABLE void singleShot(int msec, QJSValue callback);
 };
+
+} // namespace
 
 #endif // LQTUTILS_UI_H

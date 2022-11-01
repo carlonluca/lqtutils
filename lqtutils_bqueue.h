@@ -32,11 +32,13 @@
 
 #include <optional>
 
+namespace lqt {
+
 template<typename T>
-class LQTBlockingQueue
+class BlockingQueue
 {
 public:
-    LQTBlockingQueue(int capacity, const QString& name = QString()) :
+    BlockingQueue(int capacity, const QString& name = QString()) :
         m_capacity(capacity), m_disposed(false), m_name(name) {}
     bool enqueue(const T& e, qint64 timeout = -1);
     bool enqueueDropFirst(const T& e, qint64 timeout = -1);
@@ -62,7 +64,7 @@ private:
 };
 
 template<typename T>
-bool LQTBlockingQueue<T>::enqueue(const T& e, qint64 timeout)
+bool BlockingQueue<T>::enqueue(const T& e, qint64 timeout)
 {
     QMutexLocker locker(&m_mutex);
     if (m_disposed)
@@ -81,7 +83,7 @@ bool LQTBlockingQueue<T>::enqueue(const T& e, qint64 timeout)
 }
 
 template<typename T>
-bool LQTBlockingQueue<T>::enqueueDropFirst(const T& e, qint64 timeout)
+bool BlockingQueue<T>::enqueueDropFirst(const T& e, qint64 timeout)
 {
     QMutexLocker locker(&m_mutex);
     if (m_disposed)
@@ -101,7 +103,7 @@ bool LQTBlockingQueue<T>::enqueueDropFirst(const T& e, qint64 timeout)
 }
 
 template<typename T>
-std::optional<T> LQTBlockingQueue<T>::waitFirst(bool remove, qint64 timeout)
+std::optional<T> BlockingQueue<T>::waitFirst(bool remove, qint64 timeout)
 {
     QMutexLocker locker(&m_mutex);
     if (m_disposed)
@@ -122,40 +124,40 @@ std::optional<T> LQTBlockingQueue<T>::waitFirst(bool remove, qint64 timeout)
 }
 
 template<typename T>
-std::optional<T> LQTBlockingQueue<T>::dequeue(qint64 timeout)
+std::optional<T> BlockingQueue<T>::dequeue(qint64 timeout)
 {
     return waitFirst(true, timeout);
 }
 
 template<typename T>
-std::optional<T> LQTBlockingQueue<T>::peek(qint64 timeout)
+std::optional<T> BlockingQueue<T>::peek(qint64 timeout)
 {
     return waitFirst(false, timeout);
 }
 
 template<typename T>
-int LQTBlockingQueue<T>::size() const
+int BlockingQueue<T>::size() const
 {
     QMutexLocker locker(&m_mutex);
     return m_queue.size();
 }
 
 template<typename T>
-bool LQTBlockingQueue<T>::isEmpty() const
+bool BlockingQueue<T>::isEmpty() const
 {
     QMutexLocker locker(&m_mutex);
     return m_queue.isEmpty();
 }
 
 template<typename T>
-bool LQTBlockingQueue<T>::isDisposed() const
+bool BlockingQueue<T>::isDisposed() const
 {
     QMutexLocker locker(&m_mutex);
     return m_disposed;
 }
 
 template<typename T>
-void LQTBlockingQueue<T>::requestDispose()
+void BlockingQueue<T>::requestDispose()
 {
     QMutexLocker locker(&m_mutex);
     m_disposed = true;
@@ -164,10 +166,12 @@ void LQTBlockingQueue<T>::requestDispose()
 }
 
 template<typename T>
-void LQTBlockingQueue<T>::lockQueue(std::function<void(QList<T>*)> callback)
+void BlockingQueue<T>::lockQueue(std::function<void(QList<T>*)> callback)
 {
     QMutexLocker locker(&m_mutex);
     callback(&m_queue);
+}
+
 }
 
 #endif // LQTUTILS_BQUEUE

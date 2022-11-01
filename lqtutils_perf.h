@@ -41,13 +41,15 @@
 #define LC_UNLIKELY(x) (x)
 #endif // __GNUC__
 
+namespace lqt {
+
 /**
  * @brief measure_time Measures time spent in lambda f.
  * @param f The procedure to time.
  * @param callback The callback returning the result.
  * @return Time taken to compute f.
  */
-inline void l_measure_time(std::function<void()> f, std::function<void(const qint64&)> callback = nullptr, bool disable = false)
+inline void measure_time(std::function<void()> f, std::function<void(const qint64&)> callback = nullptr, bool disable = false)
 {
     if (disable)
         f();
@@ -70,7 +72,7 @@ inline void l_measure_time(std::function<void()> f, std::function<void(const qin
  * @return Time taken to compute f and result of f.
  */
 template<typename T>
-inline T l_measure_time(std::function<T()> f, std::function<void(const qint64&)> callback = nullptr, bool disable = false)
+inline T measure_time(std::function<T()> f, std::function<void(const qint64&)> callback = nullptr, bool disable = false)
 {
     if (disable)
         return f();
@@ -85,5 +87,7 @@ inline T l_measure_time(std::function<T()> f, std::function<void(const qint64&)>
         return res;
     }
 }
+
+} // namespace
 
 #endif // LQTUTILS_PERF_H

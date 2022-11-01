@@ -82,8 +82,10 @@
         QString sectionToPath() const                            \
         { return (!m_section.isEmpty() ? m_section + "/" : ""); }
 
+namespace lqt {
+
 template<typename T>
-class LQTCacheValue
+class CacheValue
 {
 public:
     T value(const QString& key, std::function<T()> init);
@@ -97,7 +99,7 @@ private:
 };
 
 template<typename T>
-T LQTCacheValue<T>::value(const QString& key, std::function<T()> init)
+T CacheValue<T>::value(const QString& key, std::function<T()> init)
 {
     QMutexLocker locker(&m_mutex);
     if (m_cache.contains(key))
@@ -108,24 +110,26 @@ T LQTCacheValue<T>::value(const QString& key, std::function<T()> init)
 }
 
 template<typename T>
-void LQTCacheValue<T>::reset(const QString& key)
+void CacheValue<T>::reset(const QString& key)
 {
     QMutexLocker locker(&m_mutex);
     m_cache.remove(key);
 }
 
 template<typename T>
-void LQTCacheValue<T>::setValue(const QString& key, const T& v)
+void CacheValue<T>::setValue(const QString& key, const T& v)
 {
     QMutexLocker locker(&m_mutex);
     m_cache.insert(key, v);
 }
 
 template<typename T>
-bool LQTCacheValue<T>::isSet(const QString& key)
+bool CacheValue<T>::isSet(const QString& key)
 {
     QMutexLocker locker(&m_mutex);
     return m_cache.contains(key);
 }
+
+} // namespace
 
 #endif

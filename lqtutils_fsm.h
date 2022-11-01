@@ -31,14 +31,16 @@
 
 #include "lqtutils_prop.h"
 
-class LQTLoggedState : public QState
+namespace lqt {
+
+class LoggedState : public QState
 {
     Q_OBJECT
     L_RW_PROP(QString, stateName, setStateName)
 public:
-    LQTLoggedState(QState::ChildMode childMode, QString name = QString(), QState* parent = nullptr) :
+    LoggedState(QState::ChildMode childMode, QString name = QString(), QState* parent = nullptr) :
         QState(childMode, parent) { m_stateName = name; init(); }
-    LQTLoggedState(QString name = QString(), QState* parent = nullptr) :
+    LoggedState(QString name = QString(), QState* parent = nullptr) :
         QState(parent) { m_stateName = name; init(); }
 
 protected:
@@ -48,5 +50,7 @@ protected:
         });
     }
 };
+
+} // namespace
 
 #endif // LQTUTILS_FSM_H

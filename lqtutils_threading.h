@@ -41,7 +41,9 @@
         QMetaObject::invokeMethod(obj, __VA_ARGS__, type);                                                           \
     }
 
-template<typename T> T lqt_run_in_thread_sync(QObject* o, std::function<T()> f)
+namespace lqt {
+
+template<typename T> T run_in_thread_sync(QObject* o, std::function<T()> f)
 {
     QSemaphore sem;
     T ret;
@@ -53,7 +55,7 @@ template<typename T> T lqt_run_in_thread_sync(QObject* o, std::function<T()> f)
     return ret;
 }
 
-template<typename T> T lqt_run_in_thread_sync(QThread* t, std::function<T()> f)
+template<typename T> T run_in_thread_sync(QThread* t, std::function<T()> f)
 {
     QSemaphore sem;
     T ret;
@@ -68,7 +70,7 @@ template<typename T> T lqt_run_in_thread_sync(QThread* t, std::function<T()> f)
     return ret;
 }
 
-inline void lqt_run_in_thread_sync(QThread* t, std::function<void()> f)
+inline void run_in_thread_sync(QThread* t, std::function<void()> f)
 {
     QSemaphore sem;
     QObject* o = new QObject;
@@ -81,7 +83,7 @@ inline void lqt_run_in_thread_sync(QThread* t, std::function<void()> f)
     sem.acquire();
 }
 
-inline void lqt_run_in_thread_sync(QObject* o, std::function<void()> f)
+inline void run_in_thread_sync(QObject* o, std::function<void()> f)
 {
     QSemaphore sem;
     QTimer::singleShot(0, o, [&f, &sem] {
@@ -91,7 +93,7 @@ inline void lqt_run_in_thread_sync(QObject* o, std::function<void()> f)
     sem.acquire();
 }
 
-inline void lqt_run_in_thread(QThread* t, std::function<void()> f)
+inline void run_in_thread(QThread* t, std::function<void()> f)
 {
     QObject* o = new QObject;
     o->moveToThread(t);
@@ -102,14 +104,16 @@ inline void lqt_run_in_thread(QThread* t, std::function<void()> f)
 }
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-class LQTRecursiveMutex : public QMutex
+class RecursiveMutex : public QMutex
 {
 public:
     LQTRecursiveMutex() :
         QMutex(QMutex::Recursive) {}
 };
 #else
-typedef QRecursiveMutex LQTRecursiveMutex;
+typedef QRecursiveMutex RecursiveMutex;
 #endif
+
+} // namespace
 
 #endif // LQTUTILS_THREADING_H

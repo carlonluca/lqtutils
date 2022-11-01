@@ -34,6 +34,8 @@
 #define QSL QStringLiteral
 #endif // QSL
 
+namespace lqt {
+
 inline QString path_combine(std::initializer_list<QString> l)
 {
     QString ret;
@@ -150,5 +152,7 @@ inline QString size_to_string(const QSize& size)
             .arg(size.width())
             .arg(size.height());
 }
+
+} // namespace
 
 #endif // LQTUTILS_STRING_H

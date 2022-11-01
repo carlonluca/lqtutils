@@ -43,13 +43,15 @@ L_DECLARE_ENUM(LQTDownloaderState,
                S_IO_FAILURE,
                S_ABORTED)
 
-class LQTDownloaderPriv : public QObject
+namespace lqt {
+
+class DownloaderPriv : public QObject
 {
     Q_OBJECT
     L_RO_PROP_AS(LQTDownloaderState::Value, state, LQTDownloaderState::S_IDLE)
 public:
-    LQTDownloaderPriv(const QUrl& url, const QString& filePath, QObject* parent = nullptr);
-    ~LQTDownloaderPriv();
+    DownloaderPriv(const QUrl& url, const QString& filePath, QObject* parent = nullptr);
+    ~DownloaderPriv();
 
 public slots:
     void download();
@@ -67,13 +69,13 @@ private:
     QFile m_file;
 };
 
-class LQTDownloader : public QObject
+class Downloader : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool state READ state NOTIFY stateChanged)
 public:
-    LQTDownloader(const QUrl& url, const QString& filePath, QObject* parent = nullptr);
-    ~LQTDownloader();
+    Downloader(const QUrl& url, const QString& filePath, QObject* parent = nullptr);
+    ~Downloader();
 
     void download();
     void abort();
@@ -86,9 +88,11 @@ signals:
 
 private:
     QThread* m_thread;
-    LQTDownloaderPriv* m_threadContext;
+    DownloaderPriv* m_threadContext;
     QUrl m_url;
     QString m_filePath;
 };
+
+} // namespace
 
 #endif // LQTUTILS_NET
