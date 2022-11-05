@@ -31,7 +31,7 @@
 namespace lqt {
 
 FrameRateMonitor::FrameRateMonitor(QQuickWindow* w, QObject* parent) :
-    LQTFreqMeter(parent)
+    FreqMeter(parent)
 {
     setWindow(w);
 }

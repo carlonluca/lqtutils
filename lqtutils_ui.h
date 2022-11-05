@@ -36,7 +36,7 @@ class QQuickWindow;
 
 namespace lqt {
 
-class FrameRateMonitor : public LQTFreqMeter
+class FrameRateMonitor : public FreqMeter
 {
     Q_OBJECT
 public:

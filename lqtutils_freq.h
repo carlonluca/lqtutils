@@ -36,12 +36,12 @@ class QTimer;
 
 namespace lqt {
 
-class LQTFreqMeter : public QObject
+class FreqMeter : public QObject
 {
     Q_OBJECT
     L_RO_PROP_AS(int, freq, 0)
 public:
-    explicit LQTFreqMeter(QObject* parent = nullptr);
+    explicit FreqMeter(QObject* parent = nullptr);
 
 public slots:
     void registerSample();

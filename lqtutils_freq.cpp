@@ -32,25 +32,25 @@
 
 namespace lqt {
 
-LQTFreqMeter::LQTFreqMeter(QObject* parent) :
+FreqMeter::FreqMeter(QObject* parent) :
     QObject(parent)
 {
     m_refreshTimer = new QTimer(this);
     connect(m_refreshTimer, &QTimer::timeout,
-            this, &LQTFreqMeter::refresh);
+            this, &FreqMeter::refresh);
     m_refreshTimer->setInterval(AUTO_REFRESH_INTERVAL);
     m_refreshTimer->setSingleShot(true);
     m_refreshTimer->start();
 }
 
-void LQTFreqMeter::registerSample()
+void FreqMeter::registerSample()
 {
     QMutexLocker locker(&m_mutex);
     m_timestamps.append(QDateTime::currentDateTime());
-    QTimer::singleShot(0, this, &LQTFreqMeter::refresh);
+    QTimer::singleShot(0, this, &FreqMeter::refresh);
 }
 
-void LQTFreqMeter::refresh()
+void FreqMeter::refresh()
 {
     QMutexLocker locker(&m_mutex);
     QDateTime now = QDateTime::currentDateTime();
