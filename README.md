@@ -203,13 +203,13 @@ MyEnum::registerEnum("com.luke", 1, 0);
 ```
 
 ## Cache values and init automatically
-```LQTCacheValue``` caches values of any type in a hash and calls the provided lambda if the value was never initialized. This is useful when writing settings classes and you want to read only once.
+```lqt::CacheValue``` caches values of any type in a hash and calls the provided lambda if the value was never initialized. This is useful when writing settings classes and you want to read only once.
 
 ## lqtutils_fsm.h
 A QState subclass that includes a state name and prints it to stdout when each state is entered.
 
 ## lqtutils_threading.h
-```LQTRecursiveMutex``` is a simple QMutex subclass defaulting to recursive mode.
+```lqt::RecursiveMutex``` is a simple QMutex subclass defaulting to recursive mode.
 
 ```INVOKE_AWAIT_ASYNC``` is a wrapper around QMetaObject::invokeMethod that allows to execute a slot or lambda in the thread of an obj, synchronously awaiting for the result. E.g.:
 ```c++
@@ -233,7 +233,7 @@ A class that can be used to execute a lambda whenever the current scope ends, e.
 ```c++
 int i = 9;
 {
-    LQTAutoExec autoexec([&] {
+    lqt::AutoExec autoexec([&] {
         i++;
     });
     QCOMPARE(i, 9);
@@ -241,15 +241,15 @@ int i = 9;
 QCOMPARE(i, 10);
 ```
 
-```LQTSharedAutoExec```: a class that can create copiable autoexec objects. Useful to implement locks with a function being executed when the lock is released.
+```lqt::SharedAutoExec```: a class that can create copiable autoexec objects. Useful to implement locks with a function being executed when the lock is released.
 
 ## lqtutils_freq.h
 
-```LQTFreqMeter``` is a class that allows to measure the rate of any sampling activity. For example the refresh rate (see lqtutils_ui.h) or the rate of some kind of processing.
+```lqt::FreqMeter``` is a class that allows to measure the rate of any sampling activity. For example the refresh rate (see lqtutils_ui.h) or the rate of some kind of processing.
 
 ## lqtutils_ui.h
 
-```LQTFrameRateMonitor``` is a class that can be used to measure the current frame rate of a QQuickWindow. The class monitors the frequency of frame swaps and provides a property with a value reporting the frame rate during the last second.
+```lqt::FrameRateMonitor``` is a class that can be used to measure the current frame rate of a QQuickWindow. The class monitors the frequency of frame swaps and provides a property with a value reporting the frame rate during the last second.
 
 ### How to Use
 
@@ -257,7 +257,7 @@ To use it, simply instantiate it when you need it like this:
 
 ```c++
 QQuickView view;
-LQTFrameRateMonitor* monitor = new LQTFrameRateMonitor(&view);
+LQTFrameRateMonitor* monitor = new lqt::FrameRateMonitor(&view);
 ```
 
 expose it to QML if you need it:
@@ -274,7 +274,7 @@ Text { text: qsTr("fps: ") + fpsmonitor.freq }
 
 ### Details
 
-The frame rate is provided in a notifiable property of the ```LQTFrameRateMonitor``` class:
+The frame rate is provided in a notifiable property of the ```lqt::FrameRateMonitor``` class:
 
 ```c++
 L_RO_PROP_AS(int, freq, 0)
@@ -353,7 +353,7 @@ private:
 
 [...]
 
-LQTBlockingQueue<int> queue(10, QSL("display_name"));
+lqt::BlockingQueue<int> queue(10, QSL("display_name"));
 LQTTestConsumer consumer(&queue);
 LQTTestProducer producer(&queue);
 consumer.start();
@@ -371,16 +371,16 @@ consumer.wait();
 
 ## lqtutils_net.h
 
-The class ```LQTDownloader``` can be used to download a URL to a file in a background thread. Example:
+The class ```lqt::Downloader``` can be used to download a URL to a file in a background thread. Example:
 
 ```c++
-QScopedPointer<LQTDownloader> downloader(new LQTDownloader(url, filePath));
+QScopedPointer<lqt::Downloader> downloader(new LQTDownloader(url, filePath));
 downloader->download();
-connect(downloader.data(), &LQTDownloader::downloadProgress, this, [&downloader] (qint64 progress, qint64 total) {
+connect(downloader.data(), &lqt::Downloader::downloadProgress, this, [&downloader] (qint64 progress, qint64 total) {
     qDebug() << "Downloading:" << progress << "/" << total << downloader->state();
 });
-connect(downloader.data(), &LQTDownloader::stateChanged, this, [&loop, &downloader] {
-    if (downloader->state() == LQTDownloaderState::S_DONE)
+connect(downloader.data(), &lqt::Downloader::stateChanged, this, [&loop, &downloader] {
+    if (downloader->state() == lqt::DownloaderState::S_DONE)
         // Done
 });
 ```
