@@ -154,14 +154,14 @@ For gadgets:
 Contains a few tools that can be used to speed up writing simple settings to a file. Settings will still use QSettings and are therefore fully compatible. The macros are simply shortcuts to synthetise code. I only used this for creating ini files, but should work for other formats. An example:
 ```c++
 L_DECLARE_SETTINGS(LSettingsTest, new QSettings("settings.ini", QSettings::IniFormat))
-L_DEFINE_VALUE(QString, string1, QString("string1"), toString)
-L_DEFINE_VALUE(QSize, size, QSize(100, 100), toSize)
-L_DEFINE_VALUE(double, temperature, -1, toDouble)
-L_DEFINE_VALUE(QByteArray, image, QByteArray(), toByteArray)
+L_DEFINE_VALUE(QString, string1, QString("string1"))
+L_DEFINE_VALUE(QSize, size, QSize(100, 100))
+L_DEFINE_VALUE(double, temperature, -1)
+L_DEFINE_VALUE(QByteArray, image, QByteArray())
 L_END_CLASS
 
 L_DECLARE_SETTINGS(LSettingsTestSec1, new QSettings("settings.ini", QSettings::IniFormat), "SECTION_1")
-L_DEFINE_VALUE(QString, string2, QString("string2"), toString)
+L_DEFINE_VALUE(QString, string2, QString("string2"))
 L_END_CLASS
 ```
 This will provide an interface to a "strong type" settings file containing a string, a QSize value, a double, a jpg image and another string, in a specific section of the ini file. Each class is reentrant like QSettings and can be instantiated in multiple threads.
