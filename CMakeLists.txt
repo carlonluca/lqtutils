@@ -8,6 +8,7 @@ endif()
 
 add_library(lqtutils STATIC)
 target_sources(lqtutils PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_autoexec.h
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_string.h
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_bqueue.h
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_data.h

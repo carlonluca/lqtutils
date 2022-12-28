@@ -47,7 +47,7 @@
     public Q_SLOTS:                                                           \
         void set_##name(type value) {                                         \
             if (name() == value) return;                                      \
-            m_settings->setValue(sectionToPath() + #name, value);             \
+            m_settings->setValue(sectionToPath() + #name, QVariant::fromValue(value));             \
             emit name##Changed(value);                                        \
             emit notifier().name##Changed(value);                             \
         }                                                                     \

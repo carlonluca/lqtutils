@@ -28,6 +28,8 @@
 #include <QPainter>
 #include <QQmlEngine>
 #include <QDebug>
+#include <QMetaType>
+#include <QDataStream>
 
 #include "../lqtutils_prop.h"
 #include "../lqtutils_string.h"
@@ -41,6 +43,29 @@
 #include "../lqtutils_bqueue.h"
 #include "../lqtutils_net.h"
 #include "../lqtutils_data.h"
+
+struct LQTSerializeTest
+{
+    QString s;
+    int i;
+    QImage img;
+
+    bool operator==(const LQTSerializeTest& t) {
+        return s == t.s && i == t.i && img == t.img;
+    }
+};
+Q_DECLARE_METATYPE(LQTSerializeTest)
+
+QDataStream& operator<<(QDataStream& out, const LQTSerializeTest& v)
+{ return out << v.s << v.i << v.img; }
+
+QDataStream& operator>>(QDataStream& in, LQTSerializeTest& v)
+{
+    in >> v.s;
+    in >> v.i;
+    in >> v.img;
+    return in;
+}
 
 class LQtUtilsObject : public QObject
 {
@@ -59,8 +84,7 @@ class LQtUtilsObject : public QObject
     L_RW_PROP_REF_CS(QString, csPropRef, QSL("HELLO"))
     L_RO_PROP_REF_CS(QString, csRoPropRef, QSL("csRoPropRef"))
 public:
-     LQtUtilsObject(QObject* parent = nullptr) :
-     QObject(parent) {}
+     LQtUtilsObject(QObject* parent = nullptr) : QObject(parent) {}
 
 public slots:
     // Custom setter.
@@ -102,6 +126,7 @@ L_DEFINE_VALUE(QString, string1, QString("string1"), toString)
 L_DEFINE_VALUE(QSize, size, QSize(100, 100), toSize)
 L_DEFINE_VALUE(double, temperature, -1, toDouble)
 L_DEFINE_VALUE(QByteArray, image, QByteArray(), toByteArray)
+L_DEFINE_VALUE(LQTSerializeTest, customVariant, QVariant::fromValue(LQTSerializeTest()), value<LQTSerializeTest>)
 L_END_CLASS
 
 L_DECLARE_SETTINGS(LSettingsTestSec1, new QSettings("settings.ini", QSettings::IniFormat), "SECTION_1")
@@ -149,9 +174,14 @@ private slots:
     void test_case26();
     void test_case27();
     void test_case28();
+    void test_case29();
 };
 
-LQtUtilsTest::LQtUtilsTest() {}
+LQtUtilsTest::LQtUtilsTest()
+{
+    qRegisterMetaType<LQTSerializeTest>();
+}
+
 LQtUtilsTest::~LQtUtilsTest() {}
 
 void LQtUtilsTest::test_case1()
@@ -765,6 +795,22 @@ void LQtUtilsTest::test_case28()
     QVERIFY(!lqt::approx_equal(.01f, .02f, .0f));
     QVERIFY(lqt::approx_equal(1.f/2, 2.f/4, .0001f));
     QVERIFY(lqt::approx_equal(0.3, 0.1 + 0.2, 0.0005));
+}
+
+void LQtUtilsTest::test_case29()
+{
+    QImage img(100, 100, QImage::Format_ARGB32);
+    img.fill(Qt::red);
+    LQTSerializeTest t {
+        QSL("test"), 10, img
+    };
+
+    LSettingsTest().set_customVariant(t);
+
+    LQTSerializeTest t2 = LSettingsTest().customVariant();
+    QVERIFY(t.i == t2.i);
+    QVERIFY(t.img == t2.img);
+    QVERIFY(t.s == t2.s);
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)
