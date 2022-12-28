@@ -18,6 +18,7 @@ Test_qt5:
     - cd build
     - cmake ../qt5
     - make
+    - export QTEST_FUNCTION_TIMEOUT=10000000
     - ./LQtUtilsTest
 
 Test_qt61:
@@ -30,6 +31,7 @@ Test_qt61:
     - cd build
     - cmake ../qt6
     - make
+    - export QTEST_FUNCTION_TIMEOUT=10000000
     - ./LQtUtilsTest
 
 Test_qt62_jammy:
@@ -42,6 +44,7 @@ Test_qt62_jammy:
     - cd build
     - cmake ../qt6
     - make
+    - export QTEST_FUNCTION_TIMEOUT=10000000
     - ./LQtUtilsTest
 
 Test_qt63_jammy:
@@ -54,6 +57,7 @@ Test_qt63_jammy:
     - cd build
     - cmake ../qt6
     - make
+    - export QTEST_FUNCTION_TIMEOUT=10000000
     - ./LQtUtilsTest
 
 Test_qt64_jammy:
@@ -66,4 +70,5 @@ Test_qt64_jammy:
     - cd build
     - QT_HOST_PATH=/opt/Qt-arm64-6.4.0 cmake ../qt6
     - make
+    - export QTEST_FUNCTION_TIMEOUT=10000000
     - ./LQtUtilsTest
