@@ -122,15 +122,15 @@ L_RO_PROP(QStringList, myList, setMyList, QStringList() << "hello")
 L_END_CLASS
 
 L_DECLARE_SETTINGS(LSettingsTest, new QSettings("settings.ini", QSettings::IniFormat))
-L_DEFINE_VALUE(QString, string1, QString("string1"), toString)
-L_DEFINE_VALUE(QSize, size, QSize(100, 100), toSize)
-L_DEFINE_VALUE(double, temperature, -1, toDouble)
-L_DEFINE_VALUE(QByteArray, image, QByteArray(), toByteArray)
-L_DEFINE_VALUE(LQTSerializeTest, customVariant, QVariant::fromValue(LQTSerializeTest()), value<LQTSerializeTest>)
+L_DEFINE_VALUE(QString, string1, QString("string1"))
+L_DEFINE_VALUE(QSize, size, QSize(100, 100))
+L_DEFINE_VALUE(double, temperature, -1)
+L_DEFINE_VALUE(QByteArray, image, QByteArray())
+L_DEFINE_VALUE(LQTSerializeTest, customVariant, QVariant::fromValue(LQTSerializeTest()))
 L_END_CLASS
 
 L_DECLARE_SETTINGS(LSettingsTestSec1, new QSettings("settings.ini", QSettings::IniFormat), "SECTION_1")
-L_DEFINE_VALUE(QString, string2, QString("string2"), toString)
+L_DEFINE_VALUE(QString, string2, QString("string2"))
 L_END_CLASS
 
 L_DECLARE_ENUM(MyEnum,
