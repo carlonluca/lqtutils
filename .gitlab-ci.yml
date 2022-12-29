@@ -63,12 +63,12 @@ Test_qt63_jammy:
 Test_qt64_jammy:
   stage: test_qt64_jammy
   image:
-    name: "carlonluca/qt-dev:6.4.0"
+    name: "carlonluca/qt-dev:6.4.1"
     entrypoint: [""]
   script:
     - mkdir build
     - cd build
-    - QT_HOST_PATH=/opt/Qt-arm64-6.4.0 cmake ../qt6
+    - QT_HOST_PATH=/opt/Qt-arm64-6.4.1 cmake ../qt6
     - make
     - export QTEST_FUNCTION_TIMEOUT=10000000
     - ./LQtUtilsTest
