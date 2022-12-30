@@ -10,10 +10,10 @@
 Q_NAMESPACE
 
 L_DECLARE_SETTINGS(LQuickSettings, new QSettings(QSL("settings.ini"), QSettings::IniFormat))
-L_DEFINE_VALUE(int, appWidth, 200, toInt)
-L_DEFINE_VALUE(int, appHeight, 200, toInt)
-L_DEFINE_VALUE(int, appX, 100, toInt)
-L_DEFINE_VALUE(int, appY, 100, toInt)
+L_DEFINE_VALUE(int, appWidth, 200)
+L_DEFINE_VALUE(int, appHeight, 200)
+L_DEFINE_VALUE(int, appX, 100)
+L_DEFINE_VALUE(int, appY, 100)
 L_END_CLASS
 
 #endif // LQUICKSETTINGS_H
