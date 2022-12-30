@@ -41,7 +41,9 @@
 // Defines a single value inside the settings class.
 #define L_DEFINE_VALUE(type, name, def)                                                 \
     public:                                                                             \
-        type name() const {                                                             \
+        type name(bool create = false) const {                                          \
+            if (create && !m_settings->contains(#name))                                 \
+                m_settings->setValue(sectionToPath() + #name, def);                     \
             return m_settings->value(sectionToPath() + #name, def).value<type>();       \
         }                                                                               \
     public Q_SLOTS:                                                                     \

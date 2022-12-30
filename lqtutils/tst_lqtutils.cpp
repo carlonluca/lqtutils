@@ -84,7 +84,7 @@ class LQtUtilsObject : public QObject
     L_RW_PROP_REF_CS(QString, csPropRef, QSL("HELLO"))
     L_RO_PROP_REF_CS(QString, csRoPropRef, QSL("csRoPropRef"))
 public:
-     LQtUtilsObject(QObject* parent = nullptr) : QObject(parent) {}
+    LQtUtilsObject(QObject* parent = nullptr) : QObject(parent) {}
 
 public slots:
     // Custom setter.
