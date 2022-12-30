@@ -25,6 +25,8 @@
 #ifndef LQTUTILS_PROP_H
 #define LQTUTILS_PROP_H
 
+#include <QObject>
+
 // Define LQTUTILS_OMIT_ARG_FROM_SIGNAL to omit the argument from the change notification
 // signals.
 #ifdef LQTUTILS_OMIT_ARG_FROM_SIGNAL

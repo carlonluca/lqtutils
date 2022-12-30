@@ -6,25 +6,11 @@ if (Qt6_FOUND)
     find_package(Qt6 REQUIRED COMPONENTS StateMachine)
 endif()
 
-add_library(lqtutils STATIC)
-target_sources(lqtutils PRIVATE
-    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_autoexec.h
-    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_string.h
-    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_bqueue.h
-    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_data.h
-    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_enum.h
-    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_fsm.h
-    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_math.h
-    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_misc.h
-    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_perf.h
-    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_prop.h
-    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_settings.h
-    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_threading.h
-    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_time.h
-    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_ui.h ${CMAKE_CURRENT_LIST_DIR}/lqtutils_ui.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_net.h ${CMAKE_CURRENT_LIST_DIR}/lqtutils_net.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_freq.h ${CMAKE_CURRENT_LIST_DIR}/lqtutils_freq.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_fsm.h ${CMAKE_CURRENT_LIST_DIR}/lqtutils_fsm.cpp
+add_library(lqtutils STATIC
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_ui.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_net.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_freq.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_fsm.cpp
 )
 
 target_include_directories(lqtutils
