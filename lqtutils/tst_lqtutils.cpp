@@ -77,7 +77,7 @@ class LQtUtilsObject : public QObject
     L_RO_PROP_AS(QString, roTestAuto, QString())
     L_RO_PROP_AS(QString, roTestAuto2, QString("roTestAuto2"))
     L_RO_PROP_AS(QString, roTestAuto3)
-    L_RO_PROP(QString, test, setTest, QString())
+    L_RO_PROP(QString, test, setTest)
     L_RO_PROP_REF_AS(QString, refRoTestAuto)
     L_RO_PROP_REF_AS(QString, refRoTestAuto2, QString("refRoTestAuto2"))
     L_RW_PROP_CS(QString, csProp, QSL("HELLO"))

@@ -36,7 +36,7 @@
 #define EXPAND( x ) x
 #define L_SETTINGS_GET_MACRO(_1, _2, _3, NAME,...) NAME
 #define L_DECLARE_SETTINGS(...) \
-    EXPAND(L_SETTINGS_GET_MACRO(__VA_ARGS__, L_DECLARE_SETTINGS3, L_DECLARE_SETTINGS2)(__VA_ARGS__))
+    EXPAND(L_SETTINGS_GET_MACRO(__VA_ARGS__, L_DECLARE_SETTINGS3, L_DECLARE_SETTINGS2, L_DECLARE_SETTINGS1)(__VA_ARGS__))
 
 // Defines a single value inside the settings class.
 #define L_DEFINE_VALUE(type, name, def)                                                 \
