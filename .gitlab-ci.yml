@@ -3,10 +3,9 @@ variables:
 
 stages:
   - test_qt5
-  - test_qt61
   - test_qt62_jammy
-  - test_qt63_jammy
-  - test_qt64_jammy
+  - test_qt64
+  - test_qt64_android
 
 Test_qt5:
   stage: test_qt5
@@ -17,19 +16,6 @@ Test_qt5:
     - mkdir build
     - cd build
     - cmake ../qt5
-    - make
-    - export QTEST_FUNCTION_TIMEOUT=10000000
-    - ./LQtUtilsTest
-
-Test_qt61:
-  stage: test_qt61
-  image:
-    name: "carlonluca/qt-dev:6.1.2"
-    entrypoint: [""]
-  script:
-    - mkdir build
-    - cd build
-    - cmake ../qt6
     - make
     - export QTEST_FUNCTION_TIMEOUT=10000000
     - ./LQtUtilsTest
@@ -47,21 +33,8 @@ Test_qt62_jammy:
     - export QTEST_FUNCTION_TIMEOUT=10000000
     - ./LQtUtilsTest
 
-Test_qt63_jammy:
-  stage: test_qt63_jammy
-  image:
-    name: "carlonluca/qt-dev:6.3.2"
-    entrypoint: [""]
-  script:
-    - mkdir build
-    - cd build
-    - cmake ../qt6
-    - make
-    - export QTEST_FUNCTION_TIMEOUT=10000000
-    - ./LQtUtilsTest
-
-Test_qt64_jammy:
-  stage: test_qt64_jammy
+Test_qt64:
+  stage: test_qt64
   image:
     name: "carlonluca/qt-dev:6.4.1"
     entrypoint: [""]
@@ -72,3 +45,14 @@ Test_qt64_jammy:
     - make
     - export QTEST_FUNCTION_TIMEOUT=10000000
     - ./LQtUtilsTest
+
+Test_qt64_android:
+  stage: test_qt64_android
+  image:
+    name: "carlonluca/qt-dev:6.4.1"
+    entrypoint: [""]
+  script:
+    - mkdir build
+    - cd build
+    - /opt/Qt-and-armv7a-6.4.0/bin/qt-cmake ../qt6
+    - make
