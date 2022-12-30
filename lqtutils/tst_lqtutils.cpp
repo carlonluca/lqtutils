@@ -47,14 +47,13 @@
 struct LQTSerializeTest
 {
     QString s;
-    int i;
     QImage img;
-
-    bool operator==(const LQTSerializeTest& t) {
-        return s == t.s && i == t.i && img == t.img;
-    }
+    int i;
 };
 Q_DECLARE_METATYPE(LQTSerializeTest)
+
+bool operator==(const LQTSerializeTest& t1, const LQTSerializeTest& t2)
+{ return t1.s == t2.s && t1.i == t2.i && t1.img == t2.img; }
 
 QDataStream& operator<<(QDataStream& out, const LQTSerializeTest& v)
 { return out << v.s << v.i << v.img; }
@@ -802,7 +801,7 @@ void LQtUtilsTest::test_case29()
     QImage img(100, 100, QImage::Format_ARGB32);
     img.fill(Qt::red);
     LQTSerializeTest t {
-        QSL("test"), 10, img
+        QSL("test"), img, 10
     };
 
     LSettingsTest().set_customVariant(t);

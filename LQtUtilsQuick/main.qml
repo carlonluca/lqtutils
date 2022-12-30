@@ -4,27 +4,27 @@ import com.luke 1.0
 
 Window {
     property int enumValue: MySharedEnum.Value6
+    property bool doBind: false
 
     visible: true
-    x: settings.appX
-    y: settings.appY
-    width: settings.appWidth
-    height: settings.appHeight
 
     Component.onCompleted: {
         console.log("Enum value:", enumValue)
+        x = settings.appX
+        y = settings.appY
+        width = settings.appWidth
+        height = settings.appHeight
+        doBind = true
     }
 
     Connections {
         target: settings
-        onAppWidthChanged:
-            console.log("App width saved:", settings.appWidth)
-        onAppHeightChanged:
-            console.log("App height saved:", settings.appHeight)
+        onAppWidthChanged: (w) => console.log("App width saved:", w)
+        onAppHeightChanged: (h) => console.log("App height saved:", h)
     }
 
-    Binding { target: settings; property: "appWidth"; value: width }
-    Binding { target: settings; property: "appHeight"; value: height }
-    Binding { target: settings; property: "appX"; value: x }
-    Binding { target: settings; property: "appY"; value: y }
+    Binding { when: doBind; target: settings; property: "appWidth"; value: width }
+    Binding { when: doBind; target: settings; property: "appHeight"; value: height }
+    Binding { when: doBind; target: settings; property: "appX"; value: x }
+    Binding { when: doBind; target: settings; property: "appY"; value: y }
 }
