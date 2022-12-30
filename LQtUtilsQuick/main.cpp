@@ -3,7 +3,6 @@
 #include <QQmlContext>
 
 #include "../lqtutils_settings.h"
-#include "../lqtutils_string.h"
 #include "../lqtutils_prop.h"
 
 #include "ltestsignals.h"
@@ -11,7 +10,6 @@
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
     MySharedEnum::qmlRegisterMySharedEnum("com.luke", 1, 0);
     QQmlApplicationEngine engine;

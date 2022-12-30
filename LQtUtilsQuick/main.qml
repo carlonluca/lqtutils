@@ -10,7 +10,6 @@ Window {
     y: settings.appY
     width: settings.appWidth
     height: settings.appHeight
-    title: qsTr("Hello World")
 
     Component.onCompleted: {
         console.log("Enum value:", enumValue)
@@ -21,7 +20,7 @@ Window {
         onAppWidthChanged:
             console.log("App width saved:", settings.appWidth)
         onAppHeightChanged:
-            console.log("App width saved:", settings.appHeight)
+            console.log("App height saved:", settings.appHeight)
     }
 
     Binding { target: settings; property: "appWidth"; value: width }
