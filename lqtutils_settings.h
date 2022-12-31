@@ -50,7 +50,7 @@
         void set_##name(type value) {                                                   \
             if (name() == value) return;                                                \
             m_settings->setValue(sectionToPath() + #name, QVariant::fromValue(value));  \
-            emit name##Changed(value);                                                  \
+            if (this != &notifier()) emit name##Changed(value);                         \
             emit notifier().name##Changed(value);                                       \
         }                                                                               \
     Q_SIGNALS:                                                                          \
