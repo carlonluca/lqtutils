@@ -810,6 +810,12 @@ void LQtUtilsTest::test_case29()
     QVERIFY(t.i == t2.i);
     QVERIFY(t.img == t2.img);
     QVERIFY(t.s == t2.s);
+
+    LSettingsTest settings;
+    QBENCHMARK {
+        for (int i = 0; i < 1E5; i++)
+            QVERIFY(settings.size() == QSize(1280, 720));
+    }
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)
