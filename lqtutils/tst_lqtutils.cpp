@@ -105,9 +105,9 @@ public slots:
 
 L_BEGIN_GADGET(LQtUtilsGadget)
 L_RO_GPROP_AS(int, someInteger, 5)
-L_RO_GPROP_AS(int, someInteger2)
+L_RO_GPROP_AS(int, someInteger2, 0)
 L_RW_GPROP_AS(int, someRwInteger, 6)
-L_RW_GPROP_AS(int, someRwInteger2)
+L_RW_GPROP_AS(int, someRwInteger2, 0)
 L_RO_GPROP_CS(QString, csRoProp, QSL("csRoProp"))
 L_RW_GPROP_CS(QString, csRwProp, QSL("csRwProp"))
 public:
