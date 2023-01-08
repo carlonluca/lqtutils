@@ -40,7 +40,7 @@ Test_qt64:
   script:
     - mkdir build
     - cd build
-    - QT_HOST_PATH=/opt/Qt-arm64-6.4.1 cmake ../qt6
+    - QT_HOST_PATH=/opt/Qt-amd64-6.4.1 cmake ../qt6
     - make
     - export QTEST_FUNCTION_TIMEOUT=10000000
     - ./LQtUtilsTest
