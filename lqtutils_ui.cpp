@@ -56,7 +56,7 @@ void FrameRateMonitor::setWindow(QQuickWindow* w)
             this, &FrameRateMonitor::registerSample);
 }
 
-void LQTQmlUtils::singleShot(int msec, QJSValue callback)
+void QmlUtils::singleShot(int msec, QJSValue callback)
 {
     QTimer::singleShot(msec, this, [callback] () mutable
     {
@@ -99,7 +99,7 @@ inline QJniObject get_cutout()
     return insets.callObjectMethod("getDisplayCutout", "()Landroid/view/DisplayCutout;");
 }
 
-double LQTQmlUtils::safeAreaTopInset()
+double QmlUtils::safeAreaTopInset()
 {
 #ifdef Q_OS_ANDROID
     QJniObject cutout = get_cutout();
@@ -112,7 +112,7 @@ double LQTQmlUtils::safeAreaTopInset()
 #endif
 }
 
-double LQTQmlUtils::safeAreaBottomInset()
+double QmlUtils::safeAreaBottomInset()
 {
 #ifdef Q_OS_ANDROID
     QJniObject cutout = get_cutout();
