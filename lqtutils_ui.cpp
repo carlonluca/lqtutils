@@ -25,6 +25,18 @@
 #include <QTimer>
 #include <QQuickWindow>
 #include <QMutableListIterator>
+#include <QCoreApplication>
+
+#ifdef Q_OS_ANDROID
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QJniObject>
+#else
+#include <QtAndroidExtras/QtAndroid>
+#include <QtAndroidExtras/QAndroidJniObject>
+typedef QAndroidJniObject QJniObject;
+#endif
+#include <jni.h>
+#endif
 
 #include "lqtutils_ui.h"
 
@@ -44,7 +56,7 @@ void FrameRateMonitor::setWindow(QQuickWindow* w)
             this, &FrameRateMonitor::registerSample);
 }
 
-void LQTQmlUtils::singleShot(int msec, QJSValue callback)
+void QmlUtils::singleShot(int msec, QJSValue callback)
 {
     QTimer::singleShot(msec, this, [callback] () mutable
     {
@@ -52,5 +64,66 @@ void LQTQmlUtils::singleShot(int msec, QJSValue callback)
             callback.call();
     });
 }
+
+#ifndef Q_OS_IOS
+inline QJniObject get_cutout()
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QJniObject activity = QNativeInterface::QAndroidApplication::context();
+#else
+    QJniObject activity = QtAndroid::androidActivity();
+#endif
+    if (!activity.isValid()) {
+        qWarning() << "Could not get android context";
+        return QJniObject();
+    }
+
+    QJniObject window = activity.callObjectMethod("getWindow", "()Landroid/view/Window;");
+    if (!window.isValid()) {
+        qWarning() << "Cannot get window";
+        return QJniObject();
+    }
+
+    QJniObject decoView = window.callObjectMethod("getDecorView", "()Landroid/view/View;");
+    if (!decoView.isValid()) {
+        qWarning() << "Cannot get decorator view";
+        return QJniObject();
+    }
+
+    QJniObject insets = decoView.callObjectMethod("getRootWindowInsets", "()Landroid/view/WindowInsets;");
+    if (!insets.isValid()) {
+        qWarning() << "Cannot get root window insets";
+        return QJniObject();
+    }
+
+    return insets.callObjectMethod("getDisplayCutout", "()Landroid/view/DisplayCutout;");
+}
+
+double QmlUtils::safeAreaTopInset()
+{
+#ifdef Q_OS_ANDROID
+    QJniObject cutout = get_cutout();
+    if (!cutout.isValid())
+        return 0;
+
+    return cutout.callMethod<int>("getSafeInsetTop", "()I");
+#else
+    return 0;
+#endif
+}
+
+double QmlUtils::safeAreaBottomInset()
+{
+#ifdef Q_OS_ANDROID
+    QJniObject cutout = get_cutout();
+    if (!cutout.isValid())
+        return 0;
+
+    return cutout.callMethod<int>("getSafeInsetBottom", "()I");
+#else
+    return 0;
+#endif
+}
+#endif
 
 } // namespace

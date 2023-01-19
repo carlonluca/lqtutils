@@ -44,13 +44,15 @@ public:
     Q_INVOKABLE void setWindow(QQuickWindow* w);
 };
 
-class LQTQmlUtils : public QObject
+class QmlUtils : public QObject
 {
     Q_OBJECT
 public:
-    LQTQmlUtils(QObject* parent = nullptr) : QObject(parent) {}
+    QmlUtils(QObject* parent = nullptr) : QObject(parent) {}
 
     Q_INVOKABLE void singleShot(int msec, QJSValue callback);
+    Q_INVOKABLE static double safeAreaBottomInset();
+    Q_INVOKABLE static double safeAreaTopInset();
 };
 
 } // namespace
