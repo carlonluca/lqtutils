@@ -66,6 +66,7 @@ void QmlUtils::singleShot(int msec, QJSValue callback)
 }
 
 #ifndef Q_OS_IOS
+#ifdef Q_OS_ANDROID
 inline QJniObject get_cutout()
 {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -98,6 +99,7 @@ inline QJniObject get_cutout()
 
     return insets.callObjectMethod("getDisplayCutout", "()Landroid/view/DisplayCutout;");
 }
+#endif
 
 double QmlUtils::safeAreaTopInset()
 {
