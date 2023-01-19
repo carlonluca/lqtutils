@@ -12,6 +12,9 @@ add_library(lqtutils STATIC
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_freq.cpp
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_fsm.cpp
 )
+if (IOS)
+    target_sources(lqtutils PRIVATE ${CMAKE_CURRENT_LIST_DIR}/lqtutils_ui.mm)
+endif()
 
 target_include_directories(lqtutils
     PUBLIC ${CMAKE_CURRENT_LIST_DIR})
