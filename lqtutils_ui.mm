@@ -4,7 +4,7 @@
 
 namespace lqt {
 
-double LQmlUtils::safeAreaBottomMargin()
+double LQTQmlUtils::safeAreaBottomInset()
 {
     if (@available(iOS 11.0, *)) {
         UIWindow *window = UIApplication.sharedApplication.windows.firstObject;
@@ -14,7 +14,7 @@ double LQmlUtils::safeAreaBottomMargin()
     return 0;
 }
 
-double LQTQmlUtils::safeAreaTopMargin()
+double LQTQmlUtils::safeAreaTopInset()
 {
     if (@available(iOS 11.0, *)) {
         UIWindow *window = UIApplication.sharedApplication.windows.firstObject;

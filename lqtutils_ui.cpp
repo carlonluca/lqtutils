@@ -65,6 +65,7 @@ void LQTQmlUtils::singleShot(int msec, QJSValue callback)
     });
 }
 
+#ifndef Q_OS_IOS
 inline QJniObject get_cutout()
 {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -98,7 +99,6 @@ inline QJniObject get_cutout()
     return insets.callObjectMethod("getDisplayCutout", "()Landroid/view/DisplayCutout;");
 }
 
-#ifndef Q_OS_IOS
 double LQTQmlUtils::safeAreaTopInset()
 {
 #ifdef Q_OS_ANDROID
