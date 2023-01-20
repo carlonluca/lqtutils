@@ -53,6 +53,8 @@ public:
     Q_INVOKABLE void singleShot(int msec, QJSValue callback);
     Q_INVOKABLE static double safeAreaBottomInset();
     Q_INVOKABLE static double safeAreaTopInset();
+    Q_INVOKABLE static double safeAreaRightInset();
+    Q_INVOKABLE static double safeAreaLeftInset();
 };
 
 } // namespace

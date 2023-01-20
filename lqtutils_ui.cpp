@@ -114,6 +114,32 @@ double QmlUtils::safeAreaTopInset()
 #endif
 }
 
+double QmlUtils::safeAreaRightInset()
+{
+#ifdef Q_OS_ANDROID
+    QJniObject cutout = get_cutout();
+    if (!cutout.isValid())
+        return 0;
+
+    return cutout.callMethod<int>("getSafeInsetRight", "()I")/qApp->devicePixelRatio();
+#else
+    return 0;
+#endif
+}
+
+double QmlUtils::safeAreaLeftInset()
+{
+#ifdef Q_OS_ANDROID
+    QJniObject cutout = get_cutout();
+    if (!cutout.isValid())
+        return 0;
+
+    return cutout.callMethod<int>("getSafeInsetLeft", "()I")/qApp->devicePixelRatio();
+#else
+    return 0;
+#endif
+}
+
 double QmlUtils::safeAreaBottomInset()
 {
 #ifdef Q_OS_ANDROID

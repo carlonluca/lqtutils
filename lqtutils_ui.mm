@@ -24,4 +24,24 @@ double QmlUtils::safeAreaTopInset()
     return 0;
 }
 
+double QmlUtils::safeAreaLeftInset()
+{
+    if (@available(iOS 11.0, *)) {
+        UIWindow *window = UIApplication.sharedApplication.windows.firstObject;
+        return window.safeAreaInsets.left;
+    }
+
+    return 0;
+}
+
+double QmlUtils::safeAreaRightInset()
+{
+    if (@available(iOS 11.0, *)) {
+        UIWindow *window = UIApplication.sharedApplication.windows.firstObject;
+        return window.safeAreaInsets.right;
+    }
+
+    return 0;
+}
+
 }
