@@ -1,6 +1,8 @@
 # LQtUtils
 This is a module containing a few tools that I typically use in Qt apps. Using this module in your app is simple: add a submodule to your git repo and include the headers. Most of the code is in independent headers, so you don't need to build anything separately.
-A couple of headers need the related source file to be compiled explicitly; in that case I typically add the source file to my pro or cmake file.
+A couple of headers need the related source file to be compiled explicitly; in that case I typically add this project as a submodule and link to my main project file.
+
+More articles related to these topics: https://bugfreeblog.duckdns.org/tag/lqtutils.
 
 ## How to Include
 

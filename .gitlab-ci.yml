@@ -5,7 +5,6 @@ stages:
   - test_qt5
   - test_qt62_jammy
   - test_qt64
-  - test_qt64_android
 
 Test_qt5:
   stage: test_qt5
@@ -36,23 +35,12 @@ Test_qt62_jammy:
 Test_qt64:
   stage: test_qt64
   image:
-    name: "carlonluca/qt-dev:6.4.1"
+    name: "carlonluca/qt-dev:6.4.2"
     entrypoint: [""]
   script:
     - mkdir build
     - cd build
-    - QT_HOST_PATH=/opt/Qt-arm64-6.4.1 cmake ../qt6
+    - QT_HOST_PATH=/opt/Qt-amd64-6.4.2 cmake ../qt6
     - make
     - export QTEST_FUNCTION_TIMEOUT=10000000
     - ./LQtUtilsTest
-
-Test_qt64_android:
-  stage: test_qt64_android
-  image:
-    name: "carlonluca/qt-dev:6.4.1"
-    entrypoint: [""]
-  script:
-    - mkdir build
-    - cd build
-    - /opt/Qt-and-armv7a-6.4.0/bin/qt-cmake ../qt6
-    - make

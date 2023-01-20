@@ -47,14 +47,13 @@
 struct LQTSerializeTest
 {
     QString s;
-    int i;
     QImage img;
-
-    bool operator==(const LQTSerializeTest& t) {
-        return s == t.s && i == t.i && img == t.img;
-    }
+    int i;
 };
 Q_DECLARE_METATYPE(LQTSerializeTest)
+
+bool operator==(const LQTSerializeTest& t1, const LQTSerializeTest& t2)
+{ return t1.s == t2.s && t1.i == t2.i && t1.img == t2.img; }
 
 QDataStream& operator<<(QDataStream& out, const LQTSerializeTest& v)
 { return out << v.s << v.i << v.img; }
@@ -84,7 +83,7 @@ class LQtUtilsObject : public QObject
     L_RW_PROP_REF_CS(QString, csPropRef, QSL("HELLO"))
     L_RO_PROP_REF_CS(QString, csRoPropRef, QSL("csRoPropRef"))
 public:
-     LQtUtilsObject(QObject* parent = nullptr) : QObject(parent) {}
+    LQtUtilsObject(QObject* parent = nullptr) : QObject(parent) {}
 
 public slots:
     // Custom setter.
@@ -106,9 +105,9 @@ public slots:
 
 L_BEGIN_GADGET(LQtUtilsGadget)
 L_RO_GPROP_AS(int, someInteger, 5)
-L_RO_GPROP_AS(int, someInteger2)
+L_RO_GPROP_AS(int, someInteger2, 0)
 L_RW_GPROP_AS(int, someRwInteger, 6)
-L_RW_GPROP_AS(int, someRwInteger2)
+L_RW_GPROP_AS(int, someRwInteger2, 0)
 L_RO_GPROP_CS(QString, csRoProp, QSL("csRoProp"))
 L_RW_GPROP_CS(QString, csRwProp, QSL("csRwProp"))
 public:
@@ -802,7 +801,7 @@ void LQtUtilsTest::test_case29()
     QImage img(100, 100, QImage::Format_ARGB32);
     img.fill(Qt::red);
     LQTSerializeTest t {
-        QSL("test"), 10, img
+        QSL("test"), img, 10
     };
 
     LSettingsTest().set_customVariant(t);
@@ -811,6 +810,12 @@ void LQtUtilsTest::test_case29()
     QVERIFY(t.i == t2.i);
     QVERIFY(t.img == t2.img);
     QVERIFY(t.s == t2.s);
+
+    LSettingsTest settings;
+    QBENCHMARK {
+        for (int i = 0; i < 1E5; i++)
+            QVERIFY(settings.size() == QSize(1280, 720));
+    }
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)

@@ -39,48 +39,49 @@
     EXPAND(L_SETTINGS_GET_MACRO(__VA_ARGS__, L_DECLARE_SETTINGS3, L_DECLARE_SETTINGS2, L_DECLARE_SETTINGS1)(__VA_ARGS__))
 
 // Defines a single value inside the settings class.
-#define L_DEFINE_VALUE(type, name, def)                                                 \
-    public:                                                                             \
-        type name() const {                                                             \
-            return m_settings->value(sectionToPath() + #name, def).value<type>();       \
-        }                                                                               \
-    public Q_SLOTS:                                                                     \
-        void set_##name(type value) {                                                   \
-            if (name() == value) return;                                                \
-            m_settings->setValue(sectionToPath() + #name, QVariant::fromValue(value));  \
-            emit name##Changed(value);                                                  \
-            emit notifier().name##Changed(value);                                       \
-        }                                                                               \
-    Q_SIGNALS:                                                                          \
-        void name##Changed(type name);                                                  \
-    private:                                                                            \
+#define L_DEFINE_VALUE(type, name, def)                                                           \
+    public:                                                                                       \
+        type name(bool create = false) const {                                                    \
+            const QString key = m_section + QStringLiteral(#name);                                \
+            if (create && !m_settings->contains(QStringLiteral(#name)))                           \
+                m_settings->setValue(key, def);                                                   \
+            return m_settings->value(key, def).value<type>();                                     \
+        }                                                                                         \
+    public Q_SLOTS:                                                                               \
+        void set_##name(type value) {                                                             \
+            if (name() == value) return;                                                          \
+            m_settings->setValue(m_section + QStringLiteral(#name), QVariant::fromValue(value));  \
+            if (this != &notifier()) emit name##Changed(value);                                   \
+            emit notifier().name##Changed(value);                                                 \
+        }                                                                                         \
+    Q_SIGNALS:                                                                                    \
+        void name##Changed(type name);                                                            \
+    private:                                                                                      \
         Q_PROPERTY(type name READ name WRITE set_##name NOTIFY name##Changed)
 
 // Declares the settings class.
 #define L_DECLARE_SETTINGS2(classname, qsettings) \
     L_DECLARE_SETTINGS3(classname, qsettings, "")
 
-#define L_DECLARE_SETTINGS3(classname, qsettings, section)         \
-    class classname : public QObject                               \
-    {                                                              \
-    private:                                                       \
-        Q_OBJECT                                                   \
-    public:                                                        \
-        static classname& notifier() {                             \
-            static classname _notifier;                            \
-            return _notifier;                                      \
-        }                                                          \
-    public:                                                        \
-        classname(QObject* parent = nullptr) : QObject(parent) {   \
-            m_settings = qsettings;                                \
-        }                                                          \
-        ~classname() { delete m_settings; }                        \
-    protected:                                                     \
-        QSettings* m_settings;                                     \
-        QString m_section = QStringLiteral(section);               \
-    private:                                                       \
-        QString sectionToPath() const                              \
-        { return (!m_section.isEmpty() ? m_section + "/" : ""); }
+#define L_DECLARE_SETTINGS3(classname, qsettings, section)                                    \
+    class classname : public QObject                                                          \
+    {                                                                                         \
+    private:                                                                                  \
+        Q_OBJECT                                                                              \
+    public:                                                                                   \
+        static classname& notifier() {                                                        \
+            static classname _notifier;                                                       \
+            return _notifier;                                                                 \
+        }                                                                                     \
+    public:                                                                                   \
+        classname(QObject* parent = nullptr) : QObject(parent) {                              \
+            m_settings = qsettings;                                                           \
+            m_section = QStringLiteral(section).isEmpty() ? "" : QString("%1/").arg(section); \
+        }                                                                                     \
+        ~classname() { delete m_settings; }                                                   \
+    protected:                                                                                \
+        QSettings* m_settings;                                                                \
+        QString m_section;
 
 namespace lqt {
 
