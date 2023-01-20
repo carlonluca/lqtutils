@@ -25,7 +25,7 @@
 #include <QTimer>
 #include <QQuickWindow>
 #include <QMutableListIterator>
-#include <QCoreApplication>
+#include <QGuiApplication>
 
 #ifdef Q_OS_ANDROID
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -108,7 +108,7 @@ double QmlUtils::safeAreaTopInset()
     if (!cutout.isValid())
         return 0;
 
-    return cutout.callMethod<int>("getSafeInsetTop", "()I");
+    return cutout.callMethod<int>("getSafeInsetTop", "()I")/qApp->devicePixelRatio();
 #else
     return 0;
 #endif
@@ -121,7 +121,7 @@ double QmlUtils::safeAreaBottomInset()
     if (!cutout.isValid())
         return 0;
 
-    return cutout.callMethod<int>("getSafeInsetBottom", "()I");
+    return cutout.callMethod<int>("getSafeInsetBottom", "()I")/qApp->devicePixelRatio();
 #else
     return 0;
 #endif
