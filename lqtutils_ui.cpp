@@ -25,7 +25,7 @@
 #include <QTimer>
 #include <QQuickWindow>
 #include <QMutableListIterator>
-#include <QCoreApplication>
+#include <QGuiApplication>
 
 #ifdef Q_OS_ANDROID
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -66,6 +66,7 @@ void QmlUtils::singleShot(int msec, QJSValue callback)
 }
 
 #ifndef Q_OS_IOS
+#ifdef Q_OS_ANDROID
 inline QJniObject get_cutout()
 {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -98,6 +99,7 @@ inline QJniObject get_cutout()
 
     return insets.callObjectMethod("getDisplayCutout", "()Landroid/view/DisplayCutout;");
 }
+#endif
 
 double QmlUtils::safeAreaTopInset()
 {
@@ -106,7 +108,33 @@ double QmlUtils::safeAreaTopInset()
     if (!cutout.isValid())
         return 0;
 
-    return cutout.callMethod<int>("getSafeInsetTop", "()I");
+    return cutout.callMethod<int>("getSafeInsetTop", "()I")/qApp->devicePixelRatio();
+#else
+    return 0;
+#endif
+}
+
+double QmlUtils::safeAreaRightInset()
+{
+#ifdef Q_OS_ANDROID
+    QJniObject cutout = get_cutout();
+    if (!cutout.isValid())
+        return 0;
+
+    return cutout.callMethod<int>("getSafeInsetRight", "()I")/qApp->devicePixelRatio();
+#else
+    return 0;
+#endif
+}
+
+double QmlUtils::safeAreaLeftInset()
+{
+#ifdef Q_OS_ANDROID
+    QJniObject cutout = get_cutout();
+    if (!cutout.isValid())
+        return 0;
+
+    return cutout.callMethod<int>("getSafeInsetLeft", "()I")/qApp->devicePixelRatio();
 #else
     return 0;
 #endif
@@ -119,7 +147,7 @@ double QmlUtils::safeAreaBottomInset()
     if (!cutout.isValid())
         return 0;
 
-    return cutout.callMethod<int>("getSafeInsetBottom", "()I");
+    return cutout.callMethod<int>("getSafeInsetBottom", "()I")/qApp->devicePixelRatio();
 #else
     return 0;
 #endif
