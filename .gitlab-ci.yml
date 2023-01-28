@@ -5,6 +5,7 @@ stages:
   - test_qt5
   - test_qt62_jammy
   - test_qt64
+  - test_qt65_android
 
 Test_qt5:
   stage: test_qt5
@@ -44,3 +45,17 @@ Test_qt64:
     - make
     - export QTEST_FUNCTION_TIMEOUT=10000000
     - ./LQtUtilsTest
+
+Test_qt65_android:
+  stage: test_qt65_android
+  image:
+    name: "carlonluca/qt-dev:6.5.0-beta1"
+    entrypoint: [""]
+  script:
+    - mkdir build
+    - cd build
+    - /opt/Qt-android-6.5.0-beta1/android_arm64_v8a/bin/qt-cmake \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DQT_ANDROID_BUILD_ALL_ABIS:BOOL=ON \
+      -S ../qt6;
+    - cmake --build .
