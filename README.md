@@ -253,6 +253,33 @@ QCOMPARE(i, 10);
 
 ```lqt::FrameRateMonitor``` is a class that can be used to measure the current frame rate of a QQuickWindow. The class monitors the frequency of frame swaps and provides a property with a value reporting the frame rate during the last second.
 
+```lqt::QmlUtils``` includes a few UI-related methods that come handy in most apps, but are still missing in the Qt framework itself.
+
+### Single shot timer
+
+```c++
+lqt::QmlUtils::singleShot(int msec, QJSValue callback)
+```
+
+Useful to defer an action of a specified amount of milleseconds in QML, without having to create a timer.
+
+### Getting safe areas on mobile
+
+Both iOS and Android smartphones may include cutouts and you may want to know where it is safe to draw your QML UI. These four methods are useful to get the safe area both on iOS and Android (on Desktop the methods are still defined and simply return 0).
+
+```c++
+Q_INVOKABLE static double safeAreaBottomInset();
+Q_INVOKABLE static double safeAreaTopInset();
+Q_INVOKABLE static double safeAreaRightInset();
+Q_INVOKABLE static double safeAreaLeftInset();
+```
+
+Note that the methods return a value in logical pixels, so device pixel ratio is already taken into account.
+
+This is an example of a demo app where some elements extends under the cutouts, while the interactive area does not.
+
+<img src="docs/cutouts.webp" width="20%"></img>
+
 ### How to Use
 
 To use it, simply instantiate it when you need it like this:
