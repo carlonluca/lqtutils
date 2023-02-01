@@ -10,7 +10,7 @@ stages:
 Test_qt5:
   stage: test_qt5
   image:
-    name: "carlonluca/qt-dev:5.15.2_dev"
+    name: "carlonluca/qt-dev:5.15.2"
     entrypoint: [""]
   script:
     - mkdir build
