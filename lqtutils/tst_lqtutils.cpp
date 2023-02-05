@@ -43,6 +43,7 @@
 #include "../lqtutils_bqueue.h"
 #include "../lqtutils_net.h"
 #include "../lqtutils_data.h"
+#include "../lqtutils_logging.h"
 
 struct LQTSerializeTest
 {
@@ -54,6 +55,9 @@ Q_DECLARE_METATYPE(LQTSerializeTest)
 
 bool operator==(const LQTSerializeTest& t1, const LQTSerializeTest& t2)
 { return t1.s == t2.s && t1.i == t2.i && t1.img == t2.img; }
+
+QDebug& operator<<(QDebug& debug, const LQTSerializeTest& v)
+{ return debug.nospace() << "{" << v.s << ", " << v.i << "}"; }
 
 QDataStream& operator<<(QDataStream& out, const LQTSerializeTest& v)
 { return out << v.s << v.i << v.img; }
@@ -174,6 +178,7 @@ private slots:
     void test_case27();
     void test_case28();
     void test_case29();
+    void test_case30();
 };
 
 LQtUtilsTest::LQtUtilsTest()
@@ -816,6 +821,23 @@ void LQtUtilsTest::test_case29()
         for (int i = 0; i < 1E5; i++)
             QVERIFY(settings.size() == QSize(1280, 720));
     }
+}
+
+void LQtUtilsTest::test_case30()
+{
+    QStringList list = QStringList() << "a" << "b" << "c";
+    qDebug() << list;
+
+    LQTSerializeTest t1;
+    t1.i = 1;
+    t1.s = "Hello";
+
+    LQTSerializeTest t2;
+    t2.i = 2;
+    t2.s = "Luca";
+
+    QList<LQTSerializeTest> list2 = QList<LQTSerializeTest>() << t1 << t2;
+    qDebug() << lqt::ListOutput<LQTSerializeTest> { list2 };
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)
