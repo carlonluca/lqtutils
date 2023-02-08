@@ -70,6 +70,9 @@ QDataStream& operator>>(QDataStream& in, LQTSerializeTest& v)
     return in;
 }
 
+inline size_t qHash(const LQTSerializeTest& key, size_t seed)
+{ return qHashMulti(seed, key.s, key.i); }
+
 class LQtUtilsObject : public QObject
 {
     Q_OBJECT
@@ -825,9 +828,6 @@ void LQtUtilsTest::test_case29()
 
 void LQtUtilsTest::test_case30()
 {
-    QStringList list = QStringList() << "a" << "b" << "c";
-    qDebug() << list;
-
     LQTSerializeTest t1;
     t1.i = 1;
     t1.s = "Hello";
@@ -837,7 +837,21 @@ void LQtUtilsTest::test_case30()
     t2.s = "Luca";
 
     QList<LQTSerializeTest> list2 = QList<LQTSerializeTest>() << t1 << t2;
-    qDebug() << lqt::ListOutput<LQTSerializeTest> { list2 };
+    QString res = QDebug::toString(lqt::ListOutput<LQTSerializeTest> { list2 });
+    QVERIFY(res == "( {Hello, 1}, {Luca, 2} )");
+
+    // Cannot compare this to a string as the output is not constant.
+    QSet<LQTSerializeTest> set = QSet<LQTSerializeTest> {
+            t1, t2
+    };
+    qDebug() << "Set:" << lqt::SetOutput<LQTSerializeTest> { set };
+
+    // Cannot compare this to a string as the output is not constant.
+    QHash<QString, LQTSerializeTest> hash = QHash<QString, LQTSerializeTest> {
+        { "1", t1 },
+        { "2", t2 }
+    };
+    qDebug() << "Hash:" << lqt::HashOutput<QString, LQTSerializeTest> { hash };
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)

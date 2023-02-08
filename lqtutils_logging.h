@@ -32,19 +32,19 @@ namespace lqt {
 template<typename T>
 struct ListOutput
 {
-    QList<T>& list;
+    QList<T>& out;
 };
 
 template<typename T>
 struct SetOutput
 {
-    QSet<T>& set;
+    QSet<T>& out;
 };
 
 template<typename T1, typename T2>
 struct HashOutput
 {
-    QHash<T1, T2>& hash;
+    QHash<T1, T2>& out;
 };
 
 
@@ -52,16 +52,16 @@ template<typename T>
 inline QDebug operator<<(QDebug debug, const ListOutput<T>& c)
 {
     QDebugStateSaver saver(debug);
-    if (c.list.isEmpty())
-        return debug << "{ }";
-    QListIterator<T> it(c.list);
-    debug.noquote().nospace() << "{ ";
+    if (c.out.isEmpty())
+        return debug << "( )";
+    QListIterator<T> it(c.out);
+    debug.noquote().nospace() << "( ";
     while (it.hasNext()) {
         debug.noquote() << it.next();
         if (it.hasNext())
             debug.noquote() << ", ";
     }
-    debug.noquote().nospace() << " }";
+    debug.noquote().nospace() << " )";
     return debug;
 }
 
@@ -69,9 +69,9 @@ template<typename T>
 inline QDebug operator<<(QDebug debug, const SetOutput<T>& c)
 {
     QDebugStateSaver saver(debug);
-    if (c.set.isEmpty())
+    if (c.out.isEmpty())
         return debug << "{ }";
-    QSetIterator<T> it(c.list);
+    QSetIterator<T> it(c.out);
     debug.noquote().nospace() << "{ ";
     while (it.hasNext()) {
         debug.noquote() << it.next();
@@ -86,12 +86,13 @@ template<typename T1, typename T2>
 inline QDebug operator<<(QDebug debug, const HashOutput<T1, T2>& c)
 {
     QDebugStateSaver saver(debug);
-    if (c.set.isEmpty())
+    if (c.out.isEmpty())
         return debug << "{ }";
-    QHashIterator<T1, T2> it(c.list);
+    QHashIterator<T1, T2> it(c.out);
     debug.noquote().nospace() << "{ ";
     while (it.hasNext()) {
-        debug.noquote() << it.next();
+        const auto& n = it.next();
+        debug.noquote().nospace() << "{ " << n.key() << ", " << n.value() << " }";
         if (it.hasNext())
             debug.noquote() << ", ";
     }
