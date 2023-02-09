@@ -70,8 +70,8 @@ QDataStream& operator>>(QDataStream& in, LQTSerializeTest& v)
     return in;
 }
 
-inline size_t qHash(const LQTSerializeTest& key, size_t seed)
-{ return qHashMulti(seed, key.s, key.i); }
+inline uint qHash(const LQTSerializeTest& key, uint seed)
+{ return qHash(key.s, seed) ^ key.i; }
 
 class LQtUtilsObject : public QObject
 {
@@ -837,8 +837,10 @@ void LQtUtilsTest::test_case30()
     t2.s = "Luca";
 
     QList<LQTSerializeTest> list2 = QList<LQTSerializeTest>() << t1 << t2;
+#if QT_VERSION_MAJOR > 5
     QString res = QDebug::toString(lqt::ListOutput<LQTSerializeTest> { list2 });
     QVERIFY(res == "( {Hello, 1}, {Luca, 2} )");
+#endif
 
     // Cannot compare this to a string as the output is not constant.
     QSet<LQTSerializeTest> set = QSet<LQTSerializeTest> {
