@@ -23,26 +23,26 @@ DownloaderPriv::~DownloaderPriv()
 
 void DownloaderPriv::download()
 {
-    set_state(LQTDownloaderState::S_DOWNLOADING);
+    set_state(DownloaderState::S_DOWNLOADING);
 
     m_reply = m_manager->get(QNetworkRequest(m_url));
     connect(m_reply, &QNetworkReply::downloadProgress,
             this, &DownloaderPriv::downloadProgress);
     connect(m_reply, &QNetworkReply::readyRead, this, [this] {
-        if (m_state != LQTDownloaderState::S_DOWNLOADING)
+        if (m_state != DownloaderState::S_DOWNLOADING)
             return;
         write(m_reply->readAll());
     });
     connect(m_reply, &QNetworkReply::finished, this, [this] {
-        if (m_state != LQTDownloaderState::S_DOWNLOADING)
+        if (m_state != DownloaderState::S_DOWNLOADING)
             return;
         if (m_reply->error() != QNetworkReply::NoError) {
-            set_state(LQTDownloaderState::S_NETWORK_FAILURE);
+            set_state(DownloaderState::S_NETWORK_FAILURE);
             return;
         }
 
         m_file.close();
-        set_state(LQTDownloaderState::S_DONE);
+        set_state(DownloaderState::S_DONE);
     });
 }
 
@@ -54,22 +54,22 @@ void DownloaderPriv::abort()
         m_reply = nullptr;
     }
 
-    set_state(LQTDownloaderState::S_ABORTED);
+    set_state(DownloaderState::S_ABORTED);
 }
 
 void DownloaderPriv::write(const QByteArray& data)
 {
-    if (m_state != LQTDownloaderState::S_DOWNLOADING)
+    if (m_state != DownloaderState::S_DOWNLOADING)
         return;
     if (!m_file.isOpen()) {
         if (!m_file.open(QIODevice::WriteOnly)) {
-            set_state(LQTDownloaderState::S_IO_FAILURE);
+            set_state(DownloaderState::S_IO_FAILURE);
             return;
         }
     }
 
     if (m_file.write(data) != data.size())
-        set_state(LQTDownloaderState::S_IO_FAILURE);
+        set_state(DownloaderState::S_IO_FAILURE);
 }
 
 class LQTThread : public QThread
@@ -88,7 +88,7 @@ Downloader::Downloader(const QUrl& url, const QString& filePath, QObject* parent
   , m_thread(new LQTThread)
   , m_threadContext(new DownloaderPriv(url, filePath))
 {
-    LQTDownloaderState::registerEnum("com.luke", 1, 0);
+    DownloaderState::registerEnum("com.luke", 1, 0);
 
     m_threadContext->moveToThread(m_thread);
     m_thread->start();
@@ -110,13 +110,13 @@ Downloader::~Downloader()
 #ifdef DEBUG_LOGS
     qDebug() << Q_FUNC_INFO;
 #endif
-    if (state() == LQTDownloaderState::S_DOWNLOADING)
+    if (state() == DownloaderState::S_DOWNLOADING)
         abort();
 }
 
 void Downloader::download()
 {
-    if (m_threadContext->state() != LQTDownloaderState::S_IDLE) {
+    if (m_threadContext->state() != DownloaderState::S_IDLE) {
         qFatal("Do not re-use the downloader");
         return;
     }
@@ -126,7 +126,7 @@ void Downloader::download()
 
 void Downloader::abort()
 {
-    if (m_threadContext->state() == LQTDownloaderState::S_DOWNLOADING)
+    if (m_threadContext->state() == DownloaderState::S_DOWNLOADING)
         QMetaObject::invokeMethod(m_threadContext, "abort", Qt::BlockingQueuedConnection);
 }
 

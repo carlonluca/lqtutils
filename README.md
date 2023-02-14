@@ -419,12 +419,12 @@ connect(downloader.data(), &lqt::Downloader::stateChanged, this, [&loop, &downlo
 Hash of a file:
 
 ```c++
-QByteArray lqt_hash(const QString &fileName,
-                    QCryptographicHash::Algorithm algo = QCryptographicHash::Md5)
+QByteArray lqt::hash(const QString &fileName,
+                     QCryptographicHash::Algorithm algo = QCryptographicHash::Md5)
 ```
 
 Writes a random file of the specified size:
 
 ```c++
-bool lqt_random_file(const QString& fileName, qint64 size)
+bool lqt::random_file(const QString& fileName, qint64 size)
 ```
