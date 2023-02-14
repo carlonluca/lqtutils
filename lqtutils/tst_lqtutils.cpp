@@ -187,6 +187,7 @@ private slots:
 LQtUtilsTest::LQtUtilsTest()
 {
     qRegisterMetaType<LQTSerializeTest>();
+    lqt::DownloaderState::registerEnum("com.luke", 1, 0);
 }
 
 LQtUtilsTest::~LQtUtilsTest() {}
