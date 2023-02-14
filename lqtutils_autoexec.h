@@ -29,27 +29,31 @@
 
 #include <functional>
 
-class LQTAutoExec
+namespace lqt {
+
+class AutoExec
 {
 public:
-    LQTAutoExec(std::function<void()> func) { reset(func); }
-    LQTAutoExec() { reset(nullptr); }
-    ~LQTAutoExec() { if (m_func) m_func(); }
+    AutoExec(std::function<void()> func) { reset(func); }
+    AutoExec() { reset(nullptr); }
+    ~AutoExec() { if (m_func) m_func(); }
     void reset(std::function<void()> func) { m_func = func; }
     void reset() { reset(nullptr); }
 private:
     std::function<void()> m_func;
 };
 
-class LQTSharedAutoExec
+class SharedAutoExec
 {
 public:
-    LQTSharedAutoExec(std::function<void()> func) :
-        m_exec(new LQTAutoExec(func)) {}
-    LQTSharedAutoExec() {}
+    SharedAutoExec(std::function<void()> func) :
+        m_exec(new AutoExec(func)) {}
+    SharedAutoExec() {}
 
 protected:
-    QSharedPointer<LQTAutoExec> m_exec;
+    QSharedPointer<AutoExec> m_exec;
 };
+
+} // namespace
 
 #endif // LQTUTILS_AUTOEXEC_H

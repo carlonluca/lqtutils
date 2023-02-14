@@ -392,7 +392,7 @@ void LQtUtilsTest::test_case10()
 {
     int i = 9;
     {
-        LQTAutoExec autoexec([&] {
+        lqt::AutoExec autoexec([&] {
             i++;
         });
         QCOMPARE(i, 9);
@@ -429,11 +429,11 @@ void LQtUtilsTest::test_case12()
     int i = 9;
 
     {
-        LQTSharedAutoExec lock2;
+        lqt::SharedAutoExec lock2;
         {
-            LQTSharedAutoExec lock;
+            lqt::SharedAutoExec lock;
             {
-                lock = LQTSharedAutoExec([&i] {
+                lock = lqt::SharedAutoExec([&i] {
                     i++;
                 });
                 QCOMPARE(i, 9);
@@ -670,7 +670,7 @@ void LQtUtilsTest::test_case22()
 void LQtUtilsTest::test_case23()
 {
     QString tmpFilePath = QSL("/tmp/lqtutils_test_tmp.png");
-    LQTAutoExec exec([&tmpFilePath] {
+    lqt::AutoExec exec([&tmpFilePath] {
         QFile::remove(tmpFilePath);
     });
 
@@ -696,7 +696,7 @@ void LQtUtilsTest::test_case23()
 void LQtUtilsTest::test_case24()
 {
     QString tmpFilePath = QSL("/tmp/lqtutils_test_tmp.png");
-    LQTAutoExec exec([&tmpFilePath] {
+    lqt::AutoExec exec([&tmpFilePath] {
         QFile::remove(tmpFilePath);
     });
 
@@ -742,7 +742,7 @@ void LQtUtilsTest::test_case25()
 void LQtUtilsTest::test_case26()
 {
     QString tmpFilePath = QSL("/tmp/lqtutils_test_tmp.xz");
-    LQTAutoExec exec([&tmpFilePath] {
+    lqt::AutoExec exec([&tmpFilePath] {
         QFile::remove(tmpFilePath);
     });
 
@@ -772,7 +772,7 @@ void LQtUtilsTest::test_case26()
 void LQtUtilsTest::test_case27()
 {
     QString tmpFilePath("/tmp/lqtutils_test_tmp");
-    LQTAutoExec([&tmpFilePath] {
+    lqt::AutoExec([&tmpFilePath] {
         QFile::remove(tmpFilePath);
     });
 
