@@ -35,9 +35,7 @@
 #include "lqtutils_prop.h"
 #include "lqtutils_enum.h"
 
-namespace lqt {
-
-L_DECLARE_ENUM(DownloaderState,
+L_DECLARE_ENUM(LQTDownloaderState,
                S_IDLE,
                S_DOWNLOADING,
                S_DONE,
@@ -45,10 +43,12 @@ L_DECLARE_ENUM(DownloaderState,
                S_IO_FAILURE,
                S_ABORTED)
 
+namespace lqt {
+
 class DownloaderPriv : public QObject
 {
     Q_OBJECT
-    L_RO_PROP_AS(DownloaderState::Value, state, DownloaderState::S_IDLE)
+    L_RO_PROP_AS(LQTDownloaderState::Value, state, LQTDownloaderState::S_IDLE)
 public:
     DownloaderPriv(const QUrl& url, const QString& filePath, QObject* parent = nullptr);
     ~DownloaderPriv();
@@ -80,7 +80,7 @@ public:
     void download();
     void abort();
 
-    DownloaderState::Value state() const { return m_threadContext->state(); }
+    LQTDownloaderState::Value state() const { return m_threadContext->state(); }
 
 signals:
     void stateChanged();

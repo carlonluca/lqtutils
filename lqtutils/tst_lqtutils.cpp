@@ -187,7 +187,6 @@ private slots:
 LQtUtilsTest::LQtUtilsTest()
 {
     qRegisterMetaType<LQTSerializeTest>();
-    lqt::DownloaderState::registerEnum("com.luke", 1, 0);
 }
 
 LQtUtilsTest::~LQtUtilsTest() {}
@@ -679,19 +678,19 @@ void LQtUtilsTest::test_case23()
                 QSL("https://raw.githubusercontent.com/carlonluca/"
                     "isogeometric-analysis/master/2.3/lagrange.svg.png"),
                 tmpFilePath));
-    QVERIFY(downloader->state() == lqt::DownloaderState::S_IDLE);
+    QVERIFY(downloader->state() == LQTDownloaderState::S_IDLE);
 
     downloader->download();
-    QVERIFY(downloader->state() == lqt::DownloaderState::S_DOWNLOADING);
+    QVERIFY(downloader->state() == LQTDownloaderState::S_DOWNLOADING);
 
     QEventLoop loop;
     connect(downloader.data(), &lqt::Downloader::stateChanged, this, [&loop, &downloader] {
-        if (downloader->state() == lqt::DownloaderState::S_DONE)
+        if (downloader->state() == LQTDownloaderState::S_DONE)
             loop.quit();
     });
     loop.exec();
 
-    QVERIFY(downloader->state() == lqt::DownloaderState::S_DONE);
+    QVERIFY(downloader->state() == LQTDownloaderState::S_DONE);
 }
 
 void LQtUtilsTest::test_case24()
@@ -705,18 +704,18 @@ void LQtUtilsTest::test_case24()
                 QSL("https://raw.githubusercontent.com/carlonluca/"
                     "isogeometric-analysis/master/4.5/iga_knot_insertion_plate_hole.svg.png"),
                 tmpFilePath));
-    QVERIFY(downloader->state() == lqt::DownloaderState::S_IDLE);
+    QVERIFY(downloader->state() == LQTDownloaderState::S_IDLE);
 
     downloader->download();
 
     QEventLoop loop;
     connect(downloader.data(), &lqt::Downloader::downloadProgress, this, [&loop, &downloader] {
-        QVERIFY(downloader->state() == lqt::DownloaderState::S_DOWNLOADING);
+        QVERIFY(downloader->state() == LQTDownloaderState::S_DOWNLOADING);
         downloader->abort();
         loop.quit();
     });
     loop.exec();
-    QVERIFY(downloader->state() == lqt::DownloaderState::S_ABORTED);
+    QVERIFY(downloader->state() == LQTDownloaderState::S_ABORTED);
 }
 
 void LQtUtilsTest::test_case25()
@@ -725,19 +724,19 @@ void LQtUtilsTest::test_case25()
                 QSL("https://raw.githubusercontent.com/carlonluca/"
                     "isogeometric-analysis/master/4.5/iga_knot_insertion_plate_hole.svg.png"),
                 QSL("/tmp/dirthatdoesnotexist/tmp.png")));
-    QVERIFY(downloader->state() == lqt::DownloaderState::S_IDLE);
+    QVERIFY(downloader->state() == LQTDownloaderState::S_IDLE);
 
     downloader->download();
 
     QEventLoop loop;
     connect(downloader.data(), &lqt::Downloader::stateChanged, this, [&loop, &downloader] {
-        if (downloader->state() == lqt::DownloaderState::S_IO_FAILURE) {
+        if (downloader->state() == LQTDownloaderState::S_IO_FAILURE) {
             downloader->abort();
             loop.quit();
         }
     });
     loop.exec();
-    QVERIFY(downloader->state() == lqt::DownloaderState::S_IO_FAILURE);
+    QVERIFY(downloader->state() == LQTDownloaderState::S_IO_FAILURE);
 }
 
 void LQtUtilsTest::test_case26()
@@ -751,7 +750,7 @@ void LQtUtilsTest::test_case26()
                 QSL("https://raw.githubusercontent.com/carlonluca/"
                 "isogeometric-analysis/master/4.5/iga_knot_insertion_plate_hole.svg.png"),
                 tmpFilePath));
-    QVERIFY(downloader->state() == lqt::DownloaderState::S_IDLE);
+    QVERIFY(downloader->state() == LQTDownloaderState::S_IDLE);
 
     downloader->download();
     connect(downloader.data(), &lqt::Downloader::downloadProgress, this, [&downloader] (qint64 progress, qint64 total) {
@@ -760,13 +759,13 @@ void LQtUtilsTest::test_case26()
 
     QEventLoop loop;
     connect(downloader.data(), &lqt::Downloader::stateChanged, this, [&loop, &downloader] {
-        QVERIFY(downloader->state() == lqt::DownloaderState::S_DOWNLOADING ||
-                downloader->state() == lqt::DownloaderState::S_DONE);
-        if (downloader->state() == lqt::DownloaderState::S_DONE)
+        QVERIFY(downloader->state() == LQTDownloaderState::S_DOWNLOADING ||
+                downloader->state() == LQTDownloaderState::S_DONE);
+        if (downloader->state() == LQTDownloaderState::S_DONE)
             loop.quit();
     });
     loop.exec();
-    QVERIFY(downloader->state() == lqt::DownloaderState::S_DONE);
+    QVERIFY(downloader->state() == LQTDownloaderState::S_DONE);
     QVERIFY(lqt::hash(tmpFilePath) == QByteArray::fromHex(QSL("b471254ec7c69949125834e107b45dd5").toUtf8()));
 }
 
