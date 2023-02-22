@@ -448,15 +448,15 @@ void LQtUtilsTest::test_case12()
 
 void LQtUtilsTest::test_case13()
 {
-    QVERIFY(lqt::in_range(0, -1, 1));
-    QVERIFY(lqt::in_range(19.0, -10.0, 19.1));
-    QVERIFY(lqt::in_range(QSL("f"), QSL("a"), QSL("s")));
-    QVERIFY(lqt::in_range(QDateTime::currentDateTime(),
-                          QDateTime::currentDateTime().addDays(-4),
-                          QDateTime::currentDateTime().addSecs(1)));
-    QVERIFY(!lqt::in_range(QDateTime::currentDateTime(),
-                           QDateTime::currentDateTime().addDays(4),
-                           QDateTime::currentDateTime().addSecs(1)));
+    QVERIFY(lqt::is_in(0, -1, 1));
+    QVERIFY(lqt::is_in(19.0, -10.0, 19.1));
+    QVERIFY(lqt::is_in(QSL("f"), QSL("a"), QSL("s")));
+    QVERIFY(lqt::is_in(QDateTime::currentDateTime(),
+                       QDateTime::currentDateTime().addDays(-4),
+                       QDateTime::currentDateTime().addSecs(1)));
+    QVERIFY(!lqt::is_in(QDateTime::currentDateTime(),
+                        QDateTime::currentDateTime().addDays(4),
+                        QDateTime::currentDateTime().addSecs(1)));
 }
 
 void LQtUtilsTest::test_case14()
@@ -517,7 +517,7 @@ struct LQTTestConsumer : public QThread
             if (!ret)
                 return;
             QVERIFY(*ret == i++);
-            QVERIFY(lqt::in_range(m_queue->size(), 0, 11));
+            QVERIFY(lqt::is_in(m_queue->size(), 0, 10));
         }
     }
     void requestDispose() {

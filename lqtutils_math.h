@@ -36,8 +36,18 @@ namespace lqt {
  * @param b
  * @return
  */
-template<typename T> inline bool in_range(const T& val, const T& a, const T& b)
+template<typename T> [[deprecated]] inline bool in_range(const T& val, const T& a, const T& b)
 { return val >= a && val < b; }
+
+/**
+ * @brief in_range<T> Returns true iif val is in [a, b].
+ * @param val
+ * @param a
+ * @param b
+ * @return
+ */
+template<typename T> inline bool is_in(const T& val, const T& a, const T& b)
+{ return val >= a && val <= b; }
 
 /**
  * Compares two floating point numbers.
