@@ -26,6 +26,7 @@
 #define LQTUTILS_MATH
 
 #include <cmath>
+#include <QtMath>
 
 namespace lqt {
 
@@ -48,6 +49,16 @@ template<typename T> [[deprecated]] inline bool in_range(const T& val, const T& 
  */
 template<typename T> inline bool is_in(const T& val, const T& a, const T& b)
 { return val >= a && val <= b; }
+
+/**
+ * @brief nearest_in_range Returns the nearest value in the range.
+ * @param val
+ * @param a
+ * @param b
+ * @return
+ */
+template<typename T> inline T nearest_in_range(const T& val, const T& a, const T& b)
+{ return val < a ? a : (val > b) ? b : val; }
 
 /**
  * Compares two floating point numbers.

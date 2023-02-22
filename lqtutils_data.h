@@ -27,6 +27,7 @@
 #include <QCryptographicHash>
 #include <QFile>
 #include <QRandomGenerator>
+#include <QSet>
 
 namespace lqt {
 
@@ -83,6 +84,15 @@ bool random_file(const QString& fileName, qint64 size)
     }
 
     return true;
+}
+
+template<typename T>
+inline const T* get_any(const QSet<T>& set)
+{
+    if (set.isEmpty())
+        return nullptr;
+    typename QSet<T>::const_iterator it = set.constBegin();
+    return &(*it);
 }
 
 } // namespace

@@ -30,6 +30,7 @@
 #include <QDebug>
 #include <QMetaType>
 #include <QDataStream>
+#include <QMutableSetIterator>
 
 #include "../lqtutils_prop.h"
 #include "../lqtutils_string.h"
@@ -182,6 +183,7 @@ private slots:
     void test_case28();
     void test_case29();
     void test_case30();
+    void test_case31();
 };
 
 LQtUtilsTest::LQtUtilsTest()
@@ -457,6 +459,10 @@ void LQtUtilsTest::test_case13()
     QVERIFY(!lqt::is_in(QDateTime::currentDateTime(),
                         QDateTime::currentDateTime().addDays(4),
                         QDateTime::currentDateTime().addSecs(1)));
+    QVERIFY(lqt::nearest_in_range(1.1, 2., 4.) == 2);
+    QVERIFY(lqt::nearest_in_range(5, 1, 2) == 2);
+    QVERIFY(lqt::nearest_in_range(3, 1, 3) == 3);
+    QVERIFY(lqt::nearest_in_range(2, 1, 3) == 2);
 }
 
 void LQtUtilsTest::test_case14()
@@ -854,6 +860,21 @@ void LQtUtilsTest::test_case30()
         { "2", t2 }
     };
     qDebug() << "Hash:" << lqt::HashOutput<QString, LQTSerializeTest> { hash };
+}
+
+void LQtUtilsTest::test_case31()
+{
+    QSet<int> set = { 1, 2, 3, 4, 5 };
+    QMutableSetIterator<int> it(set);
+    while (it.hasNext()) {
+        const int* any = lqt::get_any(set);
+        if (!any) {
+            QVERIFY(set.isEmpty());
+            break;
+        }
+        QVERIFY(set.contains(*any));
+        set.remove(*any);
+    }
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)
