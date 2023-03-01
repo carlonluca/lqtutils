@@ -138,6 +138,8 @@ L_END_CLASS
 
 L_DECLARE_SETTINGS(LSettingsTestSec1, new QSettings("settings.ini", QSettings::IniFormat), "SECTION_1")
 L_DEFINE_VALUE(QString, string2, QString("string2"))
+L_DEFINE_VALUE(QString, string3, QString("string3"))
+L_DEFINE_VALUE(QString, string4, QString("string4"))
 L_END_CLASS
 
 L_DECLARE_ENUM(MyEnum,
@@ -249,6 +251,11 @@ void LQtUtilsTest::test_case2()
     QVERIFY(data.size() != 0);
 
     {
+        QSettings settings("settings.ini", QSettings::IniFormat);
+        settings.clear();
+    }
+
+    {
         LSettingsTest& settings = LSettingsTest::notifier();
         settings.set_string1("some string");
         settings.set_size(QSize(250, 200));
@@ -257,6 +264,10 @@ void LQtUtilsTest::test_case2()
 
         LSettingsTestSec1 sec1;
         sec1.set_string2(QSL("value_in_section"));
+        QCOMPARE(sec1.string3(true), QSL("string3"));
+        sec1.set_string3(QSL("value_in_section3"));
+        QCOMPARE(sec1.string3(true), QSL("value_in_section3"));
+        QCOMPARE(sec1.string4(true), QSL("string4"));
     }
 
     {
@@ -266,6 +277,8 @@ void LQtUtilsTest::test_case2()
         QCOMPARE(settings.value(QSL("temperature")).toDouble(), 36.7);
         QCOMPARE(settings.value(QSL("image")).toByteArray(), data);
         QCOMPARE(settings.value(QSL("SECTION_1/string2")), "value_in_section");
+        QCOMPARE(settings.value(QSL("SECTION_1/string3")), "value_in_section3");
+        QCOMPARE(settings.value(QSL("SECTION_1/string4")), "string4");
     }
 
     bool signalEmitted = false;
