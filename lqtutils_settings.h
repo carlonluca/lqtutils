@@ -43,7 +43,7 @@
     public:                                                                                       \
         type name(bool create = false) const {                                                    \
             const QString key = m_section + QStringLiteral(#name);                                \
-            if (create && !m_settings->contains(QStringLiteral(#name)))                           \
+            if (create && !m_settings->contains(key))                                             \
                 m_settings->setValue(key, def);                                                   \
             return m_settings->value(key, def).value<type>();                                     \
         }                                                                                         \
