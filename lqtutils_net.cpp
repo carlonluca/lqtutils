@@ -1,4 +1,5 @@
 #include <QFile>
+#include <QBuffer>
 
 #include "lqtutils_net.h"
 
@@ -83,6 +84,13 @@ class LQTThread : public QThread
 
 Downloader::Downloader(const QUrl& url, const QString& filePath, QObject* parent) :
     Downloader(url, new QFile(filePath), parent)
+{
+    connect(m_thread, &QThread::finished,
+            m_threadContext->ioDevice(), &QIODevice::deleteLater);
+}
+
+Downloader::Downloader(const QUrl &url, QByteArray* bucket, QObject *parent) :
+    Downloader(url, new QBuffer(bucket), parent)
 {
     connect(m_thread, &QThread::finished,
             m_threadContext->ioDevice(), &QIODevice::deleteLater);

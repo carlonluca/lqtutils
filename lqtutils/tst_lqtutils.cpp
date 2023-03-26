@@ -180,6 +180,7 @@ private slots:
     void test_case23();
     void test_case24();
     void test_case25();
+    void test_case25_2();
     void test_case26();
     void test_case27();
     void test_case28();
@@ -485,6 +486,8 @@ void LQtUtilsTest::test_case14()
     QVERIFY(lqt::today().time() == QTime(0, 0, 0, 0));
     QVERIFY(lqt::tomorrow().date() != now.date());
     QVERIFY(lqt::tomorrow().time() == QTime(0, 0, 0, 0));
+    QVERIFY(lqt::today().date().day() == lqt::tomorrow().date().day() - 1);
+    // May fail a couple of times a year.
     QVERIFY(lqt::today().msecsTo(lqt::tomorrow()) == 1000*60*60*24);
 }
 
@@ -756,6 +759,60 @@ void LQtUtilsTest::test_case25()
     });
     loop.exec();
     QVERIFY(downloader->state() == LQTDownloaderState::S_IO_FAILURE);
+}
+
+void LQtUtilsTest::test_case25_2()
+{
+    QByteArray expected;
+
+    {
+        QString tmpFilePath = QSL("/tmp/lqtutils_test_tmp.png");
+        lqt::AutoExec exec([&tmpFilePath] {
+            QFile::remove(tmpFilePath);
+        });
+
+        QScopedPointer<lqt::Downloader> downloader(new lqt::Downloader(
+            QSL("https://raw.githubusercontent.com/carlonluca/"
+                "isogeometric-analysis/master/2.3/lagrange.svg.png"),
+            tmpFilePath));
+        QVERIFY(downloader->state() == LQTDownloaderState::S_IDLE);
+
+        downloader->download();
+        QVERIFY(downloader->state() == LQTDownloaderState::S_DOWNLOADING);
+
+        QEventLoop loop;
+        connect(downloader.data(), &lqt::Downloader::stateChanged, this, [&loop, &downloader] {
+            if (downloader->state() == LQTDownloaderState::S_DONE)
+                loop.quit();
+        });
+        loop.exec();
+
+        QVERIFY(downloader->state() == LQTDownloaderState::S_DONE);
+
+        QFile f(tmpFilePath);
+        QVERIFY(f.open(QIODevice::ReadOnly));
+        expected = f.readAll();
+    }
+
+    QByteArray received;
+    QScopedPointer<lqt::Downloader> downloader(new lqt::Downloader(
+        QSL("https://raw.githubusercontent.com/carlonluca/"
+            "isogeometric-analysis/master/2.3/lagrange.svg.png"),
+        &received));
+    QVERIFY(downloader->state() == LQTDownloaderState::S_IDLE);
+
+    downloader->download();
+
+    QEventLoop loop;
+    connect(downloader.data(), &lqt::Downloader::stateChanged, this, [&loop, &downloader] {
+        if (downloader->state() == LQTDownloaderState::S_DONE) {
+            downloader->abort();
+            loop.quit();
+        }
+    });
+    loop.exec();
+    QVERIFY(downloader->state() == LQTDownloaderState::S_DONE);
+    QVERIFY(received == expected);
 }
 
 void LQtUtilsTest::test_case26()

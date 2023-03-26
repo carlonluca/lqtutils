@@ -76,6 +76,7 @@ class Downloader : public QObject
     Q_PROPERTY(bool state READ state NOTIFY stateChanged)
 public:
     Downloader(const QUrl& url, const QString& filePath, QObject* parent = nullptr);
+    Downloader(const QUrl& url, QByteArray* bucket, QObject* parent = nullptr);
     Downloader(const QUrl& url, QIODevice* destIo, QObject *parent);
     ~Downloader();
 
