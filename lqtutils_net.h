@@ -50,8 +50,10 @@ class DownloaderPriv : public QObject
     Q_OBJECT
     L_RO_PROP_AS(LQTDownloaderState::Value, state, LQTDownloaderState::S_IDLE)
 public:
-    DownloaderPriv(const QUrl& url, const QString& filePath, QObject* parent = nullptr);
+    DownloaderPriv(const QUrl& url, QIODevice* io, QObject* parent = nullptr);
     ~DownloaderPriv();
+
+    QIODevice* ioDevice() { return m_io; }
 
 public slots:
     void download();
@@ -65,8 +67,7 @@ private:
     QNetworkAccessManager* m_manager;
     QNetworkReply* m_reply;
     QUrl m_url;
-    QString m_filePath;
-    QFile m_file;
+    QIODevice* m_io;
 };
 
 class Downloader : public QObject
@@ -75,6 +76,7 @@ class Downloader : public QObject
     Q_PROPERTY(bool state READ state NOTIFY stateChanged)
 public:
     Downloader(const QUrl& url, const QString& filePath, QObject* parent = nullptr);
+    Downloader(const QUrl& url, QIODevice* destIo, QObject *parent);
     ~Downloader();
 
     void download();
@@ -90,7 +92,7 @@ private:
     QThread* m_thread;
     DownloaderPriv* m_threadContext;
     QUrl m_url;
-    QString m_filePath;
+    QIODevice* m_io;
 };
 
 } // namespace

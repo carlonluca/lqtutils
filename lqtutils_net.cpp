@@ -6,13 +6,12 @@
 
 namespace lqt {
 
-DownloaderPriv::DownloaderPriv(const QUrl& url, const QString &filePath, QObject* parent) :
+DownloaderPriv::DownloaderPriv(const QUrl& url, QIODevice* io, QObject* parent) :
     QObject(parent)
   , m_manager(new QNetworkAccessManager(this))
   , m_reply(nullptr)
   , m_url(url)
-  , m_filePath(filePath)
-  , m_file(m_filePath) {}
+  , m_io(io) {}
 
 DownloaderPriv::~DownloaderPriv()
 {
@@ -41,7 +40,7 @@ void DownloaderPriv::download()
             return;
         }
 
-        m_file.close();
+        m_io->close();
         set_state(LQTDownloaderState::S_DONE);
     });
 }
@@ -61,14 +60,15 @@ void DownloaderPriv::write(const QByteArray& data)
 {
     if (m_state != LQTDownloaderState::S_DOWNLOADING)
         return;
-    if (!m_file.isOpen()) {
-        if (!m_file.open(QIODevice::WriteOnly)) {
+
+    if (!m_io->isOpen()) {
+        if (!m_io->open(QIODevice::WriteOnly)) {
             set_state(LQTDownloaderState::S_IO_FAILURE);
             return;
         }
     }
 
-    if (m_file.write(data) != data.size())
+    if (m_io->write(data) != data.size())
         set_state(LQTDownloaderState::S_IO_FAILURE);
 }
 
@@ -82,11 +82,18 @@ class LQTThread : public QThread
 };
 
 Downloader::Downloader(const QUrl& url, const QString& filePath, QObject* parent) :
+    Downloader(url, new QFile(filePath), parent)
+{
+    connect(m_thread, &QThread::finished,
+            m_threadContext->ioDevice(), &QIODevice::deleteLater);
+}
+
+Downloader::Downloader(const QUrl& url, QIODevice* destIo, QObject* parent) :
     QObject(parent)
   , m_url(url)
-  , m_filePath(filePath)
+  , m_io(destIo)
   , m_thread(new LQTThread)
-  , m_threadContext(new DownloaderPriv(url, filePath))
+  , m_threadContext(new DownloaderPriv(url, destIo))
 {
     LQTDownloaderState::registerEnum("com.luke", 1, 0);
 
