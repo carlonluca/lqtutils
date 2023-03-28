@@ -83,14 +83,19 @@ inline void run_in_thread_sync(QThread* t, std::function<void()> f)
     sem.acquire();
 }
 
+inline void run_in_thread_sync(QObject* o, std::function<void()> f, QSemaphore* sem)
+{
+    QTimer::singleShot(0, o, [&f, &sem] {
+        f();
+        sem->release();
+    });
+    sem->acquire();
+}
+
 inline void run_in_thread_sync(QObject* o, std::function<void()> f)
 {
     QSemaphore sem;
-    QTimer::singleShot(0, o, [&f, &sem] {
-        f();
-        sem.release();
-    });
-    sem.acquire();
+    run_in_thread_sync(o, f, &sem);
 }
 
 inline void run_in_thread(QThread* t, std::function<void()> f)
