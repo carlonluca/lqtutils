@@ -44,6 +44,20 @@ public:
     Q_INVOKABLE void setWindow(QQuickWindow* w);
 };
 
+class ScreenLock
+{
+public:
+    ScreenLock();
+    ~ScreenLock();
+    bool isValid() { return m_isValid; }
+
+private:
+    void lockScreen(bool lock);
+
+private:
+    bool m_isValid;
+};
+
 class QmlUtils : public QObject
 {
     Q_OBJECT

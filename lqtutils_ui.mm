@@ -4,6 +4,15 @@
 
 namespace lqt {
 
+ScreenLock::ScreenLock() :
+    m_isValid(false)
+{
+}
+
+ScreenLock::~ScreenLock()
+{
+}
+
 double QmlUtils::safeAreaBottomInset()
 {
     if (@available(iOS 11.0, *)) {

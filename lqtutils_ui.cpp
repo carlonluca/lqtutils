@@ -42,6 +42,61 @@ typedef QAndroidJniObject QJniObject;
 
 namespace lqt {
 
+#ifndef Q_OS_IOS
+ScreenLock::ScreenLock() :
+    m_isValid(false)
+{
+#ifdef Q_OS_ANDROID
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QNativeInterface::QAndroidApplication::runOnAndroidMainThread([&] {
+        lockScreen(true);
+    }).waitForFinished();
+#else
+    QtAndroid::runOnAndroidThreadSync([&] {
+        lockScreen(true);
+    });
+#endif
+#endif
+}
+
+ScreenLock::~ScreenLock()
+{
+#ifdef Q_OS_ANDROID
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QNativeInterface::QAndroidApplication::runOnAndroidMainThread([&] {
+        lockScreen(false);
+    }).waitForFinished();
+#else
+    QtAndroid::runOnAndroidThreadSync([&] {
+        lockScreen(false);
+    });
+#endif
+#endif
+}
+
+void ScreenLock::lockScreen(bool lock)
+{
+#ifdef Q_OS_ANDROID
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QJniObject activity = QNativeInterface::QAndroidApplication::context();
+#else
+    QJniObject activity = QtAndroid::androidActivity();
+#endif
+    if (!activity.isValid())
+        return;
+
+    QJniObject window = activity.callObjectMethod("getWindow", "()Landroid/view/Window;");
+    if (!window.isValid())
+        return;
+
+    const int FLAG_KEEP_SCREEN_ON = 128;
+    window.callMethod<void>(lock ? "addFlags" : "clearFlags", "(I)V", FLAG_KEEP_SCREEN_ON);
+#else
+    Q_UNUSED(lock);
+#endif
+}
+#endif // Q_IOS_OS
+
 FrameRateMonitor::FrameRateMonitor(QQuickWindow* w, QObject* parent) :
     FreqMeter(parent)
 {
@@ -152,6 +207,7 @@ double QmlUtils::safeAreaBottomInset()
     return 0;
 #endif
 }
+
 #endif
 
 } // namespace
