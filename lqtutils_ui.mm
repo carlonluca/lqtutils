@@ -7,10 +7,12 @@ namespace lqt {
 ScreenLock::ScreenLock() :
     m_isValid(false)
 {
+    [[UIApplication sharedApplication] setIdleTimerDisabled: YES];
 }
 
 ScreenLock::~ScreenLock()
 {
+    [[UIApplication sharedApplication] setIdleTimerDisabled: NO];
 }
 
 double QmlUtils::safeAreaBottomInset()
