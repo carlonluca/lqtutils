@@ -44,7 +44,7 @@ Test_qt64:
     - cmake ../qt6
     - make
     - export QTEST_FUNCTION_TIMEOUT=10000000
-    - ./LQtUtilsTest
+    - LD_LIBRARY_PATH=/usr/local/lib ./LQtUtilsTest
 
 Test_qt65_android:
   stage: test_qt65_android
