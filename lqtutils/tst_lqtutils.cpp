@@ -45,6 +45,7 @@
 #include "../lqtutils_net.h"
 #include "../lqtutils_data.h"
 #include "../lqtutils_logging.h"
+#include "../lqtutils_system.h"
 
 struct LQTSerializeTest
 {
@@ -187,6 +188,7 @@ private slots:
     void test_case29();
     void test_case30();
     void test_case31();
+    void test_case32();
 };
 
 LQtUtilsTest::LQtUtilsTest()
@@ -945,6 +947,15 @@ void LQtUtilsTest::test_case31()
         QVERIFY(set.contains(*any));
         set.remove(*any);
     }
+}
+
+void LQtUtilsTest::test_case32()
+{
+    std::optional<lqt::MemData> mem = lqt::read_mem_data();
+    QVERIFY(mem.has_value());
+    QVERIFY(mem->totalMemBytes > 0);
+    QVERIFY(mem->freeMemBytes > 0);
+    QVERIFY(mem->totalMemBytes > mem->freeMemBytes);
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)
