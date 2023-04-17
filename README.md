@@ -403,7 +403,7 @@ consumer.wait();
 The class ```lqt::Downloader``` can be used to download a URL to a file in a background thread. Example:
 
 ```c++
-QScopedPointer<lqt::Downloader> downloader(new LQTDownloader(url, filePath));
+QScopedPointer<lqt::Downloader> downloader(new lqt::Downloader(url, filePath));
 downloader->download();
 connect(downloader.data(), &lqt::Downloader::downloadProgress, this, [&downloader] (qint64 progress, qint64 total) {
     qDebug() << "Downloading:" << progress << "/" << total << downloader->state();
