@@ -16,6 +16,14 @@ if (IOS)
     target_sources(lqtutils PRIVATE ${CMAKE_CURRENT_LIST_DIR}/lqtutils_ui.mm)
 endif()
 
+if (ENABLE_FONT_AWESOME)
+    add_compile_definitions(LQT_FONT_AWESOME_ENABLED)
+    target_sources(lqtutils PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/lqtutils_fa.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/lqtutils_fa.qrc
+    )
+endif()
+
 target_include_directories(lqtutils
     PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 
