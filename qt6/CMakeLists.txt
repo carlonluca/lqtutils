@@ -38,6 +38,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 enable_testing()
 
+set(ENABLE_FONT_AWESOME true)
 include_directories(../)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../CMakeLists.txt)
 
