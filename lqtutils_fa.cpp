@@ -42,17 +42,17 @@ bool embed_font_awesome(QQmlContext* ctx)
 {
     ::init_resources();
 
-    if (QFontDatabase::addApplicationFont(QSL(":/lqtutils/fonts/Font Awesome 6 Brands-Regular-400.otf")) == -1) {
+    if (QFontDatabase::addApplicationFont(QSL(":/lqtutils/fontawesome/Font Awesome 6 Brands-Regular-400.otf")) == -1) {
         qWarning() << "Could not load font awesome brands regular";
         return false;
     }
 
-    if (QFontDatabase::addApplicationFont(QSL(":/lqtutils/fonts/Font Awesome 6 Free-Regular-400.otf")) == -1) {
+    if (QFontDatabase::addApplicationFont(QSL(":/lqtutils/fontawesome/Font Awesome 6 Free-Regular-400.otf")) == -1) {
         qWarning() << "Could not load font awesome free regular";
         return false;
     }
 
-    if (QFontDatabase::addApplicationFont(QSL(":/lqtutils/fonts/Font Awesome 6 Free-Solid-900.otf")) == -1) {
+    if (QFontDatabase::addApplicationFont(QSL(":/lqtutils/fontawesome/Font Awesome 6 Free-Solid-900.otf")) == -1) {
         qWarning() << "Could not load font awesome free solid";
         return false;
     }
