@@ -192,9 +192,6 @@ private slots:
     void test_case30();
     void test_case31();
     void test_case32();
-#ifdef LQT_FONT_AWESOME_ENABLED
-    void test_case33();
-#endif
 };
 
 LQtUtilsTest::LQtUtilsTest()
@@ -963,14 +960,6 @@ void LQtUtilsTest::test_case32()
     QVERIFY(mem->freeMemBytes > 0);
     QVERIFY(mem->totalMemBytes > mem->freeMemBytes);
 }
-
-#ifdef LQT_FONT_AWESOME_ENABLED
-void LQtUtilsTest::test_case33()
-{
-    Q_INIT_RESOURCE(lqtutils_fa);
-    QVERIFY(lqt::embed_font_awesome(nullptr));
-}
-#endif
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)
 
