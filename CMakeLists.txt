@@ -7,10 +7,24 @@ if (Qt6_FOUND)
 endif()
 
 add_library(lqtutils STATIC
-    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_ui.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_net.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_freq.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_fsm.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_ui.cpp ${CMAKE_CURRENT_LIST_DIR}/lqtutils_ui.h
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_net.cpp ${CMAKE_CURRENT_LIST_DIR}/lqtutils_net.h
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_freq.cpp ${CMAKE_CURRENT_LIST_DIR}/lqtutils_freq.h
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_fsm.cpp ${CMAKE_CURRENT_LIST_DIR}/lqtutils_fsm.h
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_autoexec.h
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_bqueue.h
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_data.h
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_enum.h
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_logging.h
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_math.h
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_misc.h
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_perf.h
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_prop.h
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_settings.h
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_string.h
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_system.h
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_threading.h
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_time.h
 )
 if (IOS)
     target_sources(lqtutils PRIVATE ${CMAKE_CURRENT_LIST_DIR}/lqtutils_ui.mm)
@@ -19,7 +33,7 @@ endif()
 if (ENABLE_FONT_AWESOME)
     add_compile_definitions(LQT_FONT_AWESOME_ENABLED)
     target_sources(lqtutils PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/lqtutils_fa.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/lqtutils_fa.cpp ${CMAKE_CURRENT_LIST_DIR}/lqtutils_fa.h
         ${CMAKE_CURRENT_LIST_DIR}/lqtutils_fa.qrc
     )
 endif()
