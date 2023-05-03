@@ -57,13 +57,13 @@ bool embed_font_awesome(QQmlContext* ctx)
         return false;
     }
 
-    QQmlEngine* engine = ctx->engine();
-    if (!engine) {
-        qWarning() << "Cannot find qml engine";
-        return false;
-    }
-
     if (ctx) {
+        QQmlEngine* engine = ctx->engine();
+        if (!engine) {
+            qWarning() << "Cannot find qml engine";
+            return false;
+        }
+
         ctx->setContextProperty("fontAwesomeBrandsRegular",
                                 QFontDatabase::font("Font Awesome 6 Brands", "Regular", 9));
         ctx->setContextProperty("fontAwesomeFreeRegular",
