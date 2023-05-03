@@ -30,11 +30,18 @@
 #include "lqtutils_fa.h"
 #include "lqtutils_string.h"
 
+static void init_resources()
+{
+    Q_INIT_RESOURCE(lqtutils_fa);
+}
+
 namespace lqt
 {
 
 bool embed_font_awesome(QQmlContext* ctx)
 {
+    ::init_resources();
+
     if (QFontDatabase::addApplicationFont(QSL(":/lqtutils/fonts/Font Awesome 6 Brands-Regular-400.otf")) == -1) {
         qWarning() << "Could not load font awesome brands regular";
         return false;
