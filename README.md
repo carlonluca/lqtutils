@@ -428,3 +428,34 @@ Writes a random file of the specified size:
 ```c++
 bool lqt::random_file(const QString& fileName, qint64 size)
 ```
+
+## lqtutils_fs.h
+
+This header includes a function to load FontAwesome fonts and QML items to render the fonts in QML. To include FontAwesome add the support to your cmake file when including the project:
+
+```
+set(ENABLE_FONT_AWESOME true)
+include(${CMAKE_CURRENT_SOURCE_DIR}/lqtutils/CMakeLists.txt)
+```
+
+then init FontAwesome in your main function:
+
+```
+lqt::embed_font_awesome(view.engine()->rootContext());
+```
+
+Now types and fonts are loaded. To use it in QML:
+
+```
+import "qrc:/lqtutils/fontawesome"
+
+[...]
+
+LQTFontAwesomeFreeSolid {
+    width: 16
+    height: 16
+    iconUtf8: "\uf013"
+}
+```
+
+Note that the size is mandatory. The available types are: `LQTFontAwesomeFreeSolid`, `LQTFontAwesomeFreeRegular` and `LQTFontAwesomeBrandsRegular`. The init function also set the context properties: `fontAwesomeBrandsRegular`, `fontAwesomeFreeRegular` and `fontAwesomeFreeSolid`. These are QFont instances available in QML.
