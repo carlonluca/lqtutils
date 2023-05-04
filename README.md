@@ -429,7 +429,7 @@ Writes a random file of the specified size:
 bool lqt::random_file(const QString& fileName, qint64 size)
 ```
 
-## lqtutils_fs.h
+## lqtutils_fa.h
 
 This header includes a function to load FontAwesome fonts and QML items to render the fonts in QML. To include FontAwesome add the support to your cmake file when including the project:
 
