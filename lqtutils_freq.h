@@ -29,10 +29,11 @@
 #include <QDateTime>
 #include <QList>
 #include <QMutex>
+#include <QtGlobal>
 
 #include "lqtutils_prop.h"
 
-class QTimer;
+QT_FORWARD_DECLARE_CLASS(QTimer);
 
 namespace lqt {
 
