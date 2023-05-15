@@ -29,10 +29,11 @@
 #include <QDateTime>
 #include <QList>
 #include <QJSValue>
+#include <QtGlobal>
 
 #include "lqtutils_freq.h"
 
-class QQuickWindow;
+QT_FORWARD_DECLARE_CLASS(QQuickWindow);
 
 namespace lqt {
 

@@ -25,7 +25,9 @@
 #ifndef LQTUTILS_FA_H
 #define LQTUTILS_FA_H
 
-class QQmlContext;
+#include <QtGlobal>
+
+QT_FORWARD_DECLARE_CLASS(QQmlContext);
 
 namespace lqt
 {
