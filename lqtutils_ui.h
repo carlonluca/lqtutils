@@ -30,6 +30,7 @@
 #include <QList>
 #include <QJSValue>
 #include <QtGlobal>
+#include <QMetaObject>
 
 #include "lqtutils_freq.h"
 
@@ -44,6 +45,8 @@ public:
     FrameRateMonitor(QQuickWindow* w = nullptr, QObject* parent = nullptr);
     Q_INVOKABLE void setWindow(QQuickWindow* w);
 };
+
+QMetaObject::Connection enableAutoFrameUpdates(QQuickWindow& w);
 
 class ScreenLock
 {
