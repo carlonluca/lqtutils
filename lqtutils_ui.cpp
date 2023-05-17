@@ -111,6 +111,13 @@ void FrameRateMonitor::setWindow(QQuickWindow* w)
             this, &FrameRateMonitor::registerSample);
 }
 
+QMetaObject::Connection enableAutoFrameUpdates(QQuickWindow& w)
+{
+    return QObject::connect(&w, &QQuickWindow::frameSwapped,
+                            &w, &QQuickWindow::requestUpdate);
+}
+
+
 void QmlUtils::singleShot(int msec, QJSValue callback)
 {
     QTimer::singleShot(msec, this, [callback] () mutable

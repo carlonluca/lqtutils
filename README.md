@@ -301,6 +301,14 @@ and use it in QML (or in C++ if you prefer):
 Text { text: qsTr("fps: ") + fpsmonitor.freq }
 ```
 
+If there have been no updates to the scene, Qt will not redraw it and you will end up with a measurement of ~1fps. If you want to measure how many frames *can* be drawn per second, you can enable automatic frame update triggers via the helper
+
+```c++
+lqt::enableAutoFrameUpdates(view);
+```
+
+which causes the window to request an update on every frame swap (that is on every vsync in most cases).
+
 ### Details
 
 The frame rate is provided in a notifiable property of the ```lqt::FrameRateMonitor``` class:
