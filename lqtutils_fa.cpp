@@ -64,12 +64,22 @@ bool embed_font_awesome(QQmlContext* ctx)
             return false;
         }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         ctx->setContextProperty("fontAwesomeBrandsRegular",
                                 QFontDatabase::font("Font Awesome 6 Brands", "Regular", 9));
         ctx->setContextProperty("fontAwesomeFreeRegular",
                                 QFontDatabase::font("Font Awesome 6 Free", "Regular", 9));
         ctx->setContextProperty("fontAwesomeFreeSolid",
                                 QFontDatabase::font("Font Awesome 6 Free", "Solid", 9));
+#else
+        QFontDatabase db;
+        ctx->setContextProperty("fontAwesomeBrandsRegular",
+                                db.font("Font Awesome 6 Brands", "Regular", 9));
+        ctx->setContextProperty("fontAwesomeFreeRegular",
+                                db.font("Font Awesome 6 Free", "Regular", 9));
+        ctx->setContextProperty("fontAwesomeFreeSolid",
+                                db.font("Font Awesome 6 Free", "Solid", 9));
+#endif
     }
 
     return true;
