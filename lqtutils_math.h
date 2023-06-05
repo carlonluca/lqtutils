@@ -70,7 +70,7 @@ template<typename T> inline T nearest_in_range(const T& val, const T& a, const T
  * @return
  */
 template<typename T> inline bool approx_equal(const T& a, const T& b, const T& epsilon)
-{ return std::fabs(a - b) <= ( (std::fabs(a) < std::fabs(b) ? std::fabs(b) : std::fabs(a)) * epsilon); }
+{ return std::fabs(a - b) <= epsilon; }
 
 } // namespace
 
