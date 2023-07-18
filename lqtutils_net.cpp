@@ -37,6 +37,9 @@ void DownloaderPriv::download()
         if (m_state != LQTDownloaderState::S_DOWNLOADING)
             return;
         if (m_reply->error() != QNetworkReply::NoError) {
+#ifdef DEBUG_LOGS
+            qWarning() << "Download error:" << m_reply->error() << m_reply->errorString();
+#endif
             set_state(LQTDownloaderState::S_NETWORK_FAILURE);
             return;
         }
