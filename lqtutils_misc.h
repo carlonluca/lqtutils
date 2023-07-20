@@ -25,10 +25,35 @@
 #ifndef LQTUTILS_MISC_H
 #define LQTUTILS_MISC_H
 
+#include <QtGlobal>
+
 #if defined Q_OS_BLACKBERRY || defined Q_OS_ANDROID || defined Q_OS_IOS || defined Q_OS_WP
 #define L_OS_MOBILE
 #else
 #define L_OS_DESKTOP
 #endif
+
+inline bool operator!(const QString& str)
+{
+    return str.isEmpty();
+}
+
+namespace lqt {
+
+///
+/// \brief coalesce is a C++ implementation of the coalesce operator.
+/// \param lhs value to be evaluated: if evaluates to true, then it is
+/// returned, otherwise rhs is returned.
+/// \param rhs is the value to be returned if lhs does not evaluate
+/// to true.
+/// \return lhs if true, rhs otherwise.
+///
+template<typename T>
+T coalesce(T lhs, T rhs)
+{
+    return !lhs ? rhs : lhs;
+}
+
+}
 
 #endif // LQTUTILS_MISC_H

@@ -46,6 +46,7 @@
 #include "../lqtutils_data.h"
 #include "../lqtutils_logging.h"
 #include "../lqtutils_system.h"
+#include "../lqtutils_misc.h"
 #ifdef LQT_FONT_AWESOME_ENABLED
 #include "../lqtutils_fa.h"
 #endif
@@ -192,6 +193,7 @@ private slots:
     void test_case30();
     void test_case31();
     void test_case32();
+    void test_case33();
 };
 
 LQtUtilsTest::LQtUtilsTest()
@@ -959,6 +961,33 @@ void LQtUtilsTest::test_case32()
     QVERIFY(mem->totalMemBytes > 0);
     QVERIFY(mem->freeMemBytes > 0);
     QVERIFY(mem->totalMemBytes > mem->freeMemBytes);
+}
+
+void LQtUtilsTest::test_case33()
+{
+    {
+        const bool a = true;
+        const bool b = false;
+        QVERIFY(lqt::coalesce(a, b) == a);
+    }
+
+    {
+        const bool a = false;
+        const bool b = true;
+        QVERIFY(lqt::coalesce(a, b) == b);
+    }
+
+    {
+        const QString a;
+        const QString b = QSL("HELLO!");
+        QVERIFY(lqt::coalesce(a, b) == b);
+    }
+
+    {
+        const int a = 0;
+        const int b = 2;
+        QVERIFY(lqt::coalesce(a, b) == b);
+    }
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)
