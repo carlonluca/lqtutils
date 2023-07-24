@@ -50,7 +50,7 @@ inline QString path_combine(std::initializer_list<QString> l)
 inline int string_to_int(const QString& s, int def, bool* ok = nullptr)
 {
     bool _ok;
-    int ret = s.toInt(&_ok);
+    int ret = QLocale::system().toInt(s, &_ok);
     if (ok)
         *ok = _ok;
     return _ok ? ret : def;
@@ -59,7 +59,7 @@ inline int string_to_int(const QString& s, int def, bool* ok = nullptr)
 inline qint64 string_to_int64(const QString& s, qint64 def, bool* ok = nullptr)
 {
     bool _ok;
-    qint64 ret = s.toLongLong(&_ok);
+    qint64 ret = QLocale::system().toLongLong(s, &_ok);
     if (ok)
         *ok = _ok;
     return _ok ? ret : def;
@@ -68,7 +68,7 @@ inline qint64 string_to_int64(const QString& s, qint64 def, bool* ok = nullptr)
 inline qint64 string_to_uint64(const QString& s, quint64 def, bool* ok = nullptr)
 {
     bool _ok;
-    qint64 ret = s.toULongLong(&_ok);
+    qint64 ret = QLocale::system().toULongLong(s, &_ok);
     if (ok)
         *ok = _ok;
     return _ok ? ret : def;
@@ -77,7 +77,16 @@ inline qint64 string_to_uint64(const QString& s, quint64 def, bool* ok = nullptr
 inline float string_to_float(const QString& s, float def, bool* ok = nullptr)
 {
     bool _ok;
-    float ret = s.toFloat(&_ok);
+    float ret = QLocale::system().toFloat(s, &_ok);
+    if (ok)
+        *ok = _ok;
+    return _ok ? ret : def;
+}
+
+inline double string_to_double(const QString& s, double def, bool* ok = nullptr)
+{
+    bool _ok;
+    double ret = QLocale::system().toDouble(s, &_ok);
     if (ok)
         *ok = _ok;
     return _ok ? ret : def;
