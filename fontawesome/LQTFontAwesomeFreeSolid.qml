@@ -12,5 +12,7 @@ Item {
         font.weight: fontAwesomeFreeSolid.weight
         font.pixelSize: height
         anchors.fill: parent
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignHCenter
     }
 }
