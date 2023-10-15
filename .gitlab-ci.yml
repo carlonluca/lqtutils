@@ -6,6 +6,8 @@ stages:
   - test_qt62_jammy
   - test_qt64
   - test_qt65_android
+  - test_qt66
+  - test_qt66_android
 
 Test_qt5:
   stage: test_qt5
@@ -55,6 +57,33 @@ Test_qt65_android:
     - mkdir build
     - cd build
     - /opt/Qt-android-6.5.2/android_arm64_v8a/bin/qt-cmake \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DQT_ANDROID_BUILD_ALL_ABIS:BOOL=ON \
+      -S ../qt6;
+    - cmake --build .
+
+Test_qt66:
+  stage: test_qt66
+  image:
+    name: "carlonluca/qt-dev:6.6.0"
+    entrypoint: [""]
+  script:
+    - mkdir build
+    - cd build
+    - cmake ../qt6
+    - make
+    - export QTEST_FUNCTION_TIMEOUT=10000000
+    - LD_LIBRARY_PATH=/usr/local/lib ./LQtUtilsTest
+
+Test_qt66_android:
+  stage: test_qt66_android
+  image:
+    name: "carlonluca/qt-dev:6.6.0"
+    entrypoint: [""]
+  script:
+    - mkdir build
+    - cd build
+    - /opt/Qt-android-6.6.0/android_arm64_v8a/bin/qt-cmake \
       -DCMAKE_BUILD_TYPE=Release \
       -DQT_ANDROID_BUILD_ALL_ABIS:BOOL=ON \
       -S ../qt6;
