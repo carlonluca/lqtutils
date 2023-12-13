@@ -124,6 +124,8 @@ inline QRectF string_to_rect(const QString& s)
     if (!convOk)
         return QRectF();
     ret.setHeight(locale.toDouble(tokens[3].trimmed(), &convOk));
+    if (!convOk)
+        return QRectF();
 
     return ret;
 }
@@ -139,6 +141,38 @@ inline QString string_from_rect(const QRectF& rect)
             .arg(locale.toString(rect.y()))
             .arg(locale.toString(rect.width()))
             .arg(locale.toString(rect.height()));
+}
+
+inline QPointF string_to_point(const QString& s)
+{
+    if (s.isEmpty())
+        return QPoint();
+
+    QStringList tokens = s.split(',');
+    if (tokens.size() != 2)
+        return QPoint();
+
+    bool convOk;
+    QPoint ret;
+    QLocale locale(QLocale::English, QLocale::UnitedStates);
+    ret.setX(locale.toDouble(tokens[0].trimmed(), &convOk));
+    if (!convOk)
+        return QPointF();
+    ret.setY(locale.toDouble(tokens[1].trimmed(), &convOk));
+    if (!convOk)
+        return QPointF();
+
+    return ret;
+}
+
+inline QString string_from_point(const QPointF& point)
+{
+    if (point.isNull())
+        return QString();
+
+    QLocale locale(QLocale::English, QLocale::UnitedStates);
+    return QString(QSL("%1,%2"))
+        .arg(locale.toString(point.x()), locale.toString(point.y()));
 }
 
 inline QSize string_to_size(const QString& s)
