@@ -132,11 +132,11 @@ inline QString string_from_rect(const QRectF& rect)
         return QString();
 
     QLocale locale(QLocale::English, QLocale::UnitedStates);
-    return QString(QStringLiteral("%1,%2,%3,%4"))
-            .arg(locale.toString(rect.x()))
-            .arg(locale.toString(rect.y()))
-            .arg(locale.toString(rect.width()))
-            .arg(locale.toString(rect.height()));
+    return QString(QStringLiteral("%1,%2,%3,%4")).arg(
+            locale.toString(rect.x())
+          , locale.toString(rect.y())
+          , locale.toString(rect.width())
+          , locale.toString(rect.height()));
 }
 
 inline QPointF string_to_point(const QString& s)
