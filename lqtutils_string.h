@@ -167,7 +167,7 @@ inline QString string_from_point(const QPointF& point)
         return QString();
 
     QLocale locale(QLocale::English, QLocale::UnitedStates);
-    return QString(QSL("%1,%2"))
+    return QString(QStringLiteral("%1,%2"))
         .arg(locale.toString(point.x()), locale.toString(point.y()));
 }
 
