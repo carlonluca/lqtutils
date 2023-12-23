@@ -467,21 +467,3 @@ LQTFontAwesomeFreeSolid {
 ```
 
 Note that the size is mandatory. The available types are: `LQTFontAwesomeFreeSolid`, `LQTFontAwesomeFreeRegular` and `LQTFontAwesomeBrandsRegular`. The init function also set the context properties: `fontAwesomeBrandsRegular`, `fontAwesomeFreeRegular` and `fontAwesomeFreeSolid`. These are QFont instances available in QML.
-
-## lqtutils_misc.h
-
-### Coalesce operator for C++
-
-This is a trivial implementation of the coalesce operator for C++. The header also includes operator! for QString's, which makes it possible to use the coalesce operator on strings:
-
-```C++
-const bool a = true;
-const bool b = false;
-QVERIFY(lqt::coalesce(a, b) == a);
-```
-
-```C++
-const QString a;
-const QString b = QSL("HELLO!");
-QVERIFY(lqt::coalesce(a, b) == b);
-```
