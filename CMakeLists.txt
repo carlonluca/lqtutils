@@ -23,6 +23,7 @@ add_library(lqtutils STATIC
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_prop.h
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_settings.h
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_string.h
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_qsl.h
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_system.h
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_threading.h
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_time.h

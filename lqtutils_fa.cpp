@@ -28,7 +28,7 @@
 #include <QQmlComponent>
 
 #include "lqtutils_fa.h"
-#include "lqtutils_string.h"
+#include "lqtutils_qsl.h"
 
 static void init_resources()
 {

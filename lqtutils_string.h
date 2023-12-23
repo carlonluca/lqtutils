@@ -30,10 +30,6 @@
 #include <QRectF>
 #include <QLocale>
 
-#ifndef QSL
-#define QSL QStringLiteral
-#endif // QSL
-
 namespace lqt {
 
 inline QString path_combine(std::initializer_list<QString> l)
@@ -136,7 +132,7 @@ inline QString string_from_rect(const QRectF& rect)
         return QString();
 
     QLocale locale(QLocale::English, QLocale::UnitedStates);
-    return QString(QSL("%1,%2,%3,%4"))
+    return QString(QStringLiteral("%1,%2,%3,%4"))
             .arg(locale.toString(rect.x()))
             .arg(locale.toString(rect.y()))
             .arg(locale.toString(rect.width()))
@@ -200,7 +196,7 @@ inline QString size_to_string(const QSize& size)
     if (!size.isValid() || size.isNull())
         return QString();
 
-    return QString(QSL("%1x%2"))
+    return QString(QStringLiteral("%1x%2"))
             .arg(size.width())
             .arg(size.height());
 }

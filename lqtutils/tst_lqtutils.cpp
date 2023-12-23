@@ -47,6 +47,7 @@
 #include "../lqtutils_logging.h"
 #include "../lqtutils_system.h"
 #include "../lqtutils_misc.h"
+#include "../lqtutils_qsl.h"
 #ifdef LQT_FONT_AWESOME_ENABLED
 #include "../lqtutils_fa.h"
 #endif
