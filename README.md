@@ -12,7 +12,7 @@ To include in a qmake app:
 include(lqtutils/lqtutils.pri)
 ```
 
-To include in a cmake app:
+To include in a cmake app in Qt6:
 
 ```
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/lqtutils)
@@ -20,6 +20,13 @@ target_link_libraries(yourproj lqtutilsplugin)
 ```
 
 NOTE: the name of the library to link is `lqtutilsplugin`, not just `lqtutils`.
+
+To include in a cmake app in Qt5:
+
+```
+include(${CMAKE_CURRENT_SOURCE_DIR}/deps/lqtutils/CMakeLists_qt5.txt)
+target_link_libraries(LQtUtilsTest PRIVATE lqtutils)
+```
 
 ## Synthetize Qt properties in a short way (lqtutils_prop.h)
 Contains a few useful macros to synthetize Qt props. For instance:
@@ -441,7 +448,7 @@ bool lqt::random_file(const QString& fileName, qint64 size)
 
 ## lqtutils_fa.h
 
-This header includes a function to load FontAwesome fonts and QML items to render the fonts in QML. To include FontAwesome add the support to your cmake file when including the project:
+This header includes a function to load FontAwesome fonts and QML items to render the fonts in QML. To include FontAwesome in Qt6 add the support to your cmake file when including the project:
 
 ```cmake
 set(ENABLE_FONT_AWESOME true)

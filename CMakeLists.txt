@@ -35,6 +35,7 @@ endif()
 if (ENABLE_FONT_AWESOME)
     qt_add_qml_module(lqtutils
         URI lqtutils
+        VERSION 1.0
         QML_FILES
             fontawesome/LQTFontAwesomeFreeRegular.qml
             fontawesome/LQTFontAwesomeFreeSolid.qml
