@@ -52,6 +52,11 @@
 #include "../lqtutils_fa.h"
 #endif
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QtQml/QQmlExtensionPlugin>
+Q_IMPORT_QML_PLUGIN(lqtutilsPlugin)
+#endif
+
 struct LQTSerializeTest
 {
     QString s;

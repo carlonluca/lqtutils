@@ -40,11 +40,11 @@ enable_testing()
 
 set(ENABLE_FONT_AWESOME true)
 include_directories(../)
-include(${CMAKE_CURRENT_SOURCE_DIR}/../CMakeLists.txt)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/.. subproject/lqtutils)
 
 add_executable(LQtUtilsTest ../lqtutils/tst_lqtutils.cpp)
 add_test(NAME LQtUtilsTest COMMAND LQtUtilsTest)
-target_link_libraries(LQtUtilsTest PRIVATE Qt6::Test Qt6::Gui Qt6::Qml Qt6::Quick lqtutils)
+target_link_libraries(LQtUtilsTest PRIVATE Qt6::Test Qt6::Gui Qt6::Qml Qt6::Quick lqtutilsplugin)
 
 if(MSVC)
   target_compile_options(LQtUtilsTest PRIVATE /W4 /WX)
