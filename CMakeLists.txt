@@ -7,7 +7,7 @@ if (Qt6_FOUND)
     find_package(Qt6 REQUIRED COMPONENTS StateMachine)
 endif()
 
-add_library(lqtutils STATIC
+qt_add_library(lqtutils STATIC
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_ui.cpp ${CMAKE_CURRENT_LIST_DIR}/lqtutils_ui.h
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_net.cpp ${CMAKE_CURRENT_LIST_DIR}/lqtutils_net.h
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_freq.cpp ${CMAKE_CURRENT_LIST_DIR}/lqtutils_freq.h
@@ -33,11 +33,24 @@ if (IOS)
 endif()
 
 if (ENABLE_FONT_AWESOME)
-    add_compile_definitions(LQT_FONT_AWESOME_ENABLED)
-    target_sources(lqtutils PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/lqtutils_fa.cpp ${CMAKE_CURRENT_LIST_DIR}/lqtutils_fa.h
-        ${CMAKE_CURRENT_LIST_DIR}/lqtutils_fa.qrc
+    qt_add_qml_module(lqtutils
+        URI lqtutils
+        QML_FILES
+            fontawesome/LQTFontAwesomeFreeRegular.qml
+            fontawesome/LQTFontAwesomeFreeSolid.qml
+            fontawesome/LQTFontAwesomeBrandsRegular.qml
+        RESOURCES
+            "fontawesome/Font Awesome 6 Brands-Regular-400.otf"
+            "fontawesome/Font Awesome 6 Free-Regular-400.otf"
+            "fontawesome/Font Awesome 6 Free-Solid-900.otf"
+        SOURCES
+            ${CMAKE_CURRENT_LIST_DIR}/lqtutils_fa.cpp ${CMAKE_CURRENT_LIST_DIR}/lqtutils_fa.h
+        IMPORT_PATH
+            ${CMAKE_CURRENT_LIST_DIR}/fontawesome
+        RESOURCE_PREFIX /
+        IMPORT_PATH "/fontawesome"
     )
+    add_compile_definitions(LQT_FONT_AWESOME_ENABLED)
 endif()
 
 target_include_directories(lqtutils

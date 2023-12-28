@@ -15,9 +15,11 @@ include(lqtutils/lqtutils.pri)
 To include in a cmake app:
 
 ```
-include(${CMAKE_CURRENT_SOURCE_DIR}/lqtutils/CMakeLists.txt)
-target_link_libraries(yourproj lqtutils)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/lqtutils)
+target_link_libraries(yourproj lqtutilsplugin)
 ```
+
+NOTE: the name of the library to link is `lqtutilsplugin`, not just `lqtutils`.
 
 ## Synthetize Qt properties in a short way (lqtutils_prop.h)
 Contains a few useful macros to synthetize Qt props. For instance:
@@ -443,7 +445,7 @@ This header includes a function to load FontAwesome fonts and QML items to rende
 
 ```cmake
 set(ENABLE_FONT_AWESOME true)
-include(${CMAKE_CURRENT_SOURCE_DIR}/lqtutils/CMakeLists.txt)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lqtutils)
 ```
 
 then init FontAwesome in your main function:
@@ -464,6 +466,13 @@ LQTFontAwesomeFreeSolid {
     height: 16
     iconUtf8: "\uf013"
 }
+```
+
+to ensure the plugin is linked, add these two lines to your main.cpp:
+
+```c++
+#include <QtQml/QQmlExtensionPlugin>
+Q_IMPORT_QML_PLUGIN(lqtutilsPlugin)
 ```
 
 Note that the size is mandatory. The available types are: `LQTFontAwesomeFreeSolid`, `LQTFontAwesomeFreeRegular` and `LQTFontAwesomeBrandsRegular`. The init function also set the context properties: `fontAwesomeBrandsRegular`, `fontAwesomeFreeRegular` and `fontAwesomeFreeSolid`. These are QFont instances available in QML.
