@@ -28,6 +28,7 @@ qt_add_library(lqtutils STATIC
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_system.h
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_threading.h
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_time.h
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_models.h
 )
 if (IOS)
     target_sources(lqtutils PRIVATE ${CMAKE_CURRENT_LIST_DIR}/lqtutils_ui.mm)
