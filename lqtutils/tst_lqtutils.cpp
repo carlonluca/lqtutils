@@ -48,6 +48,7 @@
 #include "../lqtutils_system.h"
 #include "../lqtutils_misc.h"
 #include "../lqtutils_qsl.h"
+#include "../lqtutils_models.h"
 #ifdef LQT_FONT_AWESOME_ENABLED
 #include "../lqtutils_fa.h"
 #endif
@@ -200,6 +201,7 @@ private slots:
     void test_case31();
     void test_case32();
     void test_case33();
+    void test_case34();
 };
 
 LQtUtilsTest::LQtUtilsTest()
@@ -994,6 +996,20 @@ void LQtUtilsTest::test_case33()
         const int b = 2;
         QVERIFY(lqt::coalesce(a, b) == b);
     }
+}
+
+void LQtUtilsTest::test_case34()
+{
+    const QList<QSharedPointer<LQTSerializeTest>> list {
+        QSharedPointer<LQTSerializeTest>(new LQTSerializeTest),
+        QSharedPointer<LQTSerializeTest>(new LQTSerializeTest),
+        QSharedPointer<LQTSerializeTest>(new LQTSerializeTest)
+    };
+    list[1]->s = QSL("Luca Carlon");
+
+    QScopedPointer<lqt::QmlSharedPointerList<LQTSerializeTest>> model(new lqt::QmlSharedPointerList<LQTSerializeTest>(list));
+    QCOMPARE(model->rowCount(), list.size());
+    QCOMPARE(model->data(model->index(1, 0)).value<LQTSerializeTest*>()->s, list[1]->s);
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)

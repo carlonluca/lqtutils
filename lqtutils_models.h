@@ -33,6 +33,8 @@
 #include <QHash>
 #include <QList>
 
+namespace lqt {
+
 template<typename T>
 class QmlSharedPointerList : public QAbstractListModel
 {
@@ -68,5 +70,7 @@ public:
 private:
     QList<QSharedPointer<T>> m_list;
 };
+
+} // namespace
 
 #endif // LQTUTILS_MODELS_H
