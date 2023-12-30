@@ -43,6 +43,7 @@ public:
         QAbstractListModel(parent), m_list(list) {}
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override {
+        Q_UNUSED(parent)
         return static_cast<int>(m_list.count());
     }
 

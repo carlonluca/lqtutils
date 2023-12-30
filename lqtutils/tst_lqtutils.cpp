@@ -65,6 +65,7 @@ struct LQTSerializeTest
     int i;
 };
 Q_DECLARE_METATYPE(LQTSerializeTest)
+Q_DECLARE_METATYPE(LQTSerializeTest*)
 
 bool operator==(const LQTSerializeTest& t1, const LQTSerializeTest& t2)
 { return t1.s == t2.s && t1.i == t2.i && t1.img == t2.img; }
@@ -207,6 +208,7 @@ private slots:
 LQtUtilsTest::LQtUtilsTest()
 {
     qRegisterMetaType<LQTSerializeTest>();
+    qRegisterMetaType<LQTSerializeTest*>();
 }
 
 LQtUtilsTest::~LQtUtilsTest() {}
