@@ -22,6 +22,7 @@
  * SOFTWARE.
  **/
 
+#include "qbuffer.h"
 #include <QTimer>
 #include <QQuickWindow>
 #include <QMutableListIterator>
@@ -245,6 +246,77 @@ void SystemNotification::send()
 
     if (reply.isValid())
         qWarning() << "Failed to send notification:" << reply.error().message();
+#elif defined(Q_OS_ANDROID)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QJniObject activity = QNativeInterface::QAndroidApplication::context();
+#else
+    QJniObject activity = QtAndroid::androidActivity();
+#endif
+
+#define J_CLASS_NOT         "Landroid/app/Notification;"
+#define J_CLASS_NOT_BUILDER "Landroid/app/Notification$Builder;"
+#define J_CLASS_BITMAP      "Landroid/graphics/Bitmap;"
+#define J_CLASS_STRING      "Ljava/lang/String;"
+
+    const QJniObject channelId = QJniObject::fromString(qApp->applicationName());
+    const QJniObject channelName = QJniObject::fromString(QString("%1 notifier").arg(qApp->applicationName()));
+
+    QJniObject notificationManager = activity.callObjectMethod("getSystemService",
+                                                               "(" J_CLASS_STRING ")Ljava/lang/Object;",
+                                                               QJniObject::fromString("notification").object());
+
+    QJniObject builder;
+    if (QJniObject::getStaticField<jint>("android/os/Build$VERSION", "SDK_INT") >= 26) {
+        const jint importance = QJniObject::getStaticField<jint>("android/app/NotificationManager", "IMPORTANCE_DEFAULT");
+        QJniObject notificationChannel("android/app/NotificationChannel",
+                                       "(" J_CLASS_STRING "Ljava/lang/CharSequence;I)V",
+                                       channelId.object(), channelName.object(), importance);
+        notificationManager.callMethod<void>("createNotificationChannel",
+                                             "(Landroid/app/NotificationChannel;)V", notificationChannel.object());
+        builder = QJniObject("android/app/Notification$Builder",
+                             "(Landroid/content/Context;" J_CLASS_STRING ")V", activity.object(), channelId.object());
+    } else {
+        builder = QJniObject("android/app/Notification$Builder",
+                             "(Landroid/content/Context;)V", activity.object());
+    }
+
+    QBuffer iconBuffer;
+    iconBuffer.open(QIODevice::WriteOnly);
+    if (!m_icon.save(&iconBuffer, "png")) {
+        qWarning() << "Failed to encode icon to png";
+        return;
+    }
+
+    const QByteArray iconData = iconBuffer.buffer();
+
+    QJniEnvironment env;
+    QJniObject byteArrayObj = QJniObject::fromLocalRef(env->NewByteArray(iconData.size()));
+    env->SetByteArrayRegion(byteArrayObj.object<jbyteArray>(),
+                            0,
+                            iconData.size(),
+                            reinterpret_cast<const jbyte*>(iconData.constData()));
+
+    QJniObject bitmapFactory = QJniObject::callStaticObjectMethod("android/graphics/BitmapFactory", "decodeByteArray",
+                                                                  "([BII)" J_CLASS_BITMAP,
+                                                                  byteArrayObj.object<jbyteArray>(), 0, iconData.size());
+    QJniObject icon = QJniObject::callStaticObjectMethod("android/graphics/drawable/Icon", "createWithBitmap",
+                                                         "(" J_CLASS_BITMAP ")Landroid/graphics/drawable/Icon;",
+                                                         bitmapFactory.object());
+    builder.callObjectMethod("setSmallIcon",
+                             "(Landroid/graphics/drawable/Icon;)" J_CLASS_NOT_BUILDER,
+                             icon.object());
+    builder.callObjectMethod("setContentTitle",
+                             "(Ljava/lang/CharSequence;)" J_CLASS_NOT_BUILDER,
+                             QJniObject::fromString(m_title).object());
+    builder.callObjectMethod("setContentText",
+                             "(Ljava/lang/CharSequence;)" J_CLASS_NOT_BUILDER,
+                             QJniObject::fromString(m_message).object());
+    builder.callObjectMethod("setAutoCancel", "(Z)" J_CLASS_NOT_BUILDER, false);
+
+    QJniObject notification = builder.callObjectMethod("build", "()" J_CLASS_NOT);
+
+    const jint notificationId = 0;
+    notificationManager.callMethod<void>("notify", "(I" J_CLASS_NOT ")V", notificationId, notification.object());
 #endif
 }
 

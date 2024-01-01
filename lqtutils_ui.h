@@ -31,6 +31,7 @@
 #include <QJSValue>
 #include <QtGlobal>
 #include <QMetaObject>
+#include <QImage>
 
 #include "lqtutils_freq.h"
 #include "lqtutils_prop.h"
@@ -81,7 +82,7 @@ class SystemNotification : public QObject
     Q_OBJECT
     L_RW_PROP_AS(QString, appName)
     L_RW_PROP_AS(quint32, replacesId, 0)
-    L_RW_PROP_AS(QString, icon)
+    L_RW_PROP_AS(QImage, icon)
     L_RW_PROP_AS(QString, title)
     L_RW_PROP_AS(QString, message)
     L_RW_PROP_AS(QStringList, actions)
