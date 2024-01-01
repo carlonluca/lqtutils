@@ -38,7 +38,13 @@ typedef QAndroidJniObject QJniObject;
 #include <jni.h>
 #endif
 
+#if !defined(QT_NO_DBUS) && defined(Q_OS_LINUX)
+#include <QDBusInterface>
+#include <QDBusReply>
+#endif
+
 #include "lqtutils_ui.h"
+#include "lqtutils_qsl.h"
 
 namespace lqt {
 
@@ -216,5 +222,29 @@ double QmlUtils::safeAreaBottomInset()
 }
 
 #endif
+
+void SystemNotification::send()
+{
+#if !defined(QT_NO_DBUS) && defined(Q_OS_LINUX)
+    QDBusInterface interface(QSL("org.freedesktop.Notifications"),
+                             QSL("/org/freedesktop/Notifications"),
+                             QSL("org.freedesktop.Notifications"));
+
+    const QVariantList args {
+        m_appName,
+        m_replacesId,
+        m_icon,
+        m_title,
+        m_message,
+        m_actions,
+        m_hints,
+        m_timeout
+    };
+    QDBusReply<uint> reply = interface.callWithArgumentList(QDBus::AutoDetect, QSL("Notify"), args);
+
+    if (reply.isValid())
+        qWarning() << "Failed to send notification:" << reply.error().message();
+#endif
+}
 
 } // namespace

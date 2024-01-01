@@ -26,7 +26,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(LQtUtilsTest LANGUAGES CXX)
 
-find_package(Qt6 COMPONENTS Core Test Gui Qml Quick REQUIRED)
+find_package(Qt6 COMPONENTS Core Test Gui Qml Quick DBus REQUIRED)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -44,7 +44,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/.. subproject/lqtutils)
 
 add_executable(LQtUtilsTest ../lqtutils/tst_lqtutils.cpp)
 add_test(NAME LQtUtilsTest COMMAND LQtUtilsTest)
-target_link_libraries(LQtUtilsTest PRIVATE Qt6::Test Qt6::Gui Qt6::Qml Qt6::Quick lqtutilsplugin)
+target_link_libraries(LQtUtilsTest PRIVATE Qt6::Test Qt6::Gui Qt6::Qml Qt6::Quick Qt::DBus lqtutilsplugin)
 
 if(MSVC)
   target_compile_options(LQtUtilsTest PRIVATE /W4 /WX)

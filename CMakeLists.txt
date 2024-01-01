@@ -7,6 +7,8 @@ if (Qt6_FOUND)
     find_package(Qt NAMES Qt6 REQUIRED COMPONENTS StateMachine)
     find_package(Qt6 REQUIRED COMPONENTS StateMachine)
 endif()
+find_package(QT NAMES Qt6 Qt5 OPTIONAL_COMPONENTS DBus)
+find_package(Qt${QT_VERSION_MAJOR} OPTIONAL_COMPONENTS DBus)
 
 qt_add_library(lqtutils STATIC
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_ui.cpp ${CMAKE_CURRENT_LIST_DIR}/lqtutils_ui.h
@@ -65,6 +67,9 @@ target_link_libraries(lqtutils PRIVATE
     Qt${QT_VERSION_MAJOR}::Qml
     Qt${QT_VERSION_MAJOR}::Quick
 )
+if (Qt6DBus_FOUND)
+    target_link_libraries(lqtutils PRIVATE Qt${QT_VERSION_MAJOR}::DBus)
+endif()
 if (Qt6_FOUND)
     target_link_libraries(lqtutils PRIVATE Qt6::StateMachine)
 endif()

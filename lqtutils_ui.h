@@ -33,6 +33,7 @@
 #include <QMetaObject>
 
 #include "lqtutils_freq.h"
+#include "lqtutils_prop.h"
 
 QT_FORWARD_DECLARE_CLASS(QQuickWindow);
 
@@ -73,6 +74,23 @@ public:
     Q_INVOKABLE static double safeAreaTopInset();
     Q_INVOKABLE static double safeAreaRightInset();
     Q_INVOKABLE static double safeAreaLeftInset();
+};
+
+class SystemNotification : public QObject
+{
+    Q_OBJECT
+    L_RW_PROP_AS(QString, appName)
+    L_RW_PROP_AS(quint32, replacesId, 0)
+    L_RW_PROP_AS(QString, icon)
+    L_RW_PROP_AS(QString, title)
+    L_RW_PROP_AS(QString, message)
+    L_RW_PROP_AS(QStringList, actions)
+    L_RW_PROP_AS(QVariantMap, hints)
+    L_RW_PROP_AS(qint32, timeout, -1)
+public:
+    SystemNotification(QObject* parent = nullptr) : QObject(parent) {}
+
+    void send();
 };
 
 } // namespace
