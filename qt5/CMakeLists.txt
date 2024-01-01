@@ -26,7 +26,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(LQtUtilsTest LANGUAGES CXX)
 
-find_package(Qt5 COMPONENTS Core Test Gui Qml Quick REQUIRED)
+find_package(Qt5 COMPONENTS Core Test Gui Qml Quick DBus REQUIRED)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -43,4 +43,4 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/../CMakeLists_qt5.txt)
 
 add_executable(LQtUtilsTest ../lqtutils/tst_lqtutils.cpp)
 add_test(NAME LQtUtilsTest COMMAND LQtUtilsTest)
-target_link_libraries(LQtUtilsTest PRIVATE Qt5::Test Qt5::Gui Qt5::Qml Qt5::Quick lqtutils)
+target_link_libraries(LQtUtilsTest PRIVATE Qt5::Test Qt5::Gui Qt5::Qml Qt5::Quick Qt5::DBus lqtutils)
