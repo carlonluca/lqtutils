@@ -26,6 +26,7 @@
 #include <QQuickWindow>
 #include <QMutableListIterator>
 #include <QGuiApplication>
+#include <QDebug>
 
 #ifdef Q_OS_ANDROID
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)

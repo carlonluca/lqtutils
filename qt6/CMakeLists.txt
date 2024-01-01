@@ -47,7 +47,7 @@ add_executable(LQtUtilsTest ../lqtutils/tst_lqtutils.cpp)
 add_test(NAME LQtUtilsTest COMMAND LQtUtilsTest)
 target_link_libraries(LQtUtilsTest PRIVATE Qt6::Test Qt6::Gui Qt6::Qml Qt6::Quick lqtutilsplugin)
 if (Qt6DBus_FOUND)
-    target_link_libraries(lqtutils PRIVATE Qt${QT_VERSION_MAJOR}::DBus)
+    target_link_libraries(LQtUtilsTest PRIVATE Qt6::DBus)
 endif()
 
 if(MSVC)
