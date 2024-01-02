@@ -75,7 +75,8 @@ public:
     Q_INVOKABLE static double safeAreaTopInset();
     Q_INVOKABLE static double safeAreaRightInset();
     Q_INVOKABLE static double safeAreaLeftInset();
-    Q_INVOKABLE static bool shareResource(const QUrl& resUrl, const QString& mimeType, const QString &authority);
+    Q_INVOKABLE static bool shareResource(const QUrl& resUrl, const QString& mimeType, const QString& authority);
+    Q_INVOKABLE static bool isMobile();
 };
 
 class SystemNotification : public QObject

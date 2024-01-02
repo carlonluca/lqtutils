@@ -22,7 +22,7 @@
  * SOFTWARE.
  **/
 
-#include "qbuffer.h"
+#include <QBuffer>
 #include <QTimer>
 #include <QQuickWindow>
 #include <QMutableListIterator>
@@ -48,6 +48,7 @@ typedef QAndroidJniObject QJniObject;
 
 #include "lqtutils_ui.h"
 #include "lqtutils_qsl.h"
+#include "lqtutils_misc.h"
 
 namespace lqt {
 
@@ -348,6 +349,15 @@ bool QmlUtils::shareResource(const QUrl& resUrl, const QString& mimeType, const 
 }
 
 #endif
+
+bool QmlUtils::isMobile()
+{
+#ifdef L_OS_MOBILE
+    return true;
+#else
+    return false;
+#endif
+}
 
 void SystemNotification::send()
 {
