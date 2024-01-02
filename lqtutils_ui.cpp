@@ -38,6 +38,7 @@
 typedef QAndroidJniObject QJniObject;
 #endif
 #include <jni.h>
+#include <QtCore/private/qandroidextras_p.h>
 #endif
 
 #if !defined(QT_NO_DBUS) && defined(Q_OS_LINUX)
@@ -220,6 +221,129 @@ double QmlUtils::safeAreaBottomInset()
     return cutout.callMethod<int>("getSafeInsetBottom", "()I")/qApp->devicePixelRatio();
 #else
     return 0;
+#endif
+}
+
+bool QmlUtils::shareResource(const QUrl& resUrl, const QString& mimeType, const QString& authority)
+{
+#ifdef Q_OS_ANDROID
+    const QJniObject jniPath = QJniObject::fromString(resUrl.toLocalFile());
+    if (!jniPath.isValid()) {
+        qWarning() << "Could not create jni url";
+        return false;
+    }
+
+    const QJniObject jniFile("java/io/File", "(Ljava/lang/String;)V", jniPath.object<jstring>());
+    if (!jniFile.isValid()) {
+        qWarning() << "Could not instantiate file";
+        return false;
+    }
+
+    const QJniObject jniUri = QJniObject::callStaticObjectMethod("androidx/core/content/FileProvider",
+                                                                 "getUriForFile",
+                                                                 "(Landroid/content/Context;Ljava/lang/String;Ljava/io/File;)Landroid/net/Uri;",
+                                                                 QNativeInterface::QAndroidApplication::context(),
+                                                                 QJniObject::fromString(authority).object(),
+                                                                 jniFile.object<jobject>());
+    if (!jniUri.isValid()) {
+        qWarning() << "Failed to create FilePath uri";
+        return false;
+    }
+
+    const QJniObject jniParam = QJniObject::getStaticObjectField<jstring>("android/content/Intent", "ACTION_SEND");
+    if(!jniParam.isValid()) {
+        qWarning() << "Could not get jni intent";
+        return false;
+    }
+
+    QJniObject jniIntent("android/content/Intent", "(Ljava/lang/String;)V", jniParam.object<jstring>());
+    if (!jniIntent.isValid()) {
+        qWarning() << "Could not instantiate intent";
+        return false;
+    }
+
+    QJniObject jniType = QJniObject::fromString(mimeType);
+    if (!jniType.isValid()) {
+        qWarning() << "Could not create jni type";
+        return false;
+    }
+
+    QJniObject jniResult = jniIntent.callObjectMethod("setType",
+                                                      "(Ljava/lang/String;)Landroid/content/Intent;",
+                                                      jniType.object<jstring>());
+    if (!jniResult.isValid()) {
+        qWarning() << "Cannot set intent type";
+        return false;
+    }
+
+    const QJniObject jniExtraStream = QJniObject::getStaticObjectField<jstring>("android/content/Intent",
+                                                                                "EXTRA_STREAM");
+    if (!jniExtraStream.isValid()) {
+        qWarning() << "Cannot read extra stream constant";
+        return false;
+    }
+
+    jniResult = jniIntent.callObjectMethod("putExtra",
+                                           "(Ljava/lang/String;Landroid/os/Parcelable;)Landroid/content/Intent;",
+                                           jniExtraStream.object<jstring>(),
+                                           jniUri.object<jobject>());
+    if (!jniResult.isValid()) {
+        qWarning() << "Cannot set extra";
+        return false;
+    }
+
+    jint jniGrantReadUri = QJniObject::getStaticField<jint>("android/content/Intent", "FLAG_GRANT_READ_URI_PERMISSION");
+    Q_ASSERT(jniGrantReadUri == 1);
+
+    jint jniGrantWriteUri = QJniObject::getStaticField<jint>("android/content/Intent", "FLAG_GRANT_WRITE_URI_PERMISSION");
+    Q_ASSERT(jniGrantWriteUri == 2);
+
+    jniResult = jniIntent.callObjectMethod("addFlags", "(I)Landroid/content/Intent;", jniGrantReadUri);
+    if (!jniResult.isValid()) {
+        qWarning() << "Could not add flags to intent";
+        return false;
+    }
+
+    jniResult = jniIntent.callObjectMethod("addFlags", "(I)Landroid/content/Intent;", jniGrantWriteUri);
+    if (!jniResult.isValid()) {
+        qWarning() << "Could not add flags to intent";
+        return false;
+    }
+
+    QJniObject activity = QNativeInterface::QAndroidApplication::context();
+    if (!activity.isValid()) {
+        qWarning() << "Could not get android context";
+        return false;
+    }
+
+    QJniObject packageManager = activity.callObjectMethod("getPackageManager",
+                                                          "()Landroid/content/pm/PackageManager;");
+    if (!packageManager.isValid()) {
+        qWarning() << "Could not get packageManager object";
+        return false;
+    }
+
+    QJniObject componentName = jniIntent.callObjectMethod("resolveActivity",
+                                                          "(Landroid/content/pm/PackageManager;)Landroid/content/ComponentName;",
+                                                          packageManager.object());
+    if (!componentName.isValid())
+        return false;
+
+    QJniObject jniShareIntent =
+        QJniObject::callStaticObjectMethod("android/content/Intent",
+                                           "createChooser",
+                                           "(Landroid/content/Intent;Ljava/lang/CharSequence;)Landroid/content/Intent;",
+                                           jniIntent.object<jobject>(),
+                                           QJniObject::fromString("Share file").object<jstring>());
+    if (!jniShareIntent.isValid()) {
+        qWarning() << "Could not create share intent";
+        return false;
+    }
+
+    QtAndroidPrivate::startActivity(jniShareIntent, 1, nullptr);
+    return true;
+#else
+    return false;
 #endif
 }
 
