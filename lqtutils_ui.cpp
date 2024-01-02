@@ -280,31 +280,36 @@ void SystemNotification::send()
                              "(Landroid/content/Context;)V", activity.object());
     }
 
-    QBuffer iconBuffer;
-    iconBuffer.open(QIODevice::WriteOnly);
-    if (!m_icon.save(&iconBuffer, "png")) {
-        qWarning() << "Failed to encode icon to png";
-        return;
+    QJniObject icon;
+    if (!m_icon.isNull()) {
+        QBuffer iconBuffer;
+        iconBuffer.open(QIODevice::WriteOnly);
+        if (!m_icon.save(&iconBuffer, "png")) {
+            qWarning() << "Failed to encode icon to png";
+            return;
+        }
+
+        const QByteArray iconData = iconBuffer.buffer();
+
+        QJniEnvironment env;
+        QJniObject byteArrayObj = QJniObject::fromLocalRef(env->NewByteArray(iconData.size()));
+        env->SetByteArrayRegion(byteArrayObj.object<jbyteArray>(),
+                                0,
+                                iconData.size(),
+                                reinterpret_cast<const jbyte*>(iconData.constData()));
+
+        QJniObject bitmap = QJniObject::callStaticObjectMethod("android/graphics/BitmapFactory", "decodeByteArray",
+                                                               "([BII)" J_CLASS_BITMAP,
+                                                               byteArrayObj.object<jbyteArray>(), 0, iconData.size());
+        icon = QJniObject::callStaticObjectMethod("android/graphics/drawable/Icon", "createWithBitmap",
+                                                  "(" J_CLASS_BITMAP ")Landroid/graphics/drawable/Icon;",
+                                                  bitmap.object());
     }
 
-    const QByteArray iconData = iconBuffer.buffer();
-
-    QJniEnvironment env;
-    QJniObject byteArrayObj = QJniObject::fromLocalRef(env->NewByteArray(iconData.size()));
-    env->SetByteArrayRegion(byteArrayObj.object<jbyteArray>(),
-                            0,
-                            iconData.size(),
-                            reinterpret_cast<const jbyte*>(iconData.constData()));
-
-    QJniObject bitmapFactory = QJniObject::callStaticObjectMethod("android/graphics/BitmapFactory", "decodeByteArray",
-                                                                  "([BII)" J_CLASS_BITMAP,
-                                                                  byteArrayObj.object<jbyteArray>(), 0, iconData.size());
-    QJniObject icon = QJniObject::callStaticObjectMethod("android/graphics/drawable/Icon", "createWithBitmap",
-                                                         "(" J_CLASS_BITMAP ")Landroid/graphics/drawable/Icon;",
-                                                         bitmapFactory.object());
-    builder.callObjectMethod("setSmallIcon",
-                             "(Landroid/graphics/drawable/Icon;)" J_CLASS_NOT_BUILDER,
-                             icon.object());
+    if (icon.isValid())
+        builder.callObjectMethod("setSmallIcon",
+                                 "(Landroid/graphics/drawable/Icon;)" J_CLASS_NOT_BUILDER,
+                                 icon.object());
     builder.callObjectMethod("setContentTitle",
                              "(Ljava/lang/CharSequence;)" J_CLASS_NOT_BUILDER,
                              QJniObject::fromString(m_title).object());
