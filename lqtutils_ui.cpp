@@ -52,6 +52,7 @@ typedef QAndroidJniObject QJniObject;
 
 namespace lqt {
 
+#ifdef Q_OS_ANDROID
 QJniObject get_activity()
 {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -60,6 +61,7 @@ QJniObject get_activity()
     return QtAndroid::androidActivity();
 #endif
 }
+#endif
 
 #ifndef Q_OS_IOS
 ScreenLock::ScreenLock() :
