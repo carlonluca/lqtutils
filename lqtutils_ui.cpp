@@ -52,6 +52,15 @@ typedef QAndroidJniObject QJniObject;
 
 namespace lqt {
 
+QJniObject get_activity()
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    return QNativeInterface::QAndroidApplication::context();
+#else
+    return QtAndroid::androidActivity();
+#endif
+}
+
 #ifndef Q_OS_IOS
 ScreenLock::ScreenLock() :
     m_isValid(false)
@@ -87,11 +96,7 @@ ScreenLock::~ScreenLock()
 void ScreenLock::lockScreen(bool lock)
 {
 #ifdef Q_OS_ANDROID
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    QJniObject activity = QNativeInterface::QAndroidApplication::context();
-#else
-    QJniObject activity = QtAndroid::androidActivity();
-#endif
+    const QJniObject activity = get_activity();
     if (!activity.isValid())
         return;
 
@@ -141,11 +146,7 @@ void QmlUtils::singleShot(int msec, QJSValue callback)
 #ifdef Q_OS_ANDROID
 inline QJniObject get_cutout()
 {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    QJniObject activity = QNativeInterface::QAndroidApplication::context();
-#else
-    QJniObject activity = QtAndroid::androidActivity();
-#endif
+    QJniObject activity = get_activity();
     if (!activity.isValid()) {
         qWarning() << "Could not get android context";
         return QJniObject();
@@ -381,11 +382,7 @@ void SystemNotification::send()
     if (reply.isValid())
         qWarning() << "Failed to send notification:" << reply.error().message();
 #elif defined(Q_OS_ANDROID)
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    QJniObject activity = QNativeInterface::QAndroidApplication::context();
-#else
-    QJniObject activity = QtAndroid::androidActivity();
-#endif
+    const QJniObject activity = get_activity();
 
 #define J_CLASS_NOT         "Landroid/app/Notification;"
 #define J_CLASS_NOT_BUILDER "Landroid/app/Notification$Builder;"
@@ -440,10 +437,30 @@ void SystemNotification::send()
                                                   bitmap.object());
     }
 
+    const jint flags = QJniObject::getStaticField<jint>("android/content/Intent", "FLAG_ACTIVITY_NEW_TASK") |
+                       QJniObject::getStaticField<jint>("android/content/Intent", "FLAG_ACTIVITY_CLEAR_TASK");
+    const QJniObject openIntent("android/content/Intent",
+                                "(Landroid/content/Context;Ljava/lang/Class;)V",
+                                activity.object(),
+                                activity.objectClass());
+
+    QJniObject pendingIntent;
+    if (openIntent.isValid()) {
+        openIntent.callObjectMethod("setFlags", "(I)Landroid/content/Intent;", flags);
+        pendingIntent = QJniObject::callStaticObjectMethod("android/app/PendingIntent",
+                                                           "getActivity",
+                                                           "(Landroid/content/Context;ILandroid/content/Intent;I)Landroid/app/PendingIntent;",
+                                                           activity.object(), 0, openIntent.object(), 0);
+    }
+
     if (icon.isValid())
         builder.callObjectMethod("setSmallIcon",
                                  "(Landroid/graphics/drawable/Icon;)" J_CLASS_NOT_BUILDER,
                                  icon.object());
+    if (pendingIntent.isValid() && m_openApp)
+        builder.callObjectMethod("setContentIntent",
+                                 "(Landroid/app/PendingIntent;)" J_CLASS_NOT_BUILDER,
+                                 pendingIntent.object());
     builder.callObjectMethod("setContentTitle",
                              "(Ljava/lang/CharSequence;)" J_CLASS_NOT_BUILDER,
                              QJniObject::fromString(m_title).object());

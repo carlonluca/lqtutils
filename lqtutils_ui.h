@@ -75,7 +75,9 @@ public:
     Q_INVOKABLE static double safeAreaTopInset();
     Q_INVOKABLE static double safeAreaRightInset();
     Q_INVOKABLE static double safeAreaLeftInset();
-    Q_INVOKABLE static bool shareResource(const QUrl& resUrl, const QString& mimeType, const QString& authority);
+    Q_INVOKABLE static bool shareResource(const QUrl& resUrl,
+                                          const QString& mimeType,
+                                          const QString& authority);
     Q_INVOKABLE static bool isMobile();
 };
 
@@ -90,6 +92,7 @@ class SystemNotification : public QObject
     L_RW_PROP_AS(QStringList, actions)
     L_RW_PROP_AS(QVariantMap, hints)
     L_RW_PROP_AS(qint32, timeout, -1)
+    L_RW_PROP_AS(bool, openApp, false)
 public:
     SystemNotification(QObject* parent = nullptr) : QObject(parent) {}
 
