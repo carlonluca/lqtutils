@@ -404,7 +404,7 @@ bool QmlUtils::isMobile()
 
 bool QmlUtils::setBarColorLight(bool light, bool fullscreen)
 {
-#ifdef Q_OS_ANDROID
+#if defined(Q_OS_ANDROID) && QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     run_activity_thread([&] {
         QJniObject decoView = get_decor_view();
         if (!decoView.isValid()) {
@@ -454,12 +454,14 @@ bool QmlUtils::setBarColorLight(bool light, bool fullscreen)
     });
     return true;
 #else
+    // Not supported.
     return false;
 #endif
 }
 
 bool QmlUtils::setNavBarColor(const QColor &color)
 {
+#if defined(Q_OS_ANDROID) && QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     run_activity_thread([color] {
         if (QtAndroidPrivate::androidSdkVersion() < 21) {
             qWarning() << "Not supported for SDKs < 21";
@@ -473,10 +475,15 @@ bool QmlUtils::setNavBarColor(const QColor &color)
         window.callMethod<void>("setNavigationBarColor", "(I)V", color.rgba());
     });
     return true;
+#else
+    // Not supported.
+    return false;
+#endif
 }
 
 bool QmlUtils::setStatusBarColor(const QColor &color)
 {
+#if defined(Q_OS_ANDROID) && QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     run_activity_thread([color] {
         if (QtAndroidPrivate::androidSdkVersion() < 21) {
             qWarning() << "Not supported for SDKs < 21";
@@ -490,6 +497,10 @@ bool QmlUtils::setStatusBarColor(const QColor &color)
         window.callMethod<void>("setStatusBarColor", "(I)V", color.rgba());
     });
     return true;
+#else
+    // Not supported.
+    return false;
+#endif
 }
 
 void SystemNotification::send()
