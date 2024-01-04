@@ -46,6 +46,8 @@ typedef QAndroidJniObject QJniObject;
 #include <QDBusReply>
 #endif
 
+#include <functional>
+
 #include "lqtutils_ui.h"
 #include "lqtutils_qsl.h"
 #include "lqtutils_misc.h"
@@ -53,12 +55,38 @@ typedef QAndroidJniObject QJniObject;
 namespace lqt {
 
 #ifdef Q_OS_ANDROID
-QJniObject get_activity()
+inline QJniObject get_activity()
 {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     return QNativeInterface::QAndroidApplication::context();
 #else
     return QtAndroid::androidActivity();
+#endif
+}
+
+inline QJniObject get_window()
+{
+    const QJniObject activity = get_activity();
+    if (!activity.isValid())
+        return QJniObject();
+
+    QJniObject window = activity.callObjectMethod("getWindow", "()Landroid/view/Window;");
+    if (!window.isValid()) {
+        qWarning() << "Cannot get window";
+        return QJniObject();
+    }
+
+    return window;
+}
+
+inline void run_activity_thread(std::function<void()> f)
+{
+#ifdef Q_OS_ANDROID
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QNativeInterface::QAndroidApplication::runOnAndroidMainThread(f).waitForFinished();
+#else
+    QtAndroid::runOnAndroidThreadSync(f);
+#endif
 #endif
 }
 #endif
@@ -68,41 +96,25 @@ ScreenLock::ScreenLock() :
     m_isValid(false)
 {
 #ifdef Q_OS_ANDROID
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    QNativeInterface::QAndroidApplication::runOnAndroidMainThread([&] {
-        lockScreen(true);
-    }).waitForFinished();
-#else
-    QtAndroid::runOnAndroidThreadSync([&] {
+    run_activity_thread([&] {
         lockScreen(true);
     });
-#endif
 #endif
 }
 
 ScreenLock::~ScreenLock()
 {
 #ifdef Q_OS_ANDROID
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    QNativeInterface::QAndroidApplication::runOnAndroidMainThread([&] {
-        lockScreen(false);
-    }).waitForFinished();
-#else
-    QtAndroid::runOnAndroidThreadSync([&] {
+    run_activity_thread([&] {
         lockScreen(false);
     });
-#endif
 #endif
 }
 
 void ScreenLock::lockScreen(bool lock)
 {
 #ifdef Q_OS_ANDROID
-    const QJniObject activity = get_activity();
-    if (!activity.isValid())
-        return;
-
-    QJniObject window = activity.callObjectMethod("getWindow", "()Landroid/view/Window;");
+    QJniObject window = get_window();
     if (!window.isValid())
         return;
 
@@ -146,7 +158,7 @@ void QmlUtils::singleShot(int msec, QJSValue callback)
 
 #ifndef Q_OS_IOS
 #ifdef Q_OS_ANDROID
-inline QJniObject get_cutout()
+inline QJniObject get_decor_view()
 {
     QJniObject activity = get_activity();
     if (!activity.isValid()) {
@@ -160,7 +172,12 @@ inline QJniObject get_cutout()
         return QJniObject();
     }
 
-    QJniObject decoView = window.callObjectMethod("getDecorView", "()Landroid/view/View;");
+    return window.callObjectMethod("getDecorView", "()Landroid/view/View;");
+}
+
+inline QJniObject get_cutout()
+{
+    QJniObject decoView = get_decor_view();
     if (!decoView.isValid()) {
         qWarning() << "Cannot get decorator view";
         return QJniObject();
@@ -212,6 +229,29 @@ double QmlUtils::safeAreaLeftInset()
     return cutout.callMethod<int>("getSafeInsetLeft", "()I")/qApp->devicePixelRatio();
 #else
     return 0;
+#endif
+}
+
+QRectF QmlUtils::visibleDisplayFrame()
+{
+#ifdef Q_OS_ANDROID
+    QJniObject decoView = get_decor_view();
+    if (!decoView.isValid()) {
+        qWarning() << "Could not get decor view";
+        return QRectF();
+    }
+
+    QJniObject rectangle("android/graphics/Rect");
+    decoView.callMethod<void>("getWindowVisibleDisplayFrame", "(Landroid/graphics/Rect;)V", rectangle.object());
+
+    const jint top = rectangle.getField<jint>("top")/qApp->devicePixelRatio();
+    const jint bottom = rectangle.getField<jint>("bottom")/qApp->devicePixelRatio();
+    const jint left = rectangle.getField<jint>("left")/qApp->devicePixelRatio();
+    const jint right = rectangle.getField<jint>("right")/qApp->devicePixelRatio();
+
+    return QRectF(left, top, right - left, bottom - top);
+#else
+    return QRectF();
 #endif
 }
 
@@ -362,6 +402,96 @@ bool QmlUtils::isMobile()
 #endif
 }
 
+bool QmlUtils::setBarColorLight(bool light, bool fullscreen)
+{
+#ifdef Q_OS_ANDROID
+    run_activity_thread([&] {
+        QJniObject decoView = get_decor_view();
+        if (!decoView.isValid()) {
+            qWarning() << "Could not get decor view";
+            return;
+        }
+
+        if (fullscreen) {
+            const jint layoutStable = QJniObject::getStaticField<jint>("android/view/View", "SYSTEM_UI_FLAG_LAYOUT_STABLE");
+            const jint hideNavigation = QJniObject::getStaticField<jint>("android/view/View", "SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION");
+            const jint fullscreen = QJniObject::getStaticField<jint>("android/view/View", "SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN");
+            const jint uiVisibility = decoView.callMethod<jint>("getSystemUiVisibility", "()I")
+                                      | layoutStable
+                                      | hideNavigation
+                                      | fullscreen;
+            decoView.callMethod<void>("setSystemUiVisibility", "(I)V", uiVisibility);
+        }
+
+        if (QtAndroidPrivate::androidSdkVersion() < 26) {
+            qWarning() << "Not supported for SDKs < 30";
+            return;
+        }
+        else if (QtAndroidPrivate::androidSdkVersion() < 30) {
+            const jint lightStatus = QJniObject::getStaticField<jint>("android/view/View", "SYSTEM_UI_FLAG_LIGHT_STATUS_BAR");
+            const jint lightNav = QJniObject::getStaticField<jint>("android/view/View", "SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR");
+            jint uiVisibility = decoView.callMethod<jint>("getSystemUiVisibility", "()I");
+            if (light) {
+                uiVisibility |= lightStatus;
+                uiVisibility |= lightNav;
+            }
+            else {
+                uiVisibility &= ~lightStatus;
+                uiVisibility &= ~lightNav;
+            }
+            decoView.callMethod<void>("setSystemUiVisibility", "(I)V", uiVisibility);
+        }
+        else {
+            QJniObject insetsController = decoView.callObjectMethod("getWindowInsetsController", "()Landroid/view/WindowInsetsController;");
+            if (!insetsController.isValid()) {
+                qWarning() << "Could not get WindowInsetsController";
+                return;
+            }
+
+            const jint lightValue = QJniObject::getStaticField<jint>("android/view/WindowInsetsController", "APPEARANCE_LIGHT_STATUS_BARS");
+            insetsController.callMethod<void>("setSystemBarsAppearance", "(II)V", light ? lightValue : 0, lightValue);
+        }
+    });
+    return true;
+#else
+    return false;
+#endif
+}
+
+bool QmlUtils::setNavBarColor(const QColor &color)
+{
+    run_activity_thread([color] {
+        if (QtAndroidPrivate::androidSdkVersion() < 21) {
+            qWarning() << "Not supported for SDKs < 21";
+            return;
+        }
+
+        QJniObject window = get_window();
+        if (!window.isValid())
+            return;
+
+        window.callMethod<void>("setNavigationBarColor", "(I)V", color.rgba());
+    });
+    return true;
+}
+
+bool QmlUtils::setStatusBarColor(const QColor &color)
+{
+    run_activity_thread([color] {
+        if (QtAndroidPrivate::androidSdkVersion() < 21) {
+            qWarning() << "Not supported for SDKs < 21";
+            return;
+        }
+
+        QJniObject window = get_window();
+        if (!window.isValid())
+            return;
+
+        window.callMethod<void>("setStatusBarColor", "(I)V", color.rgba());
+    });
+    return true;
+}
+
 void SystemNotification::send()
 {
 #if !defined(QT_NO_DBUS) && defined(Q_OS_LINUX)
@@ -452,7 +582,10 @@ void SystemNotification::send()
         pendingIntent = QJniObject::callStaticObjectMethod("android/app/PendingIntent",
                                                            "getActivity",
                                                            "(Landroid/content/Context;ILandroid/content/Intent;I)Landroid/app/PendingIntent;",
-                                                           activity.object(), 0, openIntent.object(), 0);
+                                                           activity.object(),
+                                                           0,
+                                                           openIntent.object(),
+                                                           QJniObject::getStaticField<jint>("android/app/PendingIntent", "FLAG_IMMUTABLE"));
     }
 
     if (icon.isValid())
