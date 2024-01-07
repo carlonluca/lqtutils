@@ -100,8 +100,23 @@ class SystemNotification : public QObject
 public:
     SystemNotification(QObject* parent = nullptr) : QObject(parent) {}
 
-    void send();
+    virtual void send();
+
+private:
+    friend class AndroidSystemNotification;
 };
+
+#ifdef Q_OS_ANDROID
+class AndroidSystemNotification : public SystemNotification
+{
+    Q_OBJECT
+    L_RW_PROP_AS(QString, activityClass)
+public:
+    AndroidSystemNotification(QObject* parent = nullptr) : SystemNotification(parent) {}
+
+    virtual void send() override;
+};
+#endif
 
 } // namespace
 

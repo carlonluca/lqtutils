@@ -525,6 +525,13 @@ void SystemNotification::send()
     if (reply.isValid())
         qWarning() << "Failed to send notification:" << reply.error().message();
 #elif defined(Q_OS_ANDROID)
+    qWarning() << "Please use AndroidSystemNotification";
+#endif
+}
+
+#ifdef Q_OS_ANDROID
+void AndroidSystemNotification::send()
+{
     const QJniObject activity = get_activity();
 
 #define J_CLASS_NOT         "Landroid/app/Notification;"
@@ -554,6 +561,7 @@ void SystemNotification::send()
                              "(Landroid/content/Context;)V", activity.object());
     }
 
+    QJniEnvironment env;
     QJniObject icon;
     if (!m_icon.isNull()) {
         QBuffer iconBuffer;
@@ -565,7 +573,6 @@ void SystemNotification::send()
 
         const QByteArray iconData = iconBuffer.buffer();
 
-        QJniEnvironment env;
         QJniObject byteArrayObj = QJniObject::fromLocalRef(env->NewByteArray(iconData.size()));
         env->SetByteArrayRegion(byteArrayObj.object<jbyteArray>(),
                                 0,
@@ -585,7 +592,7 @@ void SystemNotification::send()
     const QJniObject openIntent("android/content/Intent",
                                 "(Landroid/content/Context;Ljava/lang/Class;)V",
                                 activity.object(),
-                                activity.objectClass());
+                                env.findClass(m_activityClass.replace('.', '/').toLocal8Bit()));
 
     QJniObject pendingIntent;
     if (openIntent.isValid()) {
@@ -619,7 +626,7 @@ void SystemNotification::send()
 
     const jint notificationId = 0;
     notificationManager.callMethod<void>("notify", "(I" J_CLASS_NOT ")V", notificationId, notification.object());
-#endif
 }
+#endif // Q_OS_ANDROID
 
 } // namespace
