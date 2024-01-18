@@ -9,6 +9,9 @@ if (Qt6_FOUND)
 endif()
 find_package(QT NAMES Qt6 Qt5 OPTIONAL_COMPONENTS DBus)
 find_package(Qt${QT_VERSION_MAJOR} OPTIONAL_COMPONENTS DBus)
+if (APPLE)
+    find_library(USER_NOTIFICATIONS_FRAMEWORK UserNotifications)
+endif()
 
 qt_add_library(lqtutils STATIC
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_ui.cpp ${CMAKE_CURRENT_LIST_DIR}/lqtutils_ui.h
@@ -34,6 +37,9 @@ qt_add_library(lqtutils STATIC
 )
 if (IOS)
     target_sources(lqtutils PRIVATE ${CMAKE_CURRENT_LIST_DIR}/lqtutils_ui.mm)
+endif()
+if (APPLE)
+    target_sources(lqtutils PRIVATE ${CMAKE_CURRENT_LIST_DIR}/lqtutils_ui_apple.mm)
 endif()
 
 if (ENABLE_FONT_AWESOME)
@@ -72,4 +78,7 @@ if (Qt6DBus_FOUND)
 endif()
 if (Qt6_FOUND)
     target_link_libraries(lqtutils PRIVATE Qt6::StateMachine)
+endif()
+if (APPLE)
+    target_link_libraries(lqtutils PRIVATE ${USER_NOTIFICATIONS_FRAMEWORK})
 endif()

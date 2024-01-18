@@ -104,6 +104,7 @@ public:
 
 private:
     friend class AndroidSystemNotification;
+    friend class AppleSystemNotification;
 };
 
 #ifdef Q_OS_ANDROID
@@ -115,6 +116,19 @@ public:
     AndroidSystemNotification(QObject* parent = nullptr) : SystemNotification(parent) {}
 
     virtual void send() override;
+};
+#endif
+
+#ifdef Q_OS_APPLE
+class AppleSystemNotification : public SystemNotification
+{
+    Q_OBJECT
+public:
+    AppleSystemNotification(QObject* parent = nullptr) : SystemNotification(parent) {}
+
+    virtual void send() override;
+
+    static void requestPermission(std::function<void(bool)> callback);
 };
 #endif
 

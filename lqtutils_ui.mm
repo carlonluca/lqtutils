@@ -55,4 +55,16 @@ double QmlUtils::safeAreaRightInset()
     return 0;
 }
 
+bool QmlUtils::shareResource(const QUrl& resUrl, const QString& mimeType, const QString& authority)
+{
+    qWarning() << "Not implemented";
+    return false;
+}
+
+QRectF QmlUtils::visibleDisplayFrame()
+{
+    qWarning() << "Not implemented";
+    return QRectF();
+}
+
 }
