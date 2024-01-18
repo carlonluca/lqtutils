@@ -1,6 +1,8 @@
-#include "lqtutils_ui.h"
+#include <QUrl>
 
 #include <UIKit/UIKit.h>
+
+#include "lqtutils_ui.h"
 
 namespace lqt {
 
@@ -55,10 +57,26 @@ double QmlUtils::safeAreaRightInset()
     return 0;
 }
 
-bool QmlUtils::shareResource(const QUrl& resUrl, const QString& mimeType, const QString& authority)
+bool QmlUtils::shareResource(const QUrl& resUrl, const QString& /* mimeType */, const QString& /* authority */)
 {
-    qWarning() << "Not implemented";
-    return false;
+    NSString* nsFilePath = resUrl.toLocalFile().toNSString();
+    NSURL* url = [NSURL fileURLWithPath:nsFilePath];
+    if (!url) {
+        qWarning() << "Invalid file name:" << resUrl.toLocalFile();
+        return false;
+    }
+
+    NSArray* dataToShare = @[url];
+
+    UIActivityViewController* activityViewController = [[UIActivityViewController alloc] initWithActivityItems:dataToShare applicationActivities:nil];
+    [activityViewController autorelease];
+
+    UIView* view = [[[[UIApplication sharedApplication] keyWindow] rootViewController] view];
+    activityViewController.popoverPresentationController.sourceView = view;
+
+    [[[[UIApplication sharedApplication] keyWindow] rootViewController] presentViewController:activityViewController animated:YES completion:nil];
+
+    return true;
 }
 
 QRectF QmlUtils::visibleDisplayFrame()
