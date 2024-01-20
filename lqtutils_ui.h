@@ -85,6 +85,12 @@ public:
     Q_INVOKABLE static bool setStatusBarColor(const QColor& color);
 };
 
+/**
+ * @brief The SystemNotification class
+ *
+ * NOTE: icon must be 16x16 or 32x32 RGB32 on Windows.
+ * NOTE: timeout is valid on Windows only for 2000 and XP.
+ */
 class SystemNotification : public QObject
 {
     Q_OBJECT

@@ -46,6 +46,10 @@ typedef QAndroidJniObject QJniObject;
 #include <QDBusReply>
 #endif
 
+#if defined(Q_OS_WINDOWS)
+#include <Windows.h>
+#endif
+
 #include <functional>
 
 #include "lqtutils_ui.h"
@@ -526,6 +530,31 @@ void SystemNotification::send()
         qWarning() << "Failed to send notification:" << reply.error().message();
 #elif defined(Q_OS_ANDROID)
     qWarning() << "Please use AndroidSystemNotification";
+#elif defined(Q_OS_WINDOWS)
+
+    const std::wstring wstrTitle = m_title.toStdWString();
+    const std::wstring wstrMsg = m_message.toStdWString();
+
+    NOTIFYICONDATA notifyIconData;
+    ZeroMemory(&notifyIconData, sizeof(NOTIFYICONDATA));
+
+    notifyIconData.cbSize = sizeof(NOTIFYICONDATA);
+    notifyIconData.hWnd = nullptr;
+    notifyIconData.uID = m_replacesId;
+    notifyIconData.uFlags = NIF_INFO;
+    notifyIconData.dwInfoFlags =  m_icon.isNull() ? NIIF_INFO : (NIIF_USER | NIIF_LARGE_ICON);
+    notifyIconData.hBalloonIcon = m_icon.isNull() ? LoadIcon(nullptr, IDI_INFORMATION) : m_icon.toHICON();
+    notifyIconData.uTimeout = m_timeout;
+
+    lstrcpyn(notifyIconData.szInfoTitle, wstrTitle.c_str(), sizeof(notifyIconData.szInfoTitle)/sizeof(wchar_t));
+    lstrcpyn(notifyIconData.szInfo, wstrMsg.c_str(), sizeof(notifyIconData.szInfo)/sizeof(wchar_t));
+
+    Shell_NotifyIcon(NIM_ADD, &notifyIconData);
+
+    DestroyIcon(notifyIconData.hBalloonIcon);
+
+#else
+    qWarning() << "Not implemented";
 #endif
 }
 
