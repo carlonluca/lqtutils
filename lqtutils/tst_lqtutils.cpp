@@ -971,6 +971,9 @@ void LQtUtilsTest::test_case32()
     QVERIFY(mem->totalMemBytes > 0);
     QVERIFY(mem->freeMemBytes > 0);
     QVERIFY(mem->totalMemBytes > mem->freeMemBytes);
+
+    qInfo() << "Total:" << QLocale::system().formattedDataSize(mem->totalMemBytes);
+    qInfo() << "Free :" << QLocale::system().formattedDataSize(mem->freeMemBytes);
 }
 
 void LQtUtilsTest::test_case33()

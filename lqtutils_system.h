@@ -33,10 +33,15 @@ namespace lqt {
 
 struct MemData
 {
+    // Total usable memory.
     qint64 totalMemBytes;
+    // Total memory still available. This is not necessarily unused, but can
+    // be allocated.
     qint64 freeMemBytes;
 };
 
+/// @brief Returns RAM info. This does not take swap into account.
+/// @return Structure with total and free mem.
 inline std::optional<MemData> read_mem_data()
 {
     QFile memFile(QStringLiteral("/proc/meminfo"));
@@ -56,6 +61,8 @@ inline std::optional<MemData> read_mem_data()
     static const QRegularExpression regexMemFree(QStringLiteral("MemFree:\\s*(\\d+)"));
     static const QRegularExpression regexMemBuff(QStringLiteral("Buffers:\\s*(\\d+)"));
     static const QRegularExpression regexMemCache(QStringLiteral("Cached:\\s*(\\d+)"));
+    static const QRegularExpression regexMemRecl(QStringLiteral("SReclaimable:\\s*(\\d+)"));
+    static const QRegularExpression regexMemShared(QStringLiteral("Shmem:\\s*(\\d+)"));
 
     auto readValue = [&meminfoContent] (const QRegularExpression& regex) -> qint64 {
         QRegularExpressionMatch match = regex.match(meminfoContent);
@@ -67,16 +74,18 @@ inline std::optional<MemData> read_mem_data()
         return match.captured(1).toLongLong();
     };
 
-    qint64 memTotal = readValue(regexMemTotal)*1024;
-    qint64 memFree = readValue(regexMemFree)*1024;
-    qint64 memBuff = readValue(regexMemBuff)*1024;
-    qint64 memCache = readValue(regexMemCache)*1024;
-    if (memTotal < 0 || memFree < 0 || memBuff < 0 || memCache < 0)
+    const qint64 memTotal = readValue(regexMemTotal)*1024;
+    const qint64 memFree = readValue(regexMemFree)*1024;
+    const qint64 memBuff = readValue(regexMemBuff)*1024;
+    const qint64 memCache = readValue(regexMemCache)*1024;
+    const qint64 memRecl = readValue(regexMemRecl)*1024;
+    const qint64 memShared = readValue(regexMemShared)*1024;
+    if (memTotal < 0 || memFree < 0 || memBuff < 0 || memCache < 0 || memRecl < 0 || memShared < 0)
         return std::nullopt;
 
     return MemData {
         memTotal,
-        memFree + memBuff + memCache
+        memFree + memBuff + (memCache + memRecl - memShared)
     };
 }
 
