@@ -483,3 +483,15 @@ Q_IMPORT_QML_PLUGIN(lqtutilsPlugin)
 ```
 
 Note that the size is mandatory. The available types are: `LQTFontAwesomeFreeSolid`, `LQTFontAwesomeFreeRegular` and `LQTFontAwesomeBrandsRegular`. The init function also set the context properties: `fontAwesomeBrandsRegular`, `fontAwesomeFreeRegular` and `fontAwesomeFreeSolid`. These are QFont instances available in QML.
+
+## Compute total and available RAM (lqtutils_system.h) [Linux only]
+
+This header includes a function to compute the total available RAM and the RAM potentially allocatable.
+
+```c++
+std::optional<lqt::MemData> mem = lqt::read_mem_data();
+if (!mem)
+    return;
+qInfo() << "Total:" << mem->totalMemBytes;
+qInfo() << "Free :" << mem->freeMemBytes;
+```
