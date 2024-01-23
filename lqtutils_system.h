@@ -62,7 +62,6 @@ inline std::optional<MemData> read_mem_data()
     static const QRegularExpression regexMemBuff(QStringLiteral("Buffers:\\s*(\\d+)"));
     static const QRegularExpression regexMemCache(QStringLiteral("Cached:\\s*(\\d+)"));
     static const QRegularExpression regexMemRecl(QStringLiteral("SReclaimable:\\s*(\\d+)"));
-    static const QRegularExpression regexMemShared(QStringLiteral("Shmem:\\s*(\\d+)"));
 
     auto readValue = [&meminfoContent] (const QRegularExpression& regex) -> qint64 {
         QRegularExpressionMatch match = regex.match(meminfoContent);
@@ -79,13 +78,12 @@ inline std::optional<MemData> read_mem_data()
     const qint64 memBuff = readValue(regexMemBuff)*1024;
     const qint64 memCache = readValue(regexMemCache)*1024;
     const qint64 memRecl = readValue(regexMemRecl)*1024;
-    const qint64 memShared = readValue(regexMemShared)*1024;
-    if (memTotal < 0 || memFree < 0 || memBuff < 0 || memCache < 0 || memRecl < 0 || memShared < 0)
+    if (memTotal < 0 || memFree < 0 || memBuff < 0 || memCache < 0 || memRecl < 0)
         return std::nullopt;
 
     return MemData {
         memTotal,
-        memFree + memBuff + (memCache + memRecl - memShared)
+        memFree + memBuff + memCache + memRecl
     };
 }
 
