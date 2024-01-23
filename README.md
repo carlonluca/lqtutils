@@ -270,7 +270,17 @@ QCOMPARE(i, 10);
 lqt::QmlUtils::singleShot(int msec, QJSValue callback)
 ```
 
-Useful to defer an action of a specified amount of milleseconds in QML, without having to create a timer.
+Useful to defer an action of a specified amount of milleseconds in QML, without having to create a timer. Example:
+
+```QML
+lqtUtils.singleShot(5000, () => console.log("Hello!"))
+```
+
+remember to expose lqt::QmlUtils to QML with:
+
+```c++
+engine.rootContext()->setContextProperty("lqtUtils", new lqt::QmlUtils(qApp));
+```
 
 ### Getting safe areas on mobile
 
