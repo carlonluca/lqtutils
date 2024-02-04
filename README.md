@@ -4,6 +4,27 @@ A couple of headers need the related source file to be compiled explicitly; in t
 
 More articles related to these topics: https://bugfreeblog.duckdns.org/tag/lqtutils.
 
+## Index
+
+- [How to Include](#how-to-include)
+- [Synthesize Qt properties in a short way (lqtutils_prop.h)](#synthesize-qt-props)
+- [Synthesize Qt enums and quickly expose to QML (lqtutils_enum.h)](#synthesize-qt-enums)
+- [Synthesize Qt settings with support for signals (lqtutils_settings.h)](#synthesize-qt-settings)
+- [Cache values and init automatically](#cache-values)
+- [Threading tools](#threading)
+- [Auto execute actions when exiting a scope (lqtutils_autoexec.h)](#autoexec)
+- [Measuring rate](#measure-rate)
+- [Measuring framerate](#measure-framerate)
+- [Showing Local Notifications](#local-notifications)
+- [Single shot timer for QML (lqtutils_ui.h)](#singleshot-qml)
+- [Getting safe areas on mobile](#safe-areas)
+- [Measure Performance (lqtutils_perf.h)](#measure-performance)
+- [Blocking Queue for qt (lqtutils_bqueue.h)](#blocking-queue)
+- [Download a File with Progress Notifications (lqtutils_net.h)](#download-file)
+- [FontAwesome in QML](#fontawesome)
+- [Compute total and available RAM (lqtutils_system.h) [Linux only]](#available-ram)
+
+<a id="how-to-include"></a>
 ## How to Include
 
 To include in a qmake app:
@@ -28,8 +49,11 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/deps/lqtutils/CMakeLists_qt5.txt)
 target_link_libraries(LQtUtilsTest PRIVATE lqtutils)
 ```
 
-## Synthetize Qt properties in a short way (lqtutils_prop.h)
-Contains a few useful macros to synthetize Qt props. For instance:
+<a id="synthesize-qt-props"></a>
+## Synthesize Qt properties in a short way (lqtutils_prop.h)
+**For more info: https://bugfreeblog.duckdns.org/2020/05/synthesize-qt-properties.html.**
+
+Contains a few useful macros to synthesize Qt props. For instance:
 ```c++
 class Fraction : public QObject
 {
@@ -161,7 +185,10 @@ For gadgets:
     L_BEGIN_GADGET(name)
     L_END_GADGET
 
-## Synthetize Qt settings with support for signals (lqtutils_settings.h)
+<a id="synthesize-qt-settings"></a>
+## Synthesize Qt settings with support for signals (lqtutils_settings.h)
+**For more info: https://bugfreeblog.duckdns.org/2023/01/lqtutils-settings.html.**
+
 Contains a few tools that can be used to speed up writing simple settings to a file. Settings will still use QSettings and are therefore fully compatible. The macros are simply shortcuts to synthetise code. I only used this for creating ini files, but should work for other formats. An example:
 ```c++
 L_DECLARE_SETTINGS(LSettingsTest, new QSettings("settings.ini", QSettings::IniFormat))
@@ -200,7 +227,11 @@ Window {
     Binding { target: settings; property: "appY"; value: y }
 }
 ```
-## Synthetize Qt enums and quickly expose to QML (lqtutils_enum.h)
+
+<a id="synthesize-qt-enums"></a>
+## synthesize Qt enums and quickly expose to QML (lqtutils_enum.h)
+**For more info: https://bugfreeblog.duckdns.org/2020/06/synthesizing-qt-settings.html.**
+
 Contains a macro to define a enum and register it with the meta-object system. This enum can then be exposed to the QML. To create the enum simply do:
 ```c++
 L_DECLARE_ENUM(MyEnum,
@@ -213,13 +244,12 @@ This enum is exposed using a namespace without subclassing QObject. Register wit
 MyEnum::registerEnum("com.luke", 1, 0);
 ```
 
+<a id="cache-values"></a>
 ## Cache values and init automatically
 ```lqt::CacheValue``` caches values of any type in a hash and calls the provided lambda if the value was never initialized. This is useful when writing settings classes and you want to read only once.
 
-## lqtutils_fsm.h
-A QState subclass that includes a state name and prints it to stdout when each state is entered.
-
-## lqtutils_threading.h
+<a id="threading"></a>
+## Threading tools (lqtutils_threading.h)
 ```lqt::RecursiveMutex``` is a simple QMutex subclass defaulting to recursive mode.
 
 ```INVOKE_AWAIT_ASYNC``` is a wrapper around QMetaObject::invokeMethod that allows to execute a slot or lambda in the thread of an obj, synchronously awaiting for the result. E.g.:
@@ -239,7 +269,8 @@ QCOMPARE(i, 11);
 
 ```lqt_run_in_thread``` runs a lambda in a specific QThread asynchronously.
 
-## lqtutils_autoexec.h
+<a id="autoexec"></a>
+## Auto execute actions when exiting a scope (lqtutils_autoexec.h)
 A class that can be used to execute a lambda whenever the current scope ends, e.g.:
 ```c++
 int i = 9;
@@ -254,17 +285,42 @@ QCOMPARE(i, 10);
 
 ```lqt::SharedAutoExec```: a class that can create copiable autoexec objects. Useful to implement locks with a function being executed when the lock is released.
 
-## lqtutils_freq.h
+<a id="measure-rate"></a>
+## Measuring rate (lqtutils_freq.h)
 
 ```lqt::FreqMeter``` is a class that allows to measure the rate of any sampling activity. For example the refresh rate (see lqtutils_ui.h) or the rate of some kind of processing.
 
-## lqtutils_ui.h
+<a id="measure-framerate"></a>
+## Measuring frame rate in QML (lqtutils_ui.h)
+
+**For more info: https://bugfreeblog.duckdns.org/2021/09/measure-framerate-qt.html.**
 
 ```lqt::FrameRateMonitor``` is a class that can be used to measure the current frame rate of a QQuickWindow. The class monitors the frequency of frame swaps and provides a property with a value reporting the frame rate during the last second.
 
-```lqt::QmlUtils``` includes a few UI-related methods that come handy in most apps, but are still missing in the Qt framework itself.
+<a id="local-notifications"></a>
+## Showing Local Notifications
 
-### Single shot timer
+The `lqt::SystemNotification` and the `lqt::AndroidSystemNotification` objects can be used to show a local notification on Linux, Android, Windows, iOS and MacOS.
+
+Example:
+
+```c++
+#ifdef Q_OS_ANDROID
+    lqt::AndroidSystemNotification notification;
+    notification.set_icon(QImage(":/qt/qml/FlashbackPrism/assets/icon_96.png"));
+    notification.set_activityClass(QSL("org.qtproject.qt.android.bindings.QtActivity"));
+#else
+    lqt::SystemNotification notification;
+#endif
+    notification.set_appName(qApp->applicationName());
+    notification.set_title(tr("Flashbacks available"));
+    notification.set_message(tr("You have %1 memories taken in %2 years for today. Have a look!").arg(photos).arg(years));
+    notification.set_openApp(true);
+    notification.send();
+```
+
+<a id="singleshot-qml"></a>
+## Single shot timer for QML (lqtutils_ui.h)
 
 ```c++
 lqt::QmlUtils::singleShot(int msec, QJSValue callback)
@@ -282,7 +338,10 @@ remember to expose lqt::QmlUtils to QML with:
 engine.rootContext()->setContextProperty("lqtUtils", new lqt::QmlUtils(qApp));
 ```
 
-### Getting safe areas on mobile
+<a id="safe-areas"></a>
+## Getting safe areas on mobile (lqtutils_ui.h)
+
+**For more info: https://bugfreeblog.duckdns.org/2023/01/qt-qml-cutouts.html.**
 
 Both iOS and Android smartphones may include cutouts and you may want to know where it is safe to draw your QML UI. These four methods are useful to get the safe area both on iOS and Android (on Desktop the methods are still defined and simply return 0).
 
@@ -338,7 +397,8 @@ L_RO_PROP_AS(int, freq, 0)
 
 Note that this property is defined using the prop macros provided by this library. The property is recomputed when each frame is swapped or after a second. The overhead of the component should be minimal.
 
-## lqtutils_perf.h
+<a id="measure-performance"></a>
+## Measure Performance (lqtutils_perf.h)
 
 ```measure_time``` is a shortcut to quickly measure a procedure provided in a lambda for benchmarking it. The macro ```L_MEASURE_TIME``` can be used to be able to enable/disable the measurement through ```L_ENABLE_BENCHMARKS``` at project level reducing overhead to zero.
 
@@ -359,7 +419,8 @@ measure_time([&] {
 });
 ```
 
-## lqtutils_bqueue.h
+<a id="blocking-queue"></a>
+## Blocking Queue for qt (lqtutils_bqueue.h)
 
 This header contains a simple blocking queue. It allows blocking/nonblocking insertions with timeout, blocking/nonblocking removal and a safe processing of the queue. This is an example of the producer/consumer pattern:
 
@@ -425,7 +486,8 @@ consumer.requestDispose();
 consumer.wait();
 ```
 
-## lqtutils_net.h
+<a id="download-file"></a>
+## Download a File with Progress Notifications (lqtutils_net.h)
 
 The class ```lqt::Downloader``` can be used to download a URL to a file in a background thread. Example:
 
@@ -456,7 +518,10 @@ Writes a random file of the specified size:
 bool lqt::random_file(const QString& fileName, qint64 size)
 ```
 
-## lqtutils_fa.h
+<a id="fontawesome"></a>
+## FontAwesome in QML (lqtutils_fa.h)
+
+**For more info: https://bugfreeblog.duckdns.org/2023/05/fontawesome-qml-lqtutils.html.**
 
 This header includes a function to load FontAwesome fonts and QML items to render the fonts in QML. To include FontAwesome in Qt6 add the support to your cmake file when including the project:
 
@@ -494,7 +559,10 @@ Q_IMPORT_QML_PLUGIN(lqtutilsPlugin)
 
 Note that the size is mandatory. The available types are: `LQTFontAwesomeFreeSolid`, `LQTFontAwesomeFreeRegular` and `LQTFontAwesomeBrandsRegular`. The init function also set the context properties: `fontAwesomeBrandsRegular`, `fontAwesomeFreeRegular` and `fontAwesomeFreeSolid`. These are QFont instances available in QML.
 
+<a id="available-ram"></a>
 ## Compute total and available RAM (lqtutils_system.h) [Linux only]
+
+**For more info: https://bugfreeblog.duckdns.org/2024/01/computing-total-and-free-ram-in-linux-with-qt.html.**
 
 This header includes a function to compute the total available RAM and the RAM potentially allocatable.
 
