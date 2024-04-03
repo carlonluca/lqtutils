@@ -125,7 +125,7 @@ public:
 };
 #endif
 
-#ifdef Q_OS_APPLE
+#ifdef Q_OS_DARWIN
 class AppleSystemNotification : public SystemNotification
 {
     Q_OBJECT
