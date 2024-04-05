@@ -291,7 +291,11 @@ bool QmlUtils::shareResource(const QUrl& resUrl, const QString& mimeType, const 
     const QJniObject jniUri = QJniObject::callStaticObjectMethod("androidx/core/content/FileProvider",
                                                                  "getUriForFile",
                                                                  "(Landroid/content/Context;Ljava/lang/String;Ljava/io/File;)Landroid/net/Uri;",
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+                                                                 QNativeInterface::QAndroidApplication::context().object(),
+#else
                                                                  QNativeInterface::QAndroidApplication::context(),
+#endif
                                                                  QJniObject::fromString(authority).object(),
                                                                  jniFile.object<jobject>());
     if (!jniUri.isValid()) {
