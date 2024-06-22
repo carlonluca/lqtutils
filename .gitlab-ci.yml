@@ -107,12 +107,12 @@ Test_qt67:
 Test_qt67_android:
   stage: test_qt67_android
   image:
-    name: "carlonluca/qt-dev:6.7.0"
+    name: "carlonluca/qt-dev:6.7.2"
     entrypoint: [""]
   script:
     - mkdir build
     - cd build
-    - /opt/Qt-android-6.7.0/android_arm64_v8a/bin/qt-cmake \
+    - /opt/Qt-android-6.7.2/android_arm64_v8a/bin/qt-cmake \
       -DCMAKE_BUILD_TYPE=Release \
       -DQT_ANDROID_BUILD_ALL_ABIS:BOOL=ON \
       -S ../qt6;
