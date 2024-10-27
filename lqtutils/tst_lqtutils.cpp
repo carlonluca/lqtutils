@@ -203,6 +203,9 @@ private slots:
     void test_case32();
     void test_case33();
     void test_case34();
+    void test_case35();
+    void test_case36();
+    void test_case37();
 };
 
 LQtUtilsTest::LQtUtilsTest()
@@ -1015,6 +1018,56 @@ void LQtUtilsTest::test_case34()
     QScopedPointer<lqt::QmlSharedPointerList<LQTSerializeTest>> model(new lqt::QmlSharedPointerList<LQTSerializeTest>(list));
     QCOMPARE(model->rowCount(), list.size());
     QCOMPARE(model->data(model->index(1, 0)).value<LQTSerializeTest*>()->s, list[1]->s);
+}
+
+void LQtUtilsTest::test_case35()
+{
+    QList<QByteArray> randomBuffers;
+    for (int i = 0; i < 100; i++) {
+        const QByteArray randomBuffer = lqt::random_data(1024*1024);
+        for (const QByteArray& buffer : randomBuffers) {
+            QVERIFY(randomBuffer != buffer);
+            QVERIFY(randomBuffer.size() == 1024*1024);
+        }
+    }
+}
+
+void LQtUtilsTest::test_case36()
+{
+    for (int i = 0; i < 100; i++) {
+        QTemporaryFile f;
+        QVERIFY(f.open());
+        const QByteArray randomData = lqt::random_data(1024*1024);
+        QVERIFY(randomData.size() == 1024*1024);
+        QVERIFY(f.write(randomData) == 1024*1024);
+        f.close();
+        QVERIFY(lqt::read_all(&f) == randomData);
+        QFile g("somefilewhichdoesnotexist");
+        QVERIFY(lqt::read_all(&g).isEmpty());
+    }
+}
+
+void LQtUtilsTest::test_case37()
+{
+    QTemporaryDir dir;
+    QString abc = dir.filePath("abc");
+    QString def = dir.filePath("def");
+    QDir subdir(lqt::path_combine({ dir.path(), "subdir" }));
+    QString ghi = subdir.filePath("ghi");
+
+    QVERIFY(subdir.mkpath("."));
+    QVERIFY(lqt::write_all(abc, "abc"));
+    QVERIFY(lqt::write_all(def, "def"));
+    QVERIFY(lqt::write_all(ghi, "ghi"));
+
+    const QString src = dir.path();
+    const QString dst = lqt::path_combine({ QDir::tempPath(), "dst" });
+
+    QVERIFY(lqt::copy_path(src, dst));
+    QVERIFY(lqt::read_all(lqt::path_combine({ dst, "abc" })) == "abc");
+    QVERIFY(lqt::read_all(lqt::path_combine({ dst, "def" })) == "def");
+    QVERIFY(lqt::read_all(lqt::path_combine({ dst, "subdir", "ghi" })) == "ghi");
+    QVERIFY(QDir(dst).removeRecursively());
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)

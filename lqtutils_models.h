@@ -39,7 +39,7 @@ template<typename T>
 class QmlSharedPointerList : public QAbstractListModel
 {
 public:
-    QmlSharedPointerList<T>(const QList<QSharedPointer<T>>& list = QList<QSharedPointer<T>>(), QObject* parent = nullptr) :
+    QmlSharedPointerList(const QList<QSharedPointer<T>>& list = QList<QSharedPointer<T>>(), QObject* parent = nullptr) :
         QAbstractListModel(parent), m_list(list) {}
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override {
