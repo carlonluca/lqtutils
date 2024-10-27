@@ -194,6 +194,7 @@ inline bool write_all(const QString& filePath, const QByteArray& data)
     return write_all(&f, data);
 }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
 /**
  * Copies an entire directory to another location.
  *
@@ -247,5 +248,6 @@ bool copy_path(const QString& src, const QString& dst)
 
     return true;
 }
+#endif
 
 } // namespace

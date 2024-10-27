@@ -1049,6 +1049,7 @@ void LQtUtilsTest::test_case36()
 
 void LQtUtilsTest::test_case37()
 {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
     QTemporaryDir dir;
     QString abc = dir.filePath("abc");
     QString def = dir.filePath("def");
@@ -1068,6 +1069,7 @@ void LQtUtilsTest::test_case37()
     QVERIFY(lqt::read_all(lqt::path_combine({ dst, "def" })) == "def");
     QVERIFY(lqt::read_all(lqt::path_combine({ dst, "subdir", "ghi" })) == "ghi");
     QVERIFY(QDir(dst).removeRecursively());
+#endif
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)
