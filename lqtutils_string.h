@@ -30,6 +30,10 @@
 #include <QRectF>
 #include <QLocale>
 
+#ifndef QStringLiteral
+#define QStringLiteral(s) s
+#endif
+
 namespace lqt {
 
 inline QString path_combine(std::initializer_list<QString> l)
