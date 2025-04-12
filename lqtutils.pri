@@ -24,10 +24,12 @@
 
 SOURCES += \
     $$PWD/lqtutils_ui.cpp \
-    $$PWD/lqtutils_freq.cpp
+    $$PWD/lqtutils_freq.cpp \
+    $$PWD/lqtutils_fa.cpp
 HEADERS += \
     $$PWD/lqtutils_ui.h \
-    $$PWD/lqtutils_freq.h
+    $$PWD/lqtutils_freq.h \
+    $$PWD/lqtutils_fa.h
 ios {
 SOURCES += $$PWD/lqtutils_ui.mm
 }
