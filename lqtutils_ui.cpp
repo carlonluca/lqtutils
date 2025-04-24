@@ -411,6 +411,55 @@ bool QmlUtils::isMobile()
 #endif
 }
 
+#if defined(Q_OS_ANDROID) && QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+void set_imersive_mode_pre_30(const QJniObject& decoView)
+{
+    const jint layoutStable = QJniObject::getStaticField<jint>("android/view/View", "SYSTEM_UI_FLAG_LAYOUT_STABLE");
+    const jint layoutHideNavigation = QJniObject::getStaticField<jint>("android/view/View", "SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION");
+    const jint layoutFullscreen = QJniObject::getStaticField<jint>("android/view/View", "SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN");
+    const jint hideNavigation = QJniObject::getStaticField<jint>("android/view/View", "SYSTEM_UI_FLAG_HIDE_NAVIGATION");
+    const jint fullscreen = QJniObject::getStaticField<jint>("android/view/View", "SYSTEM_UI_FLAG_FULLSCREEN");
+    const jint immersiveSticky = QJniObject::getStaticField<jint>("android/view/View", "SYSTEM_UI_FLAG_IMMERSIVE_STICKY");
+    const jint uiVisibility = decoView.callMethod<jint>("getSystemUiVisibility", "()I")
+                              | layoutStable
+                              | layoutHideNavigation
+                              | layoutFullscreen
+                              | hideNavigation
+                              | fullscreen
+                              | immersiveSticky;
+    qDebug() << "REFRESH:" << layoutStable << immersiveSticky;
+    decoView.callMethod<void>("setSystemUiVisibility", "(I)V", uiVisibility);
+}
+
+void set_imersive_mode_pre_30(const QJniObject& insetsController, bool hide)
+{
+    QJniObject window = get_window();
+    if (!window.isValid())
+        return;
+
+    const jint types = QJniObject::callStaticMethod<jint>(
+        "android/view/WindowInsets$Type",
+        "systemBars",
+        "()I"
+        );
+
+    if (hide) {
+        qDebug()<< "Hide1:" << types;
+        insetsController.callMethod<void>("hide", "(I)V", types);
+
+        // Set behavior to allow swipe reveal
+        const jint behavior = QJniObject::getStaticField<jint>(
+            "android/view/WindowInsetsController",
+            "BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE"
+            );
+        qDebug()<< "Hide:" << behavior;
+        insetsController.callMethod<void>("setSystemBarsBehavior", "(I)V", behavior);
+    } else
+        // Show status and nav bars
+        insetsController.callMethod<void>("show", "(I)V", types);
+}
+#endif // defined(Q_OS_ANDROID) && QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+
 bool QmlUtils::setBarColorLight(bool light, bool fullscreen)
 {
 #if defined(Q_OS_ANDROID) && QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -421,19 +470,8 @@ bool QmlUtils::setBarColorLight(bool light, bool fullscreen)
             return;
         }
 
-        if (fullscreen) {
-            const jint layoutStable = QJniObject::getStaticField<jint>("android/view/View", "SYSTEM_UI_FLAG_LAYOUT_STABLE");
-            const jint hideNavigation = QJniObject::getStaticField<jint>("android/view/View", "SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION");
-            const jint fullscreen = QJniObject::getStaticField<jint>("android/view/View", "SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN");
-            const jint uiVisibility = decoView.callMethod<jint>("getSystemUiVisibility", "()I")
-                                      | layoutStable
-                                      | hideNavigation
-                                      | fullscreen;
-            decoView.callMethod<void>("setSystemUiVisibility", "(I)V", uiVisibility);
-        }
-
         if (QtAndroidPrivate::androidSdkVersion() < 26) {
-            qWarning() << "Not supported for SDKs < 30";
+            qWarning() << "Not supported for SDKs < 26";
             return;
         }
         else if (QtAndroidPrivate::androidSdkVersion() < 30) {
@@ -449,6 +487,8 @@ bool QmlUtils::setBarColorLight(bool light, bool fullscreen)
                 uiVisibility &= ~lightNav;
             }
             decoView.callMethod<void>("setSystemUiVisibility", "(I)V", uiVisibility);
+            if (fullscreen)
+                set_imersive_mode_pre_30(decoView);
         }
         else {
             QJniObject insetsController = decoView.callObjectMethod("getWindowInsetsController", "()Landroid/view/WindowInsetsController;");
@@ -459,6 +499,10 @@ bool QmlUtils::setBarColorLight(bool light, bool fullscreen)
 
             const jint lightValue = QJniObject::getStaticField<jint>("android/view/WindowInsetsController", "APPEARANCE_LIGHT_STATUS_BARS");
             insetsController.callMethod<void>("setSystemBarsAppearance", "(II)V", light ? lightValue : 0, lightValue);
+            if (fullscreen) {
+                qDebug() << "Set fullscreen" << lightValue;
+                set_imersive_mode_pre_30(insetsController, fullscreen);
+            }
         }
     });
     return true;
