@@ -152,7 +152,7 @@ Test_qt68_android:
 Test_qt69:
   stage: test_qt69
   image:
-    name: "carlonluca/qt-dev:6.9.0"
+    name: "carlonluca/qt-dev:6.9.1"
     entrypoint: [""]
   script:
     - mkdir build
@@ -165,12 +165,12 @@ Test_qt69:
 Test_qt69_android:
   stage: test_qt69_android
   image:
-    name: "carlonluca/qt-dev:6.9.0"
+    name: "carlonluca/qt-dev:6.9.1"
     entrypoint: [""]
   script:
     - mkdir build
     - cd build
-    - /opt/qt/6.9.0/android_arm64_v8a/bin/qt-cmake \
+    - /opt/qt/6.9.1/android_arm64_v8a/bin/qt-cmake \
       -DCMAKE_BUILD_TYPE=Release \
       -DQT_ANDROID_BUILD_ALL_ABIS:BOOL=ON \
       -S ../qt6;
