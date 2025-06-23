@@ -86,7 +86,11 @@ public:
     LQTDownloaderState::Value state() const { return m_threadContext->state(); }
 
 signals:
+#ifdef LQTUTILS_OMIT_ARG_FROM_SIGNAL
+    void stateChanged();
+#else
     void stateChanged(LQTDownloaderState::Value state);
+#endif
     void downloadProgress(qint64 done, qint64 total);
 
 private:

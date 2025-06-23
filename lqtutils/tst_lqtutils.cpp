@@ -22,7 +22,7 @@
  * SOFTWARE.
  **/
 
-#include <QtTest>
+#include <QTest>
 #include <QString>
 #include <QImage>
 #include <QPainter>
@@ -31,6 +31,8 @@
 #include <QMetaType>
 #include <QDataStream>
 #include <QMutableSetIterator>
+#include <QThreadPool>
+#include <QTemporaryFile>
 
 #include "../lqtutils_prop.h"
 #include "../lqtutils_string.h"
@@ -103,6 +105,8 @@ class LQtUtilsObject : public QObject
     L_RW_PROP_CS(QString, csProp, QSL("HELLO"))
     L_RW_PROP_REF_CS(QString, csPropRef, QSL("HELLO"))
     L_RO_PROP_REF_CS(QString, csRoPropRef, QSL("csRoPropRef"))
+    Q_PROPERTY(int myInt READ myInt WRITE setMyInt NOTIFY myIntChanged FINAL)
+    L_RO_PROP_AS(int, myInt2, 0)
 public:
     LQtUtilsObject(QObject* parent = nullptr) : QObject(parent) {}
 
@@ -122,6 +126,21 @@ public slots:
         m_csRoPropRef = prop;
         m_test = QSL("csRoPropRef");
     }
+
+public:
+    int myInt() const { return m_myInt; }
+    void setMyInt(int myInt) {
+        if (myInt == m_myInt)
+            return;
+        m_myInt = myInt;
+        emit myIntChanged(myInt);
+    }
+
+signals:
+    void myIntChanged(int i);
+
+private:
+    int m_myInt;
 };
 
 L_BEGIN_GADGET(LQtUtilsGadget)
@@ -206,6 +225,7 @@ private slots:
     void test_case35();
     void test_case36();
     void test_case37();
+    void test_case38();
 };
 
 LQtUtilsTest::LQtUtilsTest()
@@ -221,9 +241,15 @@ void LQtUtilsTest::test_case1()
     const QString s = QSL("HELLOOOOO!");
     LQtUtilsObject test;
     test.setTest(s);
+#ifdef LQTUTILS_OMIT_ARG_FROM_SIGNAL
+    connect(&test, &LQtUtilsObject::testChanged, this, [] {
+        qDebug() << "Valued changed";
+    });
+#else
     connect(&test, &LQtUtilsObject::testChanged, this, [] (QString) {
         qDebug() << "Valued changed";
     });
+#endif
     QVERIFY(test.test() == s);
     test.setTest("HELLO");
     QVERIFY(test.test() != s);
@@ -1070,6 +1096,22 @@ void LQtUtilsTest::test_case37()
     QVERIFY(lqt::read_all(lqt::path_combine({ dst, "subdir", "ghi" })) == "ghi");
     QVERIFY(QDir(dst).removeRecursively());
 #endif
+}
+
+void LQtUtilsTest::test_case38()
+{
+    LQtUtilsObject obj;
+
+    QElapsedTimer timer;
+    timer.start();
+    for (int i = 0; i < 1E8; i++)
+        obj.setMyInt(i);
+    qDebug() << "Classic Qt property with signals with parameters:" << timer.elapsed();
+
+    timer.restart();
+    for (int i = 0; i < 1E8; i++)
+        obj.set_myInt2(i);
+    qDebug() << "Qt property built using lqt macro:" << timer.elapsed();
 }
 
 QTEST_GUILESS_MAIN(LQtUtilsTest)
