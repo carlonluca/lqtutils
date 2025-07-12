@@ -27,6 +27,14 @@ Test_qt5:
     - make
     - export QTEST_FUNCTION_TIMEOUT=10000000
     - ./LQtUtilsTest
+    - cd ..
+    - git clone http://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_FQDN}/qt/Fall.git
+    - cd Fall
+    - git submodule update --init --recursive
+    - mkdir build
+    - cd build
+    - /opt/Qt-android-5.15.2/bin/qmake ..
+    - make
 
 Test_qt62_jammy:
   stage: test_qt62_jammy
