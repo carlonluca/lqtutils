@@ -32,13 +32,14 @@
 #ifdef Q_OS_ANDROID
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 #include <QJniObject>
+#include <QtCore/private/qandroidextras_p.h>
 #else
 #include <QtAndroidExtras/QtAndroid>
 #include <QtAndroidExtras/QAndroidJniObject>
+#include <QtAndroidExtras/QAndroidJniEnvironment>
 typedef QAndroidJniObject QJniObject;
 #endif
 #include <jni.h>
-#include <QtCore/private/qandroidextras_p.h>
 #endif
 
 #if !defined(QT_NO_DBUS) && defined(Q_OS_LINUX)
@@ -276,6 +277,7 @@ double QmlUtils::safeAreaBottomInset()
 bool QmlUtils::shareResource(const QUrl& resUrl, const QString& mimeType, const QString& authority)
 {
 #ifdef Q_OS_ANDROID
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
     const QJniObject jniPath = QJniObject::fromString(resUrl.toLocalFile());
     if (!jniPath.isValid()) {
         qWarning() << "Could not create jni url";
@@ -291,11 +293,7 @@ bool QmlUtils::shareResource(const QUrl& resUrl, const QString& mimeType, const 
     const QJniObject jniUri = QJniObject::callStaticObjectMethod("androidx/core/content/FileProvider",
                                                                  "getUriForFile",
                                                                  "(Landroid/content/Context;Ljava/lang/String;Ljava/io/File;)Landroid/net/Uri;",
-#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
                                                                  QNativeInterface::QAndroidApplication::context().object(),
-#else
-                                                                 QNativeInterface::QAndroidApplication::context(),
-#endif
                                                                  QJniObject::fromString(authority).object(),
                                                                  jniFile.object<jobject>());
     if (!jniUri.isValid()) {
@@ -396,6 +394,15 @@ bool QmlUtils::shareResource(const QUrl& resUrl, const QString& mimeType, const 
     QtAndroidPrivate::startActivity(jniShareIntent, 1, nullptr);
     return true;
 #else
+    Q_UNUSED(resUrl);
+    Q_UNUSED(mimeType);
+    Q_UNUSED(authority);
+    return false;
+#endif
+#else
+    Q_UNUSED(resUrl);
+    Q_UNUSED(mimeType);
+    Q_UNUSED(authority);
     return false;
 #endif
 }
@@ -463,6 +470,8 @@ bool QmlUtils::setBarColorLight(bool light, bool fullscreen)
     });
     return true;
 #else
+    Q_UNUSED(light);
+    Q_UNUSED(fullscreen);
     // Not supported.
     return false;
 #endif
@@ -486,6 +495,7 @@ bool QmlUtils::setNavBarColor(const QColor &color)
     return true;
 #else
     // Not supported.
+    Q_UNUSED(color);
     return false;
 #endif
 }
@@ -508,6 +518,7 @@ bool QmlUtils::setStatusBarColor(const QColor &color)
     return true;
 #else
     // Not supported.
+    Q_UNUSED(color);
     return false;
 #endif
 }
@@ -595,7 +606,11 @@ void AndroidSystemNotification::send()
                              "(Landroid/content/Context;)V", activity.object());
     }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     QJniEnvironment env;
+#else
+    QAndroidJniEnvironment env;
+#endif
     QJniObject icon;
     if (!m_icon.isNull()) {
         QBuffer iconBuffer;

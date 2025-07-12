@@ -32,6 +32,9 @@
 #include <QtGlobal>
 #include <QMetaObject>
 #include <QImage>
+#include <QMap>
+#include <QVariant>
+#include <QString>
 
 #include "lqtutils_freq.h"
 #include "lqtutils_prop.h"

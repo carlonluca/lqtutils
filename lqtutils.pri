@@ -22,6 +22,9 @@
 # SOFTWARE.
 #
 
+android {
+QT += androidextras
+}
 SOURCES += \
     $$PWD/lqtutils_ui.cpp \
     $$PWD/lqtutils_freq.cpp \
