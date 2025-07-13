@@ -55,14 +55,10 @@ target_link_libraries(LQtUtilsTest PRIVATE lqtutils)
 
 Contains a few useful macros to synthesize Qt props. For instance:
 ```c++
-class Fraction : public QObject
-{
-    Q_OBJECT
-    L_RW_PROP(double, numerator, setNumerator, 5)
-    L_RW_PROP(double, denominator, setDenominator, 9)
-public:
-    Fraction(QObject* parent = nullptr) : QObject(parent) {}
-};
+L_BEGIN_CLASS(Fraction)
+L_RW_PROP_AS(double, numerator, 5)
+L_RW_PROP_AS(double, denominator, 9)
+L_END_CLASS
 ```
 instead of:
 ```c++
@@ -110,16 +106,19 @@ private:
     double m_denominator;
 };
 ```
-When the QObject subclass is not supposed to have a particular behavior, the two macros L_BEGIN_CLASS and L_END_CLASS can speed up the declaration even more:
-```c++
-L_BEGIN_CLASS(Fraction)
-L_RW_PROP(double, numerator, setNumerator, 5)
-L_RW_PROP(double, denominator, setDenominator, 9)
-L_END_CLASS
-```
-The L_RW_PROP and L_RO_PROP macros are overloaded, and can therefore be used with three or four params. The last param is used if you want to init the prop to some specific value automatically.
+This makes the usage of Qt properties more synthetic and speeds up the development. It is very useful when many properties are needed to expose data to QML. Properties will provide a setter, a getter, notifications through their signal and support binding in QML.
 
-This makes the usage of Qt properties more synthetic and speeds up the development. It is very useful when many properties are needed to expose data to QML.
+You can use macros even in a larger class, with a regular syntax:
+```c++
+class Fraction : public QObject
+{
+    Q_OBJECT
+    L_RW_PROP_AS(double, numerator, 5)
+    L_RW_PROP_AS(double, denominator, 9)
+public:
+    Fraction(QObject* parent = nullptr) : QObject(parent) {}
+};
+```
 
 ### References
 
