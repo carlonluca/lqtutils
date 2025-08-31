@@ -532,7 +532,7 @@ void LQtUtilsTest::test_case14()
     QVERIFY(lqt::today().time() == QTime(0, 0, 0, 0));
     QVERIFY(lqt::tomorrow().date() != now.date());
     QVERIFY(lqt::tomorrow().time() == QTime(0, 0, 0, 0));
-    QVERIFY(lqt::today().date().day() == lqt::tomorrow().date().day() - 1);
+    QVERIFY(lqt::today().date().day() == lqt::tomorrow().date().addDays(-1).day());
     // May fail a couple of times a year.
     QVERIFY(lqt::today().msecsTo(lqt::tomorrow()) == 1000*60*60*24);
 }
@@ -1066,7 +1066,6 @@ void LQtUtilsTest::test_case36()
         const QByteArray randomData = lqt::random_data(1024*1024);
         QVERIFY(randomData.size() == 1024*1024);
         QVERIFY(f.write(randomData) == 1024*1024);
-        f.close();
         QVERIFY(lqt::read_all(&f) == randomData);
         QFile g("somefilewhichdoesnotexist");
         QVERIFY(lqt::read_all(&g).isEmpty());

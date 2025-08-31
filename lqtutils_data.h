@@ -138,10 +138,14 @@ inline QByteArray read_all(QIODevice* io)
     if (!io)
         return QByteArray();
 
-    if (!io->open(QIODevice::ReadOnly)) {
-        qWarning() << "Failed to open I/O device";
-        return QByteArray();
+    if (!io->isOpen()) {
+        if (!io->open(QIODevice::ReadOnly)) {
+            qWarning() << "Failed to open I/O device";
+            return QByteArray();
+        }
     }
+    else
+        io->seek(0);
 
     return io->readAll();
 }
