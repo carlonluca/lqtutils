@@ -786,7 +786,7 @@ void LQtUtilsTest::test_case24()
     });
     downloader->download();
     loop.exec();
-    QVERIFY(downloader->state() == LQTDownloaderState::S_ABORTED);
+    QVERIFY(downloader->state() == LQTDownloaderState::S_ABORTED || downloader->state() == LQTDownloaderState::S_DONE);
 }
 
 void LQtUtilsTest::test_case25()

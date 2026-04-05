@@ -25,7 +25,11 @@ void DownloaderPriv::download()
 {
     set_state(LQTDownloaderState::S_DOWNLOADING);
 
-    m_reply = m_manager->get(QNetworkRequest(m_url));
+    QNetworkRequest req(m_url);
+    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute,
+                     QNetworkRequest::NoLessSafeRedirectPolicy);
+
+    m_reply = m_manager->get(req);
     connect(m_reply, &QNetworkReply::downloadProgress,
             this, &DownloaderPriv::downloadProgress);
     connect(m_reply, &QNetworkReply::readyRead, this, [this] {
