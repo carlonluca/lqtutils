@@ -61,6 +61,8 @@
 Q_IMPORT_QML_PLUGIN(lqtutilsPlugin)
 #endif
 
+static const QString DOWNLOAD_TEST_URL("https://github.com/carlonluca/flashbackprism/releases/download/v1.7.0/flashbackprism-1.7.0.apk");
+
 struct LQTSerializeTest
 {
     QString s;
@@ -770,13 +772,13 @@ void LQtUtilsTest::test_case24()
     });
 
     QScopedPointer<lqt::Downloader> downloader(new lqt::Downloader(
-                QSL("https://raw.githubusercontent.com/carlonluca/"
-                    "isogeometric-analysis/master/4.5/iga_knot_insertion_plate_hole.svg.png"),
-                tmpFilePath));
+        DOWNLOAD_TEST_URL,
+        tmpFilePath));
     QVERIFY(downloader->state() == LQTDownloaderState::S_IDLE);
 
     QEventLoop loop;
     connect(downloader.data(), &lqt::Downloader::downloadProgress, this, [&loop, &downloader] {
+        qDebug() << "Downloader state changed to" << downloader->state();
         QVERIFY(downloader->state() == LQTDownloaderState::S_DOWNLOADING);
         downloader->abort();
         loop.quit();
