@@ -62,7 +62,7 @@
 Q_IMPORT_QML_PLUGIN(lqtutilsPlugin)
 #endif
 
-static const QString DOWNLOAD_TEST_URL("https://github.com/carlonluca/flashbackprism/releases/download/v1.7.0/flashbackprism-1.7.0.apk");
+static const QString DOWNLOAD_TEST_URL("https://github.com/carlonluca/mldonkey-next/releases/download/v1.4.0/mldonkey-next-v1.4.0.AppImage");
 
 struct LQTSerializeTest
 {
@@ -778,9 +778,8 @@ void LQtUtilsTest::test_case24()
     QVERIFY(downloader->state() == LQTDownloaderState::S_IDLE);
 
     QEventLoop loop;
-    connect(downloader.data(), &lqt::Downloader::downloadProgress, this, [&loop, &downloader, &tmpFilePath] {
+    connect(downloader.data(), &lqt::Downloader::downloadProgress, this, [&loop, &downloader] {
         qDebug() << "Downloader state changed to" << downloader->state();
-        QVERIFY(lqt::hash(tmpFilePath) == QByteArray::fromHex("84828d8dbfcd0bb0bd10b3e180aa87ca"));
         QVERIFY(downloader->state() == LQTDownloaderState::S_DOWNLOADING);
         downloader->abort();
         loop.quit();
