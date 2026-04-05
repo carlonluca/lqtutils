@@ -779,6 +779,7 @@ void LQtUtilsTest::test_case24()
 
     QEventLoop loop;
     connect(downloader.data(), &lqt::Downloader::downloadProgress, this, [&loop, &downloader] {
+        qDebug() << "Downloader state changed to" << downloader->state();
         QVERIFY(downloader->state() == LQTDownloaderState::S_DOWNLOADING);
         downloader->abort();
         loop.quit();
