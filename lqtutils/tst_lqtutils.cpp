@@ -34,6 +34,7 @@
 #include <QThreadPool>
 #include <QTemporaryFile>
 #include <QElapsedTimer>
+#include <QByteArray>
 
 #include "../lqtutils_prop.h"
 #include "../lqtutils_string.h"
@@ -777,8 +778,9 @@ void LQtUtilsTest::test_case24()
     QVERIFY(downloader->state() == LQTDownloaderState::S_IDLE);
 
     QEventLoop loop;
-    connect(downloader.data(), &lqt::Downloader::downloadProgress, this, [&loop, &downloader] {
+    connect(downloader.data(), &lqt::Downloader::downloadProgress, this, [&loop, &downloader, &tmpFilePath] {
         qDebug() << "Downloader state changed to" << downloader->state();
+        QVERIFY(lqt::hash(tmpFilePath) == QByteArray::fromHex("84828d8dbfcd0bb0bd10b3e180aa87ca"));
         QVERIFY(downloader->state() == LQTDownloaderState::S_DOWNLOADING);
         downloader->abort();
         loop.quit();
