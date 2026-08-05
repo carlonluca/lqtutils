@@ -4,8 +4,308 @@ on:
     branches:
       - main
   pull_request:
+env:
+  QTEST_FUNCTION_TIMEOUT: 10000000
 jobs:
-  test:
-    runs-on: x64
+  test_qt5:
+    name: Qt 5.15.2
+    runs-on: docker
+    container:
+      image: carlonluca/qt-dev:5.15.2
     steps:
-      - run: echo All good!
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build and test
+        run: |
+          mkdir build
+          cd build
+          cmake ../qt5
+          make
+          ./LQtUtilsTest
+
+      - name: Build Android example
+        run: |
+          git clone https://github.com/carlonluca/Fall.git
+          cd Fall
+          git submodule update --init --recursive
+          mkdir build
+          cd build
+          /opt/Qt-android-5.15.2/bin/qmake ..
+          make
+
+  test_qt62_jammy:
+    name: Qt 6.2.4 Jammy
+    runs-on: docker
+    container:
+      image: carlonluca/qt-dev:6.2.4_jammy
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - run: |
+          mkdir build
+          cd build
+          cmake ../qt6
+          make
+          ./LQtUtilsTest
+
+
+  test_qt64:
+    name: Qt 6.4.3
+    runs-on: docker
+    container:
+      image: carlonluca/qt-dev:6.4.3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - run: |
+          mkdir build
+          cd build
+          cmake ../qt6
+          make
+          LD_LIBRARY_PATH=/usr/local/lib ./LQtUtilsTest
+
+
+  test_qt65_android:
+    name: Qt 6.5.2 Android
+    runs-on: docker
+    container:
+      image: carlonluca/qt-dev:6.5.2
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - run: |
+          mkdir build
+          cd build
+          /opt/Qt-android-6.5.2/android_arm64_v8a/bin/qt-cmake \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DQT_ANDROID_BUILD_ALL_ABIS:BOOL=ON \
+            -S ../qt6
+          cmake --build .
+
+
+  test_qt66:
+    name: Qt 6.6.1
+    runs-on: docker
+    container:
+      image: carlonluca/qt-dev:6.6.1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - run: |
+          mkdir build
+          cd build
+          cmake ../qt6
+          make
+          LD_LIBRARY_PATH=/usr/local/lib ./LQtUtilsTest
+
+
+  test_qt66_android:
+    name: Qt 6.6.1 Android
+    runs-on: docker
+    container:
+      image: carlonluca/qt-dev:6.6.1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - run: |
+          mkdir build
+          cd build
+          /opt/Qt-android-6.6.1/android_arm64_v8a/bin/qt-cmake \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DQT_ANDROID_BUILD_ALL_ABIS:BOOL=ON \
+            -S ../qt6
+          cmake --build .
+
+
+  test_qt67:
+    name: Qt 6.7.3
+    runs-on: docker
+    container:
+      image: carlonluca/qt-dev:6.7.3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - run: |
+          mkdir build
+          cd build
+          cmake ../qt6
+          make
+          LD_LIBRARY_PATH=/usr/local/lib ./LQtUtilsTest
+
+
+  test_qt67_android:
+    name: Qt 6.7.3 Android
+    runs-on: docker
+    container:
+      image: carlonluca/qt-dev:6.7.3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - run: |
+          mkdir build
+          cd build
+          /opt/Qt-android-6.7.3/android_arm64_v8a/bin/qt-cmake \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DQT_ANDROID_BUILD_ALL_ABIS:BOOL=ON \
+            -S ../qt6
+          cmake --build .
+
+  test_qt68:
+    name: Qt 6.8.3
+    runs-on: docker
+    container:
+      image: carlonluca/qt-dev:6.8.3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - run: |
+          mkdir build
+          cd build
+          cmake ../qt6
+          make
+          LD_LIBRARY_PATH=/usr/local/lib ./LQtUtilsTest
+
+  test_qt68_android:
+    name: Qt 6.8.3 Android
+    runs-on: docker
+    container:
+      image: carlonluca/qt-dev:6.8.3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - run: |
+          mkdir build
+          cd build
+          /opt/qt/6.8.3/android_arm64_v8a/bin/qt-cmake \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DQT_ANDROID_BUILD_ALL_ABIS:BOOL=ON \
+            -S ../qt6
+          cmake --build .
+
+  test_qt69:
+    name: Qt 6.9.1
+    runs-on: docker
+    container:
+      image: carlonluca/qt-dev:6.9.1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - run: |
+          mkdir build
+          cd build
+          cmake ../qt6
+          make
+          LD_LIBRARY_PATH=/usr/local/lib ./LQtUtilsTest
+
+  test_qt69_android:
+    name: Qt 6.9.2 Android
+    runs-on: docker
+    container:
+      image: carlonluca/qt-dev:6.9.2
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - run: |
+          mkdir build
+          cd build
+          /opt/qt/6.9.2/android_arm64_v8a/bin/qt-cmake \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DQT_ANDROID_BUILD_ALL_ABIS:BOOL=ON \
+            -S ../qt6
+          cmake --build .
+
+  test_qt610:
+    name: Qt 6.10.0
+    runs-on: docker
+    container:
+      image: carlonluca/qt-dev:6.10.0
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - run: |
+          mkdir build
+          cd build
+          cmake ../qt6
+          make
+          LD_LIBRARY_PATH=/usr/local/lib ./LQtUtilsTest
+
+  test_qt610_android:
+    name: Qt 6.10.1 Android
+    runs-on: docker
+    container:
+      image: carlonluca/qt-dev:6.10.1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - run: |
+          mkdir build
+          cd build
+          /opt/qt/6.10.1/android_arm64_v8a/bin/qt-cmake \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DQT_ANDROID_BUILD_ALL_ABIS:BOOL=ON \
+            -S ../qt6
+          cmake --build .
+
+  test_qt611:
+    name: Qt 6.11.1 Resolute
+    runs-on: docker
+    container:
+      image: carlonluca/qt-dev:6.11.1_resolute
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - run: |
+          mkdir build
+          cd build
+          cmake ../qt6
+          make
+          LD_LIBRARY_PATH=/usr/local/lib ./LQtUtilsTest
+
+  test_qt611_android:
+    name: Qt 6.11.1 Resolute Android
+    runs-on: docker
+    container:
+      image: carlonluca/qt-dev:6.11.1_resolute
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - run: |
+          mkdir build
+          cd build
+          /opt/qt/6.11.1/android_arm64_v8a/bin/qt-cmake \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DQT_ANDROID_BUILD_ALL_ABIS:BOOL=ON \
+            -S ../qt6
+          cmake --build .
