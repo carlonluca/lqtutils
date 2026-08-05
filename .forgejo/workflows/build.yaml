@@ -9,7 +9,7 @@ env:
 jobs:
   test_qt5:
     name: Qt 5.15.2
-    runs-on: docker
+    runs-on: x64
     container:
       image: carlonluca/qt-dev:5.15.2
     steps:
