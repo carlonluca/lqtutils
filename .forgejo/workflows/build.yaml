@@ -6,6 +6,6 @@ on:
   pull_request:
 jobs:
   test:
-    runs-on: docker
+    runs-on: x64
     steps:
       - run: echo All good!
