@@ -9,7 +9,7 @@ env:
 jobs:
   test_qt5:
     name: Qt 5.15.2
-    runs-on: x64
+    runs-on: ubuntu-26.04
     container:
       image: carlonluca/qt-dev:5.15.2
     steps:
@@ -37,7 +37,7 @@ jobs:
 
   test_qt62_jammy:
     name: Qt 6.2.4 Jammy
-    runs-on: docker
+    runs-on: ubuntu-26.04
     container:
       image: carlonluca/qt-dev:6.2.4_jammy
     steps:
@@ -55,7 +55,7 @@ jobs:
 
   test_qt64:
     name: Qt 6.4.3
-    runs-on: docker
+    runs-on: ubuntu-26.04
     container:
       image: carlonluca/qt-dev:6.4.3
     steps:
@@ -73,7 +73,7 @@ jobs:
 
   test_qt65_android:
     name: Qt 6.5.2 Android
-    runs-on: docker
+    runs-on: ubuntu-26.04
     container:
       image: carlonluca/qt-dev:6.5.2
     steps:
@@ -93,7 +93,7 @@ jobs:
 
   test_qt66:
     name: Qt 6.6.1
-    runs-on: docker
+    runs-on: ubuntu-26.04
     container:
       image: carlonluca/qt-dev:6.6.1
     steps:
@@ -111,7 +111,7 @@ jobs:
 
   test_qt66_android:
     name: Qt 6.6.1 Android
-    runs-on: docker
+    runs-on: ubuntu-26.04
     container:
       image: carlonluca/qt-dev:6.6.1
     steps:
@@ -131,7 +131,7 @@ jobs:
 
   test_qt67:
     name: Qt 6.7.3
-    runs-on: docker
+    runs-on: ubuntu-26.04
     container:
       image: carlonluca/qt-dev:6.7.3
     steps:
@@ -149,7 +149,7 @@ jobs:
 
   test_qt67_android:
     name: Qt 6.7.3 Android
-    runs-on: docker
+    runs-on: ubuntu-26.04
     container:
       image: carlonluca/qt-dev:6.7.3
     steps:
@@ -168,7 +168,7 @@ jobs:
 
   test_qt68:
     name: Qt 6.8.3
-    runs-on: docker
+    runs-on: ubuntu-26.04
     container:
       image: carlonluca/qt-dev:6.8.3
     steps:
@@ -185,7 +185,7 @@ jobs:
 
   test_qt68_android:
     name: Qt 6.8.3 Android
-    runs-on: docker
+    runs-on: ubuntu-26.04
     container:
       image: carlonluca/qt-dev:6.8.3
     steps:
@@ -204,7 +204,7 @@ jobs:
 
   test_qt69:
     name: Qt 6.9.1
-    runs-on: docker
+    runs-on: ubuntu-26.04
     container:
       image: carlonluca/qt-dev:6.9.1
     steps:
@@ -221,7 +221,7 @@ jobs:
 
   test_qt69_android:
     name: Qt 6.9.2 Android
-    runs-on: docker
+    runs-on: ubuntu-26.04
     container:
       image: carlonluca/qt-dev:6.9.2
     steps:
@@ -240,7 +240,7 @@ jobs:
 
   test_qt610:
     name: Qt 6.10.0
-    runs-on: docker
+    runs-on: ubuntu-26.04
     container:
       image: carlonluca/qt-dev:6.10.0
     steps:
@@ -257,7 +257,7 @@ jobs:
 
   test_qt610_android:
     name: Qt 6.10.1 Android
-    runs-on: docker
+    runs-on: ubuntu-26.04
     container:
       image: carlonluca/qt-dev:6.10.1
     steps:
@@ -276,7 +276,7 @@ jobs:
 
   test_qt611:
     name: Qt 6.11.1 Resolute
-    runs-on: docker
+    runs-on: ubuntu-26.04
     container:
       image: carlonluca/qt-dev:6.11.1_resolute
     steps:
@@ -293,7 +293,7 @@ jobs:
 
   test_qt611_android:
     name: Qt 6.11.1 Resolute Android
-    runs-on: docker
+    runs-on: ubuntu-26.04
     container:
       image: carlonluca/qt-dev:6.11.1_resolute
     steps:
@@ -312,7 +312,7 @@ jobs:
 
   test_qt612_android:
     name: Qt 6.12.0 Resolute Android
-    runs-on: docker
+    runs-on: ubuntu-26.04
     container:
       image: carlonluca/qt-dev:6.12.0
     steps:
