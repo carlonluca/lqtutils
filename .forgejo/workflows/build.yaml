@@ -309,3 +309,22 @@ jobs:
             -DQT_ANDROID_BUILD_ALL_ABIS:BOOL=ON \
             -S ../qt6
           cmake --build .
+
+  test_qt612_android:
+    name: Qt 6.12.0 Resolute Android
+    runs-on: docker
+    container:
+      image: carlonluca/qt-dev:6.12.0
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - run: |
+          mkdir build
+          cd build
+          /opt/qt/6.12.0/android_arm64_v8a/bin/qt-cmake \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DQT_ANDROID_BUILD_ALL_ABIS:BOOL=ON \
+            -S ../qt6
+          cmake --build .
