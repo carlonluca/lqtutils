@@ -34,6 +34,13 @@ jobs:
           cd build
           /opt/Qt-android-5.15.2/bin/qmake ..
           make
+  cleanup_qt5:
+    name: Cleanup image
+    runs-on: ubuntu-26.04
+    if: always()
+    steps:
+      - name: Clean
+        run: docker image rm carlonluca/qt-dev:5.15.2
 
   test_qt62_jammy:
     name: Qt 6.2.4 Jammy
@@ -51,7 +58,13 @@ jobs:
           cmake ../qt6
           make
           ./LQtUtilsTest
-
+  cleanup_qt62_jammy:
+    name: Cleanup image
+    runs-on: ubuntu-26.04
+    if: always()
+    steps:
+      - name: Clean
+        run: docker image rm carlonluca/qt-dev:6.2.4_jammy
 
   test_qt64:
     name: Qt 6.4.3
@@ -69,7 +82,13 @@ jobs:
           cmake ../qt6
           make
           LD_LIBRARY_PATH=/usr/local/lib ./LQtUtilsTest
-
+  cleanup_qt64:
+    name: Cleanup image
+    runs-on: ubuntu-26.04
+    if: always()
+    steps:
+      - name: Clean
+        run: docker image rm carlonluca/qt-dev:6.4.3
 
   test_qt65_android:
     name: Qt 6.5.2 Android
@@ -89,7 +108,13 @@ jobs:
             -DQT_ANDROID_BUILD_ALL_ABIS:BOOL=ON \
             -S ../qt6
           cmake --build .
-
+  cleanup_qt65_android:
+    name: Cleanup image
+    runs-on: ubuntu-26.04
+    if: always()
+    steps:
+      - name: Clean
+        run: docker image rm carlonluca/qt-dev:6.5.2
 
   test_qt66:
     name: Qt 6.6.1
