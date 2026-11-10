@@ -30,6 +30,8 @@
 #include <QList>
 #include <QMutex>
 #include <QtGlobal>
+#include <QTimer>
+#include <QMutableListIterator>
 
 #include "lqtutils_prop.h"
 
@@ -37,22 +39,52 @@ QT_FORWARD_DECLARE_CLASS(QTimer);
 
 namespace lqt {
 
+#define AUTO_REFRESH_INTERVAL 1000
+
 class FreqMeter : public QObject
 {
     Q_OBJECT
     L_RO_PROP_AS(int, freq, 0)
 public:
-    explicit FreqMeter(QObject* parent = nullptr);
+    explicit FreqMeter(QObject* parent = nullptr) :
+        QObject(parent) {
+        m_refreshTimer = new QTimer(this);
+        connect(m_refreshTimer, &QTimer::timeout,
+                this, &FreqMeter::refresh);
+        m_refreshTimer->setInterval(AUTO_REFRESH_INTERVAL);
+        m_refreshTimer->setSingleShot(true);
+        m_refreshTimer->start();
+    }
 
 public slots:
-    void registerSample();
-    void refresh();
+    void registerSample() {
+        QMutexLocker locker(&m_mutex);
+        m_timestamps.append(QDateTime::currentDateTime());
+        QTimer::singleShot(0, this, &FreqMeter::refresh);
+    }
+
+    void refresh() {
+        QMutexLocker locker(&m_mutex);
+        QDateTime now = QDateTime::currentDateTime();
+        QMutableListIterator<QDateTime> it(m_timestamps);
+        while (it.hasNext()) {
+            if (it.next().msecsTo(now) > 1000)
+                it.remove();
+            else
+                break;
+        }
+        set_freq(m_timestamps.size());
+        m_refreshTimer->stop();
+        m_refreshTimer->start();
+    }
 
 private:
     QMutex m_mutex;
     QList<QDateTime> m_timestamps;
     QTimer* m_refreshTimer;
 };
+
+#undef AUTO_REFRESH_INTERVAL
 
 } // namespace
 
