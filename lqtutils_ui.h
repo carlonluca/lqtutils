@@ -135,6 +135,10 @@ class SystemNotification : public QObject
 public:
     SystemNotification(QObject* parent = nullptr) : QObject(parent) {}
     virtual void send();
+
+#ifdef Q_OS_ANDROID
+    friend class AndroidSystemNotification;
+#endif
 };
 
 #ifdef Q_OS_ANDROID
