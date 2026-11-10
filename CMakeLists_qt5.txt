@@ -3,8 +3,8 @@ set(CMAKE_AUTOMOC ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Qml Quick)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Qml Quick)
-find_package(QT NAMES Qt6 Qt5 OPTIONAL_COMPONENTS DBus)
-find_package(Qt${QT_VERSION_MAJOR} OPTIONAL_COMPONENTS DBus)
+find_package(QT NAMES Qt6 Qt5 OPTIONAL_COMPONENTS DBus QUIET)
+find_package(Qt${QT_VERSION_MAJOR} OPTIONAL_COMPONENTS DBus QUIET)
 if (Qt6_FOUND)
     find_package(Qt6 REQUIRED COMPONENTS StateMachine)
 endif()
@@ -51,6 +51,7 @@ target_link_libraries(lqtutils PRIVATE
     Qt${QT_VERSION_MAJOR}::Qml
     Qt${QT_VERSION_MAJOR}::Quick
 )
-if (Qt5DBus_FOUND)
-    target_link_libraries(lqtutils PRIVATE Qt5::DBus)
+if(TARGET Qt${QT_VERSION_MAJOR}::DBus)
+    target_link_libraries(lqtutils PUBLIC Qt${QT_VERSION_MAJOR}::DBus)
+    target_compile_definitions(lqtutils PUBLIC LQTUTILS_HAS_DBUS)
 endif()

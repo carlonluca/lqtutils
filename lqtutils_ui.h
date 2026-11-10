@@ -60,7 +60,7 @@ typedef QAndroidJniObject QJniObject;
 #include <jni.h>
 #endif
 
-#if !defined(QT_NO_DBUS) && defined(Q_OS_LINUX)
+#if defined(LQTUTILS_HAS_DBUS) && defined(Q_OS_LINUX)
 #include <QDBusInterface>
 #include <QDBusReply>
 #endif
@@ -619,7 +619,7 @@ inline bool QmlUtils::setStatusBarColor(const QColor &color)
 
 inline void SystemNotification::send()
 {
-#if !defined(QT_NO_DBUS) && defined(Q_OS_LINUX)
+#if defined(LQTUTILS_HAS_DBUS) && defined(Q_OS_LINUX)
     QDBusInterface interface(QStringLiteral("org.freedesktop.Notifications"),
                              QStringLiteral("/org/freedesktop/Notifications"),
                              QStringLiteral("org.freedesktop.Notifications"));
