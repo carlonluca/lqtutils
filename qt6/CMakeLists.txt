@@ -53,6 +53,9 @@ target_link_libraries(LQtUtilsTest PRIVATE Qt6::Test Qt6::Gui Qt6::Qml Qt6::Quic
 if (Qt6DBus_FOUND)
     target_link_libraries(LQtUtilsTest PRIVATE Qt6::DBus)
 endif()
+if (ANDROID)
+  target_link_libraries(LQtUtilsTest PRIVATE Qt6::CorePrivate)
+endif()
 
 if(MSVC)
   target_compile_options(LQtUtilsTest PRIVATE /W4 /WX)
