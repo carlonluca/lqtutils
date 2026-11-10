@@ -21,7 +21,7 @@ qt_add_library(lqtutils STATIC
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_ui.cpp ${CMAKE_CURRENT_LIST_DIR}/lqtutils_ui.h
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_net.cpp ${CMAKE_CURRENT_LIST_DIR}/lqtutils_net.h
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_freq.cpp ${CMAKE_CURRENT_LIST_DIR}/lqtutils_freq.h
-    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_fsm.cpp ${CMAKE_CURRENT_LIST_DIR}/lqtutils_fsm.h
+    ${CMAKE_CURRENT_LIST_DIR}/lqtutils_fsm.h
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_autoexec.h
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_bqueue.h
     ${CMAKE_CURRENT_LIST_DIR}/lqtutils_data.h
