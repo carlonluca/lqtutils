@@ -28,6 +28,9 @@ project(LQtUtilsTest LANGUAGES CXX)
 
 find_package(Qt6 COMPONENTS Core Test Gui Qml Quick REQUIRED)
 find_package(Qt6 OPTIONAL_COMPONENTS DBus)
+if(ANDROID AND Qt6_VERSION VERSION_GREATER_EQUAL "6.10.0")
+  find_package(Qt6 REQUIRED COMPONENT CorePrivate)
+endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
