@@ -40,12 +40,12 @@ bool embed_font_awesome(QQmlContext* ctx)
         return false;
     }
 
-    if (QFontDatabase::addApplicationFont(QSL(":/lqtutils/fontawesome/Font Awesome 7 Free Solid-Regular-400.otf")) == -1) {
+    if (QFontDatabase::addApplicationFont(QSL(":/lqtutils/fontawesome/Font Awesome 7 Free-Regular-400.otf")) == -1) {
         qWarning() << "Could not load font awesome free regular";
         return false;
     }
 
-    if (QFontDatabase::addApplicationFont(QSL(":/lqtutils/fontawesome/Font Awesome 7 Free Solid-Solid-900.otf")) == -1) {
+    if (QFontDatabase::addApplicationFont(QSL(":/lqtutils/fontawesome/Font Awesome 7 Free-Solid-900.otf")) == -1) {
         qWarning() << "Could not load font awesome free solid";
         return false;
     }
