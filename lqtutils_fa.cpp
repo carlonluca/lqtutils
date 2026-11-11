@@ -35,17 +35,17 @@ namespace lqt
 
 bool embed_font_awesome(QQmlContext* ctx)
 {
-    if (QFontDatabase::addApplicationFont(QSL(":/lqtutils/fontawesome/Font Awesome 6 Brands-Regular-400.otf")) == -1) {
+    if (QFontDatabase::addApplicationFont(QSL(":/lqtutils/fontawesome/Font Awesome 7 Brands-Regular-400.otf")) == -1) {
         qWarning() << "Could not load font awesome brands regular";
         return false;
     }
 
-    if (QFontDatabase::addApplicationFont(QSL(":/lqtutils/fontawesome/Font Awesome 6 Free-Regular-400.otf")) == -1) {
+    if (QFontDatabase::addApplicationFont(QSL(":/lqtutils/fontawesome/Font Awesome 7 Free Solid-Regular-400.otf")) == -1) {
         qWarning() << "Could not load font awesome free regular";
         return false;
     }
 
-    if (QFontDatabase::addApplicationFont(QSL(":/lqtutils/fontawesome/Font Awesome 6 Free-Solid-900.otf")) == -1) {
+    if (QFontDatabase::addApplicationFont(QSL(":/lqtutils/fontawesome/Font Awesome 7 Free Solid-Solid-900.otf")) == -1) {
         qWarning() << "Could not load font awesome free solid";
         return false;
     }
@@ -61,17 +61,17 @@ bool embed_font_awesome(QQmlContext* ctx)
         ctx->setContextProperty("fontAwesomeBrandsRegular",
                                 QFontDatabase::font("Font Awesome 6 Brands", "Regular", 9));
         ctx->setContextProperty("fontAwesomeFreeRegular",
-                                QFontDatabase::font("Font Awesome 6 Free", "Regular", 9));
+                                QFontDatabase::font("Font Awesome 7 Free Solid", "Regular", 9));
         ctx->setContextProperty("fontAwesomeFreeSolid",
-                                QFontDatabase::font("Font Awesome 6 Free", "Solid", 9));
+                                QFontDatabase::font("Font Awesome 7 Free Solid", "Solid", 9));
 #else
         QFontDatabase db;
         ctx->setContextProperty("fontAwesomeBrandsRegular",
                                 db.font("Font Awesome 6 Brands", "Regular", 9));
         ctx->setContextProperty("fontAwesomeFreeRegular",
-                                db.font("Font Awesome 6 Free", "Regular", 9));
+                                db.font("Font Awesome 7 Free Solid", "Regular", 9));
         ctx->setContextProperty("fontAwesomeFreeSolid",
-                                db.font("Font Awesome 6 Free", "Solid", 9));
+                                db.font("Font Awesome 7 Free Solid", "Solid", 9));
 #endif
     }
 

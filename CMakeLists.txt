@@ -55,9 +55,9 @@ if (ENABLE_FONT_AWESOME)
             fontawesome/LQTFontAwesomeFreeSolid.qml
             fontawesome/LQTFontAwesomeBrandsRegular.qml
         RESOURCES
-            "fontawesome/Font Awesome 6 Brands-Regular-400.otf"
-            "fontawesome/Font Awesome 6 Free-Regular-400.otf"
-            "fontawesome/Font Awesome 6 Free-Solid-900.otf"
+            "fontawesome/Font Awesome 7 Brands-Regular-400.otf"
+            "fontawesome/Font Awesome 7 Free-Regular-400.otf"
+            "fontawesome/Font Awesome 7 Free-Solid-900.otf"
         SOURCES
             ${CMAKE_CURRENT_LIST_DIR}/lqtutils_fa.cpp ${CMAKE_CURRENT_LIST_DIR}/lqtutils_fa.h
         IMPORT_PATH
