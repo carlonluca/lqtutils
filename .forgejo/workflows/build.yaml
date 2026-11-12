@@ -335,12 +335,14 @@ jobs:
     container:
       image: carlonluca/qt-dev:6.12.0-win
     steps:
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y nodejs npm
       - uses: actions/checkout@v3
         with:
           submodules: recursive
       - run: |
-          apt-get update
-          apt-get install -y nodejs npm
           mkdir build
           cd build
           /opt/mxe/usr/i686-w64-mingw32.static/qt6/bin/qt-cmake ../qt6
