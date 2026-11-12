@@ -66,7 +66,7 @@ typedef QAndroidJniObject QJniObject;
 #endif
 
 #if defined(Q_OS_WINDOWS)
-#include <Windows.h>
+#include <windows.h>
 #include <shellapi.h>
 #endif
 
