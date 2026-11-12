@@ -26,8 +26,6 @@ android {
 QT += androidextras
 }
 SOURCES += \
-    $$PWD/lqtutils_ui.cpp \
-    $$PWD/lqtutils_freq.cpp \
     $$PWD/lqtutils_fa.cpp
 HEADERS += \
     $$PWD/lqtutils_ui.h \
