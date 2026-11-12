@@ -328,3 +328,18 @@ jobs:
             -DQT_ANDROID_BUILD_ALL_ABIS:BOOL=ON \
             -S ../qt6
           cmake --build .
+
+  test_qt612_win:
+    name: Qt 6.12.0 Resolute Windows
+    runs-on: ubuntu-26.04
+    container:
+      image: carlonluca/qt-dev:6.12.0-win
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - run: |
+          mkdir build
+          cd build
+          /opt/mxe/usr/i686-w64-mingw32.static/qt6/bin/qt-cmake ../qt6
+          make
