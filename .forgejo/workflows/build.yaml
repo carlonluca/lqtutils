@@ -339,6 +339,8 @@ jobs:
         with:
           submodules: recursive
       - run: |
+          apt-get update
+          apt-get install -y nodejs npm
           mkdir build
           cd build
           /opt/mxe/usr/i686-w64-mingw32.static/qt6/bin/qt-cmake ../qt6
